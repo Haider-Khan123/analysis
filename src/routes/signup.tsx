@@ -13,7 +13,7 @@ import { AuthShell } from "./login";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Create your institute — Analysis" },
+      { title: "Create Your Institute! — Analysis" },
       { name: "description", content: "Set up your institute on Analysis in under a minute." },
     ],
   }),
