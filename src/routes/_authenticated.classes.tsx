@@ -206,12 +206,13 @@ export function PageHeader({ title, subtitle }: { title: string; subtitle?: stri
 }
 
 export function EntityTable<T extends { id: string }>({
-  rows, columns, loading, onDelete, empty,
+  rows, columns, loading, onDelete, actions, empty,
 }: {
   rows: T[];
   columns: { key: keyof T | string; label: string }[];
   loading?: boolean;
   onDelete?: (id: string) => void;
+  actions?: (row: T) => React.ReactNode;
   empty: string;
 }) {
   if (loading) return <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>;
@@ -222,7 +223,7 @@ export function EntityTable<T extends { id: string }>({
         <thead>
           <tr className="border-b border-border text-left text-xs uppercase text-muted-foreground">
             {columns.map((c) => <th key={String(c.key)} className="py-2 pr-4 font-medium">{c.label}</th>)}
-            {onDelete && <th className="py-2 text-right" />}
+            {(actions || onDelete) && <th className="py-2 text-right" />}
           </tr>
         </thead>
         <tbody>
@@ -231,11 +232,16 @@ export function EntityTable<T extends { id: string }>({
               {columns.map((c) => (
                 <td key={String(c.key)} className="py-3 pr-4">{String((r as Record<string, unknown>)[c.key as string] ?? "—")}</td>
               ))}
-              {onDelete && (
+              {(actions || onDelete) && (
                 <td className="py-3 text-right">
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(r.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex items-center justify-end gap-2">
+                    {actions?.(r)}
+                    {onDelete && (
+                      <Button variant="ghost" size="icon" onClick={() => onDelete(r.id)}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
+                  </div>
                 </td>
               )}
             </tr>
@@ -245,3 +251,4 @@ export function EntityTable<T extends { id: string }>({
     </div>
   );
 }
+
