@@ -11,7 +11,7 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: "Log in — Analysis" },
-      { name: "description", content: "Sign in to your Analysis school management account." },
+      { name: "description", content: "Sign in to your Analysis institute management account." },
     ],
   }),
   component: LoginPage,
@@ -23,6 +23,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     if (!loading && isAuthenticated) navigate({ to: "/dashboard", replace: true });
@@ -41,26 +42,56 @@ function LoginPage() {
     navigate({ to: "/dashboard", replace: true });
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Enter your email above first.");
+      return;
+    }
+    setResetting(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setResetting(false);
+    if (error) toast.error(error.message);
+    else toast.success("Password reset email sent. Check your inbox.");
+  };
+
   return (
     <AuthShell title="Welcome back" subtitle="Sign in to your Analysis account.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">
+            Email <span className="text-destructive">*</span>
+          </Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
+            placeholder="xyz@email.com"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">
+              Password <span className="text-destructive">*</span>
+            </Label>
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={resetting}
+              className="text-xs font-medium text-primary hover:underline disabled:opacity-50"
+            >
+              {resetting ? "Sending…" : "Forgot password?"}
+            </button>
+          </div>
           <Input
             id="password"
             type="password"
             autoComplete="current-password"
+            placeholder="Enter your password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -71,7 +102,7 @@ function LoginPage() {
         </Button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        New school?{" "}
+        New Institute?{" "}
         <Link to="/signup" className="font-medium text-primary hover:underline">
           Create your account
         </Link>

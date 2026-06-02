@@ -13,12 +13,14 @@ import { AuthShell } from "./login";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Create your school — Analysis" },
-      { name: "description", content: "Set up your school on Analysis in under a minute." },
+      { title: "Create your institute — Analysis" },
+      { name: "description", content: "Set up your institute on Analysis in under a minute." },
     ],
   }),
   component: SignupPage,
 });
+
+const Req = () => <span className="text-destructive">*</span>;
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -28,19 +30,37 @@ function SignupPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [phone, setPhone] = useState("");
+  const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      // Already signed in — just redirect to dashboard
       navigate({ to: "/dashboard", replace: true });
     }
   }, [isAuthenticated, loading, navigate]);
 
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 500 * 1024) {
+      toast.error("Logo must be under 500KB.");
+      e.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setLogoDataUrl(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("Password Mismatch");
+      return;
+    }
     setBusy(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -53,16 +73,16 @@ function SignupPage() {
       });
       if (error) throw error;
       if (!data.session) {
-        // email confirmation required
         toast.success("Check your email to confirm your account.");
         return;
       }
-      // wait briefly for the auth state to settle, then create the school
       await new Promise((r) => setTimeout(r, 400));
-      const res = await createSchool({ data: { schoolName, phone: phone || null } });
+      const res = await createSchool({
+        data: { schoolName, phone, logoDataUrl },
+      });
       if (!res.ok) throw new Error(res.error);
       await refresh();
-      toast.success("School created. Welcome!");
+      toast.success("Institute created. Welcome!");
       navigate({ to: "/dashboard", replace: true });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Signup failed";
@@ -73,31 +93,103 @@ function SignupPage() {
   };
 
   return (
-    <AuthShell title="Create your school" subtitle="You'll become the school administrator.">
+    <AuthShell title="Create your institute" subtitle="You'll become the institute administrator.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="fullName">Your name</Label>
-          <Input id="fullName" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+          <Label htmlFor="fullName">Full Name <Req /></Label>
+          <Input
+            id="fullName"
+            required
+            placeholder="Enter your full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Label htmlFor="email">Email <Req /></Label>
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            placeholder="xyz@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Label htmlFor="password">Password <Req /></Label>
+          <Input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            minLength={8}
+            required
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           <p className="text-xs text-muted-foreground">Minimum 8 characters.</p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="schoolName">School name</Label>
-          <Input id="schoolName" required value={schoolName} onChange={(e) => setSchoolName(e.target.value)} />
+          <Label htmlFor="confirmPassword">Confirm Password <Req /></Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            minLength={8}
+            required
+            placeholder="Re-enter your password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          {confirmPassword && confirmPassword !== password && (
+            <p className="text-xs font-medium text-destructive">Password Mismatch</p>
+          )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone">School phone (optional)</Label>
-          <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <Label htmlFor="schoolName">Institution Name <Req /></Label>
+          <Input
+            id="schoolName"
+            required
+            placeholder="Enter your institution name"
+            value={schoolName}
+            onChange={(e) => setSchoolName(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="phone">Institution Phone <Req /></Label>
+          <Input
+            id="phone"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]+"
+            required
+            placeholder="Enter phone number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="logo">Institute Logo <Req /></Label>
+          <Input
+            id="logo"
+            type="file"
+            accept="image/*"
+            required
+            onChange={handleLogoChange}
+          />
+          {logoDataUrl && (
+            <img
+              src={logoDataUrl}
+              alt="Logo preview"
+              className="mt-2 h-16 w-16 rounded-md border border-border object-contain"
+            />
+          )}
+          <p className="text-xs text-muted-foreground">Max 500KB.</p>
         </div>
         <Button type="submit" className="w-full" disabled={busy}>
-          {busy ? "Creating…" : "Create school"}
+          {busy ? "Creating…" : "Create Institute"}
         </Button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
