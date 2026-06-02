@@ -33,6 +33,7 @@ function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [phone, setPhone] = useState("");
+  const [branch, setBranch] = useState("");
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
