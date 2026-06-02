@@ -234,7 +234,7 @@ function ChildrenLinkDialog({
             ) : (
               <ul className="divide-y divide-border rounded-md border border-border">
                 {linkedRows.map((s) => {
-                  const link = linksQ.data?.find((l) => l.student_id === s.id);
+                  const ln = linksQ.data?.find((l) => l.student_id === s.id);
                   return (
                     <li key={s.id} className="flex items-center justify-between p-3 text-sm">
                       <div>
@@ -246,7 +246,7 @@ function ChildrenLinkDialog({
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => link && unlink.mutate(link.id)}
+                        onClick={() => ln && unlink.mutate(ln.id)}
                       >
                         <X className="h-4 w-4 text-destructive" />
                       </Button>
