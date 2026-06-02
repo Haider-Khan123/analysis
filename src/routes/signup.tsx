@@ -79,7 +79,7 @@ function SignupPage() {
       }
       await new Promise((r) => setTimeout(r, 400));
       const res = await createSchool({
-        data: { schoolName, phone, logoDataUrl },
+        data: { schoolName, phone, branch, logoDataUrl },
       });
       if (!res.ok) throw new Error(res.error);
       await refresh();
