@@ -13,7 +13,7 @@ import { AuthShell } from "./login";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Create your institute — Analysis" },
+      { title: "Create Your Institute! — Analysis" },
       { name: "description", content: "Set up your institute on Analysis in under a minute." },
     ],
   }),
@@ -33,6 +33,7 @@ function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [phone, setPhone] = useState("");
+  const [branch, setBranch] = useState("");
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -78,7 +79,7 @@ function SignupPage() {
       }
       await new Promise((r) => setTimeout(r, 400));
       const res = await createSchool({
-        data: { schoolName, phone, logoDataUrl },
+        data: { schoolName, phone, branch, logoDataUrl },
       });
       if (!res.ok) throw new Error(res.error);
       await refresh();
@@ -93,7 +94,7 @@ function SignupPage() {
   };
 
   return (
-    <AuthShell title="Create your institute" subtitle="You'll become the institute administrator.">
+    <AuthShell title="Create Your Institute!" subtitle="You'll become the institute administrator.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="fullName">Full Name <Req /></Label>
@@ -168,6 +169,16 @@ function SignupPage() {
             placeholder="Enter phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
+          <Input
+            id="branch"
+            required
+            placeholder="Enter branch name/ code"
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
           />
         </div>
         <div className="space-y-2">

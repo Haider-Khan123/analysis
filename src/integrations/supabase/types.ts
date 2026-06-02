@@ -167,6 +167,7 @@ export type Database = {
       schools: {
         Row: {
           address: string | null
+          branch: string | null
           created_at: string
           created_by: string
           email: string | null
@@ -178,6 +179,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          branch?: string | null
           created_at?: string
           created_by: string
           email?: string | null
@@ -189,6 +191,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          branch?: string | null
           created_at?: string
           created_by?: string
           email?: string | null

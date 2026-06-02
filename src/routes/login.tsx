@@ -57,7 +57,7 @@ function LoginPage() {
   };
 
   return (
-    <AuthShell title="Welcome back" subtitle="Sign in to your Analysis account.">
+    <AuthShell title="Welcome Back!" subtitle="Sign in to your Analysis account.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">
@@ -74,19 +74,9 @@ function LoginPage() {
           />
         </div>
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">
-              Password <span className="text-destructive">*</span>
-            </Label>
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              disabled={resetting}
-              className="text-xs font-medium text-primary hover:underline disabled:opacity-50"
-            >
-              {resetting ? "Sending…" : "Forgot password?"}
-            </button>
-          </div>
+          <Label htmlFor="password">
+            Password <span className="text-destructive">*</span>
+          </Label>
           <Input
             id="password"
             type="password"
@@ -96,6 +86,14 @@ function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            disabled={resetting}
+            className="text-xs font-medium text-primary hover:underline disabled:opacity-50"
+          >
+            {resetting ? "Sending…" : "Forgot password?"}
+          </button>
         </div>
         <Button type="submit" className="w-full" disabled={busy}>
           {busy ? "Signing in…" : "Sign in"}
