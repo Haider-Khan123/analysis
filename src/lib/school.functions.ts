@@ -45,6 +45,7 @@ export const createSchoolForAdmin = createServerFn({ method: "POST" })
         name: data.schoolName,
         address: data.address ?? null,
         phone: data.phone ?? null,
+        branch: data.branch ?? null,
         email,
         logo_url: data.logoDataUrl ?? null,
         created_by: userId,
