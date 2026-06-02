@@ -94,7 +94,7 @@ function SignupPage() {
   };
 
   return (
-    <AuthShell title="Create your institute" subtitle="You'll become the institute administrator.">
+    <AuthShell title="Create Your Institute!" subtitle="You'll become the institute administrator.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="fullName">Full Name <Req /></Label>
