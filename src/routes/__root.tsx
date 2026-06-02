@@ -79,6 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Replace WhatsApp groups and paper diaries with a single secure system.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Analysis — School Management Platform" },
+      { name: "description", content: "Analysis is a school communication and student management SaaS platform." },
+      { property: "og:description", content: "Analysis is a school communication and student management SaaS platform." },
+      { name: "twitter:description", content: "Analysis is a school communication and student management SaaS platform." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fab1ec80-5e60-4839-82df-453c624f994f/id-preview-94ca13ce--7f6edd18-00df-4aea-9676-3a355dd85b53.lovable.app-1780435782438.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fab1ec80-5e60-4839-82df-453c624f994f/id-preview-94ca13ce--7f6edd18-00df-4aea-9676-3a355dd85b53.lovable.app-1780435782438.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
