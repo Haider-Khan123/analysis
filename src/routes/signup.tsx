@@ -172,6 +172,16 @@ function SignupPage() {
           />
         </div>
         <div className="space-y-2">
+          <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
+          <Input
+            id="branch"
+            required
+            placeholder="Enter branch name/ code"
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="logo">Institute Logo <Req /></Label>
           <Input
             id="logo"
