@@ -15,6 +15,7 @@ export const createSchoolForAdmin = createServerFn({ method: "POST" })
         schoolName: z.string().trim().min(2).max(120),
         address: z.string().trim().max(255).optional().nullable(),
         phone: z.string().trim().max(40).optional().nullable(),
+        branch: z.string().trim().max(120).optional().nullable(),
         logoDataUrl: z
           .string()
           .max(800_000)
