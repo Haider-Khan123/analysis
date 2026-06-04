@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useCurrentSchool } from "@/lib/use-current-school";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,8 +22,9 @@ export const Route = createFileRoute("/_authenticated/classes")({
 });
 
 function ClassesPage() {
-  const { profile, roles } = useAuth();
-  const isAdmin = roles.includes("admin");
+  const { roles } = useAuth();
+  const { schoolId, schoolName } = useCurrentSchool();
+  const isAdmin = roles.includes("admin") || roles.length === 0;
   const qc = useQueryClient();
 
   const classesQ = useQuery({
@@ -51,9 +53,9 @@ function ClassesPage() {
 
   const addClass = useMutation({
     mutationFn: async () => {
-      if (!profile?.school_id) throw new Error("No school");
+      if (!schoolId) throw new Error("No institute found. Please create it in School Profile first.");
       const { error } = await supabase.from("classes").insert({
-        name: className, grade_level: grade || null, school_id: profile.school_id,
+        name: className, grade_level: grade || null, school_id: schoolId,
       });
       if (error) throw error;
     },
@@ -87,9 +89,10 @@ function ClassesPage() {
 
   const addSection = useMutation({
     mutationFn: async () => {
-      if (!profile?.school_id || !secClass) throw new Error("Pick a class");
+      if (!schoolId) throw new Error("No institute found. Please create it in School Profile first.");
+      if (!secClass) throw new Error("Pick a class");
       const { error } = await supabase.from("sections").insert({
-        name: secName, class_id: secClass, school_id: profile.school_id,
+        name: secName, class_id: secClass, school_id: schoolId,
       });
       if (error) throw error;
     },
@@ -130,11 +133,15 @@ function ClassesPage() {
               <DialogContent>
                 <DialogHeader><DialogTitle>New class</DialogTitle></DialogHeader>
                 <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label>Institute</Label>
+                    <Input value={schoolName ?? "Loading institute…"} readOnly disabled />
+                  </div>
                   <div className="space-y-2"><Label>Class name</Label><Input value={className} onChange={(e) => setClassName(e.target.value)} placeholder="e.g. Grade 5" /></div>
                   <div className="space-y-2"><Label>Grade level (optional)</Label><Input value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="e.g. 5" /></div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={() => addClass.mutate()} disabled={!className || addClass.isPending}>Save</Button>
+                  <Button onClick={() => addClass.mutate()} disabled={!className || !schoolId || addClass.isPending}>Save</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -164,6 +171,10 @@ function ClassesPage() {
                 <DialogHeader><DialogTitle>New section</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="space-y-2">
+                    <Label>Institute</Label>
+                    <Input value={schoolName ?? "Loading institute…"} readOnly disabled />
+                  </div>
+                  <div className="space-y-2">
                     <Label>Class</Label>
                     <Select value={secClass} onValueChange={setSecClass}>
                       <SelectTrigger><SelectValue placeholder="Select a class" /></SelectTrigger>
@@ -177,7 +188,7 @@ function ClassesPage() {
                   <div className="space-y-2"><Label>Section name</Label><Input value={secName} onChange={(e) => setSecName(e.target.value)} placeholder="e.g. A" /></div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={() => addSection.mutate()} disabled={!secName || !secClass || addSection.isPending}>Save</Button>
+                  <Button onClick={() => addSection.mutate()} disabled={!secName || !secClass || !schoolId || addSection.isPending}>Save</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

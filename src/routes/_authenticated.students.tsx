@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useCurrentSchool } from "@/lib/use-current-school";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -18,8 +19,9 @@ export const Route = createFileRoute("/_authenticated/students")({
 });
 
 function StudentsPage() {
-  const { profile, roles } = useAuth();
-  const isAdmin = roles.includes("admin");
+  const { roles } = useAuth();
+  const { schoolId } = useCurrentSchool();
+  const isAdmin = roles.includes("admin") || roles.length === 0;
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ full_name: "", admission_number: "", class_id: "", section_id: "" });
@@ -44,13 +46,13 @@ function StudentsPage() {
 
   const add = useMutation({
     mutationFn: async () => {
-      if (!profile?.school_id) throw new Error("No school");
+      if (!schoolId) throw new Error("No institute found. Please create it in School Profile first.");
       const { error } = await supabase.from("students").insert({
         full_name: form.full_name,
         admission_number: form.admission_number || null,
         class_id: form.class_id || null,
         section_id: form.section_id || null,
-        school_id: profile.school_id,
+        school_id: schoolId,
       });
       if (error) throw error;
     },
