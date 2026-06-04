@@ -1,11 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { createSchoolForAdmin } from "@/lib/school.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,16 +24,11 @@ const Req = () => <span className="text-destructive">*</span>;
 function SignupPage() {
   const navigate = useNavigate();
   const { isAuthenticated, loading, refresh } = useAuth();
-  const createSchool = useServerFn(createSchoolForAdmin);
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [schoolName, setSchoolName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [branch, setBranch] = useState("");
-  const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -45,19 +38,6 @@ function SignupPage() {
       navigate({ to: "/dashboard", replace: true });
     }
   }, [isAuthenticated, loading, navigate]);
-
-  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 500 * 1024) {
-      toast.error("Logo must be under 500KB.");
-      e.target.value = "";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => setLogoDataUrl(reader.result as string);
-    reader.readAsDataURL(file);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,14 +60,9 @@ function SignupPage() {
         toast.success("Check your email to confirm your account.");
         return;
       }
-      await new Promise((r) => setTimeout(r, 400));
-      const res = await createSchool({
-        data: { schoolName, phone, branch, logoDataUrl },
-      });
-      if (!res.ok) throw new Error(res.error);
       await refresh();
-      toast.success("Institute created. Welcome!");
-      navigate({ to: "/dashboard", replace: true });
+      toast.success("Account created. Set up your institute next.");
+      navigate({ to: "/school-profile", replace: true });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Signup failed";
       toast.error(msg);
@@ -173,59 +148,8 @@ function SignupPage() {
             <p className="text-xs font-medium text-destructive">Password Mismatch</p>
           )}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="schoolName">Institution Name <Req /></Label>
-          <Input
-            id="schoolName"
-            required
-            placeholder="Enter your institution name"
-            value={schoolName}
-            onChange={(e) => setSchoolName(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
-          <Input
-            id="branch"
-            required
-            placeholder="Enter branch name/ code"
-            value={branch}
-            onChange={(e) => setBranch(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="phone">Institution Phone <Req /></Label>
-          <Input
-            id="phone"
-            type="tel"
-            inputMode="numeric"
-            pattern="[0-9]+"
-            required
-            placeholder="Enter phone number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="logo">Institute Logo <Req /></Label>
-          <Input
-            id="logo"
-            type="file"
-            accept="image/*"
-            required
-            onChange={handleLogoChange}
-          />
-          {logoDataUrl && (
-            <img
-              src={logoDataUrl}
-              alt="Logo preview"
-              className="mt-2 h-16 w-16 rounded-md border border-border object-contain"
-            />
-          )}
-          <p className="text-xs text-muted-foreground">Max 500KB.</p>
-        </div>
         <Button type="submit" className="w-full" disabled={busy}>
-          {busy ? "Creating…" : "Create Institute"}
+          {busy ? "Creating…" : "Create Account"}
         </Button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">

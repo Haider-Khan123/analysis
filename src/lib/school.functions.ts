@@ -79,7 +79,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       .maybeSingle();
 
     if (!profile?.school_id) {
-      return { schoolId: null, counts: { students: 0, teachers: 0, classes: 0, parents: 0 }, schoolName: null };
+      return { schoolId: null, counts: { institute: 0, students: 0, teachers: 0, classes: 0, parents: 0 }, schoolName: null };
     }
 
     const schoolId = profile.school_id;
@@ -95,6 +95,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       schoolId,
       schoolName: school?.name ?? null,
       counts: {
+        institute: 1,
         students: students.count ?? 0,
         teachers: teachers.count ?? 0,
         classes: classes.count ?? 0,
@@ -102,6 +103,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       },
     };
   });
+
 
 /**
  * Admin-only: invite a teacher or parent to create a login.

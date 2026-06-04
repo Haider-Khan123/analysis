@@ -27,12 +27,13 @@ export const Route = createFileRoute("/_authenticated")({
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/students", label: "Students", icon: GraduationCap },
-  { to: "/teachers", label: "Teachers", icon: UserCog },
-  { to: "/classes", label: "Classes & Sections", icon: School },
-  { to: "/parents", label: "Parents", icon: Users },
   { to: "/school-profile", label: "School Profile", icon: Building2 },
+  { to: "/classes", label: "Classes & Sections", icon: School },
+  { to: "/teachers", label: "Teachers", icon: UserCog },
+  { to: "/students", label: "Students", icon: GraduationCap },
+  { to: "/parents", label: "Parents", icon: Users },
 ] as const;
+
 
 function AuthenticatedLayout() {
   const { isAuthenticated, loading, profile, roles, signOut } = useAuth();
