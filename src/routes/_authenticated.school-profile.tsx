@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Pencil, Trash2, Building2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import {
   createSchoolForAdmin,
@@ -52,13 +53,13 @@ function SchoolProfilePage() {
   const [saving, setSaving] = useState(false);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const [name, setName] = useState("");
   const [branch, setBranch] = useState("");
   const [phone, setPhone] = useState("");
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
 
-  // Sync local form state when the school loads/changes.
   useEffect(() => {
     if (school) {
       setName(school.name);
@@ -105,6 +106,7 @@ function SchoolProfilePage() {
       if (!res.ok) throw new Error(res.error);
       toast.success("Institute created.");
       await refreshAll();
+      setEditMode(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to create institute");
     } finally {
@@ -122,12 +124,13 @@ function SchoolProfilePage() {
           name,
           branch: branch || null,
           phone: phone || null,
-          logoDataUrl: logoDataUrl,
+          logoDataUrl,
         },
       });
       if (!res.ok) throw new Error(res.error);
       toast.success("Institute profile updated.");
       await refreshAll();
+      setEditMode(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
@@ -155,6 +158,7 @@ function SchoolProfilePage() {
     return <div className="text-sm text-muted-foreground">Loading…</div>;
   }
 
+  // No school yet → show create form.
   if (!school) {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
@@ -205,13 +209,88 @@ function SchoolProfilePage() {
     );
   }
 
+  // School exists → show details card with Edit/Delete. Edit toggles inline form.
+  if (!editMode) {
+    return (
+      <div className="mx-auto max-w-2xl space-y-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">School Profile</h1>
+            <p className="text-sm text-muted-foreground">
+              Your institute's information.
+            </p>
+          </div>
+          {isAdmin && (
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => setEditMode(true)}>
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" disabled={deleting}>
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this institute?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. All institute data, classes,
+                      students, teachers, and parents under this institute will be
+                      removed.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>
+                      Yes, delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-elegant)]">
+          <div className="flex items-center gap-5">
+            {school.logo_url ? (
+              <img
+                src={school.logo_url}
+                alt={`${school.name} logo`}
+                className="h-24 w-24 rounded-xl border border-border object-contain bg-background"
+              />
+            ) : (
+              <div className="flex h-24 w-24 items-center justify-center rounded-xl border border-border bg-muted">
+                <Building2 className="h-10 w-10 text-muted-foreground" />
+              </div>
+            )}
+            <div className="min-w-0">
+              <h2 className="text-xl font-semibold truncate">{school.name}</h2>
+              {school.branch && (
+                <p className="text-sm text-muted-foreground">Branch: {school.branch}</p>
+              )}
+              {school.phone && (
+                <p className="text-sm text-muted-foreground">Phone: {school.phone}</p>
+              )}
+              {school.email && (
+                <p className="text-sm text-muted-foreground">Email: {school.email}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Edit mode form.
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">School Profile</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage your institute's information.{!isAdmin && " Admins can edit or delete."}
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">Edit School Profile</h1>
+        <p className="text-sm text-muted-foreground">Update your institute's information.</p>
       </div>
 
       <form
@@ -220,25 +299,11 @@ function SchoolProfilePage() {
       >
         <div className="space-y-2">
           <Label htmlFor="name">Institution Name <Req /></Label>
-          <Input
-            id="name"
-            required
-            disabled={!isAdmin}
-            placeholder="Enter your institution name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
-          <Input
-            id="branch"
-            required
-            disabled={!isAdmin}
-            placeholder="Enter branch name/ code"
-            value={branch}
-            onChange={(e) => setBranch(e.target.value)}
-          />
+          <Input id="branch" required value={branch} onChange={(e) => setBranch(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="phone">Institution Phone <Req /></Label>
@@ -248,14 +313,12 @@ function SchoolProfilePage() {
             inputMode="numeric"
             pattern="[0-9]+"
             required
-            disabled={!isAdmin}
-            placeholder="Enter phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="logo">Institute Logo <Req /></Label>
+          <Label htmlFor="logo">Institute Logo</Label>
           {logoDataUrl && (
             <img
               src={logoDataUrl}
@@ -263,39 +326,29 @@ function SchoolProfilePage() {
               className="h-20 w-20 rounded-md border border-border object-contain"
             />
           )}
-          {isAdmin && (
-            <Input id="logo" type="file" accept="image/*" onChange={handleLogoChange} />
-          )}
+          <Input id="logo" type="file" accept="image/*" onChange={handleLogoChange} />
           <p className="text-xs text-muted-foreground">Max 500KB.</p>
         </div>
 
-        {isAdmin && (
-          <div className="flex items-center justify-between gap-3 pt-2">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button type="button" variant="destructive" disabled={deleting}>
-                  {deleting ? "Deleting…" : "Delete Institute"}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete this institute?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. All institute data, classes, students,
-                    teachers, and parents under this institute will be removed.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete}>Yes, delete</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-            <Button type="submit" disabled={saving}>
-              {saving ? "Saving…" : "Save Changes"}
-            </Button>
-          </div>
-        )}
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setEditMode(false);
+              // Reset form fields to current school values.
+              setName(school.name);
+              setBranch(school.branch ?? "");
+              setPhone(school.phone ?? "");
+              setLogoDataUrl(school.logo_url);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={saving}>
+            {saving ? "Saving…" : "Save Changes"}
+          </Button>
+        </div>
       </form>
     </div>
   );
