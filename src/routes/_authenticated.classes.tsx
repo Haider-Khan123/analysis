@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useCurrentSchool } from "@/lib/use-current-school";
@@ -15,11 +15,14 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const Route = createFileRoute("/_authenticated/classes")({
   head: () => ({ meta: [{ title: "Classes & Sections — Analysis" }] }),
   component: ClassesPage,
 });
+
+const CLASS_OPTIONS = Array.from({ length: 12 }, (_, i) => String(i + 1));
 
 function ClassesPage() {
   const { roles } = useAuth();
@@ -47,21 +50,33 @@ function ClassesPage() {
     },
   });
 
+  // Dedupe classes by name for dropdowns / display
+  const uniqueClasses = useMemo(() => {
+    const seen = new Set<string>();
+    return (classesQ.data ?? []).filter((c) => {
+      if (seen.has(c.name)) return false;
+      seen.add(c.name);
+      return true;
+    }).sort((a, b) => Number(a.name) - Number(b.name) || a.name.localeCompare(b.name));
+  }, [classesQ.data]);
+
+  const usedClassNames = useMemo(() => new Set(uniqueClasses.map((c) => c.name)), [uniqueClasses]);
+
   const [openClass, setOpenClass] = useState(false);
   const [className, setClassName] = useState("");
-  const [grade, setGrade] = useState("");
 
   const addClass = useMutation({
     mutationFn: async () => {
       if (!schoolId) throw new Error("No institute found. Please create it in School Profile first.");
+      if (usedClassNames.has(className)) throw new Error("This class already exists.");
       const { error } = await supabase.from("classes").insert({
-        name: className, grade_level: grade || null, school_id: schoolId,
+        name: className, grade_level: className, school_id: schoolId,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Class added");
-      setOpenClass(false); setClassName(""); setGrade("");
+      setOpenClass(false); setClassName("");
       qc.invalidateQueries({ queryKey: ["classes"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
@@ -76,7 +91,6 @@ function ClassesPage() {
     onSuccess: () => {
       toast.success("Class deleted");
       qc.invalidateQueries({ queryKey: ["classes"] });
-      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
       qc.invalidateQueries({ queryKey: ["sections"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
@@ -118,15 +132,49 @@ function ClassesPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const [search, setSearch] = useState("");
+  const term = search.trim().toLowerCase();
+
+  const filteredClasses = useMemo(
+    () => (term ? uniqueClasses.filter((c) => c.name.toLowerCase().includes(term)) : uniqueClasses),
+    [uniqueClasses, term],
+  );
+
+  const sectionsWithClass = useMemo(
+    () => (sectionsQ.data ?? []).map((s) => ({
+      ...s,
+      class_name: classesQ.data?.find((c) => c.id === s.class_id)?.name ?? "—",
+    })),
+    [sectionsQ.data, classesQ.data],
+  );
+
+  const filteredSections = useMemo(
+    () => (term
+      ? sectionsWithClass.filter((s) =>
+          s.name.toLowerCase().includes(term) || s.class_name.toLowerCase().includes(term))
+      : sectionsWithClass),
+    [sectionsWithClass, term],
+  );
+
   return (
-    <div className="mx-auto max-w-6xl space-y-8">
+    <div className="mx-auto max-w-6xl space-y-6">
       <PageHeader title="Classes & Sections" subtitle="Organize your school structure." />
+
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search classes or sections…"
+          className="pl-9"
+        />
+      </div>
 
       <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Classes</h2>
           {isAdmin && (
-            <Dialog open={openClass} onOpenChange={setOpenClass}>
+            <Dialog open={openClass} onOpenChange={(o) => { setOpenClass(o); if (!o) setClassName(""); }}>
               <DialogTrigger asChild>
                 <Button size="sm"><Plus className="mr-1 h-4 w-4" />Add class</Button>
               </DialogTrigger>
@@ -137,8 +185,19 @@ function ClassesPage() {
                     <Label>Institute</Label>
                     <Input value={schoolName ?? "Loading institute…"} readOnly disabled />
                   </div>
-                  <div className="space-y-2"><Label>Class name</Label><Input value={className} onChange={(e) => setClassName(e.target.value)} placeholder="e.g. Grade 5" /></div>
-                  <div className="space-y-2"><Label>Grade level (optional)</Label><Input value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="e.g. 5" /></div>
+                  <div className="space-y-2">
+                    <Label>Class</Label>
+                    <Select value={className} onValueChange={setClassName}>
+                      <SelectTrigger><SelectValue placeholder="Select a class (1–12)" /></SelectTrigger>
+                      <SelectContent>
+                        {CLASS_OPTIONS.map((n) => (
+                          <SelectItem key={n} value={n} disabled={usedClassNames.has(n)}>
+                            {n}{usedClassNames.has(n) ? " (already added)" : ""}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button onClick={() => addClass.mutate()} disabled={!className || !schoolId || addClass.isPending}>Save</Button>
@@ -147,23 +206,25 @@ function ClassesPage() {
             </Dialog>
           )}
         </div>
-        <EntityTable
-          rows={classesQ.data ?? []}
-          loading={classesQ.isLoading}
-          columns={[
-            { key: "name", label: "Name" },
-            { key: "grade_level", label: "Grade" },
-          ]}
-          onDelete={isAdmin ? (id) => delClass.mutate(id) : undefined}
-          empty="No classes yet."
-        />
+        <ScrollArea className="max-h-[360px] pr-2">
+          <EntityTable
+            rows={filteredClasses}
+            loading={classesQ.isLoading}
+            columns={[
+              { key: "name", label: "Class" },
+              { key: "grade_level", label: "Grade" },
+            ]}
+            onDelete={isAdmin ? (id) => delClass.mutate(id) : undefined}
+            empty={term ? "No matching classes." : "No classes yet."}
+          />
+        </ScrollArea>
       </section>
 
       <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Sections</h2>
           {isAdmin && (
-            <Dialog open={openSec} onOpenChange={setOpenSec}>
+            <Dialog open={openSec} onOpenChange={(o) => { setOpenSec(o); if (!o) { setSecName(""); setSecClass(""); } }}>
               <DialogTrigger asChild>
                 <Button size="sm"><Plus className="mr-1 h-4 w-4" />Add section</Button>
               </DialogTrigger>
@@ -179,7 +240,7 @@ function ClassesPage() {
                     <Select value={secClass} onValueChange={setSecClass}>
                       <SelectTrigger><SelectValue placeholder="Select a class" /></SelectTrigger>
                       <SelectContent>
-                        {(classesQ.data ?? []).map((c) => (
+                        {uniqueClasses.map((c) => (
                           <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                         ))}
                       </SelectContent>
@@ -194,19 +255,18 @@ function ClassesPage() {
             </Dialog>
           )}
         </div>
-        <EntityTable
-          rows={(sectionsQ.data ?? []).map((s) => ({
-            ...s,
-            class_name: classesQ.data?.find((c) => c.id === s.class_id)?.name ?? "—",
-          }))}
-          loading={sectionsQ.isLoading}
-          columns={[
-            { key: "name", label: "Section" },
-            { key: "class_name", label: "Class" },
-          ]}
-          onDelete={isAdmin ? (id) => delSection.mutate(id) : undefined}
-          empty="No sections yet."
-        />
+        <ScrollArea className="max-h-[360px] pr-2">
+          <EntityTable
+            rows={filteredSections}
+            loading={sectionsQ.isLoading}
+            columns={[
+              { key: "name", label: "Section" },
+              { key: "class_name", label: "Class" },
+            ]}
+            onDelete={isAdmin ? (id) => delSection.mutate(id) : undefined}
+            empty={term ? "No matching sections." : "No sections yet."}
+          />
+        </ScrollArea>
       </section>
     </div>
   );
@@ -267,4 +327,3 @@ export function EntityTable<T extends { id: string }>({
     </div>
   );
 }
-
