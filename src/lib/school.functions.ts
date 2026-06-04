@@ -67,6 +67,91 @@ export const createSchoolForAdmin = createServerFn({ method: "POST" })
     return { ok: true as const, schoolId: school.id };
   });
 
+/** Fetch the school profile for the currently authenticated user (via admin client to avoid RLS edge-cases). */
+export const getMySchool = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("school_id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (!profile?.school_id) return { school: null as null | {
+      id: string; name: string; branch: string | null; phone: string | null;
+      address: string | null; email: string | null; logo_url: string | null;
+    } };
+
+    const { data: school } = await supabaseAdmin
+      .from("schools")
+      .select("id, name, branch, phone, address, email, logo_url")
+      .eq("id", profile.school_id)
+      .maybeSingle();
+
+    if (!school) {
+      // Stale link — clear it so the create form shows.
+      await supabaseAdmin.from("profiles").update({ school_id: null }).eq("id", userId);
+      return { school: null };
+    }
+    return { school };
+  });
+
+/** Update the current user's school (admin only). */
+export const updateMySchool = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      name: z.string().trim().min(2).max(120),
+      branch: z.string().trim().max(120).nullable(),
+      phone: z.string().trim().max(40).nullable(),
+      logoDataUrl: z.string().max(800_000).nullable(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { data: profile } = await supabaseAdmin
+      .from("profiles").select("school_id").eq("id", userId).maybeSingle();
+    if (!profile?.school_id) return { ok: false as const, error: "No institute found." };
+
+    const { data: adminRole } = await supabaseAdmin
+      .from("user_roles").select("id").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (!adminRole) return { ok: false as const, error: "Only admins can edit." };
+
+    const { error } = await supabaseAdmin
+      .from("schools")
+      .update({
+        name: data.name,
+        branch: data.branch,
+        phone: data.phone,
+        logo_url: data.logoDataUrl,
+      })
+      .eq("id", profile.school_id);
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+/** Delete the current user's school (admin only). */
+export const deleteMySchool = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    const { data: profile } = await supabaseAdmin
+      .from("profiles").select("school_id").eq("id", userId).maybeSingle();
+    if (!profile?.school_id) return { ok: false as const, error: "No institute." };
+
+    const { data: adminRole } = await supabaseAdmin
+      .from("user_roles").select("id").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (!adminRole) return { ok: false as const, error: "Only admins can delete." };
+
+    const schoolId = profile.school_id;
+    await supabaseAdmin.from("profiles").update({ school_id: null }).eq("school_id", schoolId);
+    await supabaseAdmin.from("user_roles").delete().eq("school_id", schoolId);
+    const { error } = await supabaseAdmin.from("schools").delete().eq("id", schoolId);
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
 /** Dashboard counts for the current school. */
 export const getDashboardStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
