@@ -156,8 +156,8 @@ export const deleteMySchool = createServerFn({ method: "POST" })
 export const getDashboardStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    const { data: profile } = await supabase
+    const { userId } = context;
+    const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("school_id, full_name")
       .eq("id", userId)
@@ -169,11 +169,11 @@ export const getDashboardStats = createServerFn({ method: "GET" })
 
     const schoolId = profile.school_id;
     const [{ data: school }, students, teachers, classes, parents] = await Promise.all([
-      supabase.from("schools").select("name").eq("id", schoolId).maybeSingle(),
-      supabase.from("students").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
-      supabase.from("teachers").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
-      supabase.from("classes").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
-      supabase.from("parents").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
+      supabaseAdmin.from("schools").select("name").eq("id", schoolId).maybeSingle(),
+      supabaseAdmin.from("students").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
+      supabaseAdmin.from("teachers").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
+      supabaseAdmin.from("classes").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
+      supabaseAdmin.from("parents").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
     ]);
 
     return {
@@ -188,6 +188,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       },
     };
   });
+
 
 
 /**
