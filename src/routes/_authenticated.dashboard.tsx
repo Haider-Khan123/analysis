@@ -39,7 +39,7 @@ function Dashboard() {
         <ol className="mt-4 space-y-3 text-sm text-muted-foreground">
           <li><span className="font-medium text-foreground">1.</span> Create your institute from the <span className="font-medium text-foreground">School Profile</span> tab.</li>
           <li><span className="font-medium text-foreground">2.</span> Set up your classes and sections from the <span className="font-medium text-foreground">Classes &amp; Sections</span> tab.</li>
-          <li><span className="font-medium text-foreground">3.</span> Add teachers and assign them to sections from the <span className="font-medium text-foreground">Teachers</span> tab.</li>
+          <li><span className="font-medium text-foreground">3.</span> Add teachers and assign them to classes sections from the <span className="font-medium text-foreground">Teachers</span> tab.</li>
           <li><span className="font-medium text-foreground">4.</span> Enroll students into their class &amp; section from the <span className="font-medium text-foreground">Students</span> tab.</li>
           <li><span className="font-medium text-foreground">5.</span> Add parents and link them to their children from the <span className="font-medium text-foreground">Parents</span> tab.</li>
         </ol>
