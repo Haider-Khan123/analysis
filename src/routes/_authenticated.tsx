@@ -76,7 +76,8 @@ function AuthenticatedLayout() {
     );
   }
 
-  const role = roles[0] ?? "parent";
+  // Empty roles = fresh user/onboarding — treat as admin for sidebar visibility.
+  const role = roles[0] ?? "admin";
   const counts = stats?.counts ?? { institute: 0, classes: 0, teachers: 0, students: 0, parents: 0 };
 
   return (
@@ -134,8 +135,11 @@ function SidebarContent({
   pathname: string;
   counts: { institute: number; classes: number; teachers: number; students: number; parents: number };
 }) {
+  // Admins (and users with no role yet, i.e. fresh onboarding) see every tab.
+  // Teachers/parents see a limited subset.
+  const isOnboarding = role === "admin" || !role;
   const visible = nav.filter((item) => {
-    if (role === "admin") return true;
+    if (isOnboarding) return true;
     if (role === "teacher")
       return ["/dashboard", "/students", "/classes", "/school-profile"].includes(item.to);
     return ["/dashboard", "/students", "/school-profile"].includes(item.to);
@@ -143,9 +147,11 @@ function SidebarContent({
 
   const isLocked = (gate: string | null) => {
     if (!gate) return false;
-    if (role !== "admin") return false; // gating applies to the admin onboarding flow
+    if (!isOnboarding) return false; // gating only applies during admin onboarding
     return (counts as Record<string, number>)[gate] < 1;
   };
+
+
 
   return (
     <div className="flex h-full flex-col">
