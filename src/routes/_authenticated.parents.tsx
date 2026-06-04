@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Plus, Mail, Check, Link2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useCurrentSchool } from "@/lib/use-current-school";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,8 +20,9 @@ export const Route = createFileRoute("/_authenticated/parents")({
 });
 
 function ParentsPage() {
-  const { profile, roles } = useAuth();
-  const isAdmin = roles.includes("admin");
+  const { roles } = useAuth();
+  const { schoolId } = useCurrentSchool();
+  const isAdmin = roles.includes("admin") || roles.length === 0;
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ full_name: "", email: "", phone: "", relationship: "" });
@@ -39,8 +41,8 @@ function ParentsPage() {
 
   const add = useMutation({
     mutationFn: async () => {
-      if (!profile?.school_id) throw new Error("No institute");
-      const { error } = await supabase.from("parents").insert({ ...form, school_id: profile.school_id });
+      if (!schoolId) throw new Error("No institute found. Please create it in School Profile first.");
+      const { error } = await supabase.from("parents").insert({ ...form, school_id: schoolId });
       if (error) throw error;
     },
     onSuccess: () => {
