@@ -76,7 +76,8 @@ function AuthenticatedLayout() {
     );
   }
 
-  const role = roles[0] ?? "parent";
+  // Empty roles = fresh user/onboarding — treat as admin for sidebar visibility.
+  const role = roles[0] ?? "admin";
   const counts = stats?.counts ?? { institute: 0, classes: 0, teachers: 0, students: 0, parents: 0 };
 
   return (
