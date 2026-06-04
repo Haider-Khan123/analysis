@@ -6,6 +6,7 @@ import {
   Users,
   UserCog,
   School,
+  Building2,
   LogOut,
   Menu,
 } from "lucide-react";
