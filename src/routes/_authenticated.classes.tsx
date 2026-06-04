@@ -135,45 +135,56 @@ function ClassesPage() {
   const [search, setSearch] = useState("");
   const term = search.trim().toLowerCase();
 
-  const filteredClasses = useMemo(
-    () => (term ? uniqueClasses.filter((c) => c.name.toLowerCase().includes(term)) : uniqueClasses),
-    [uniqueClasses, term],
-  );
+  // Group: one row per unique class name, aggregating sections across duplicate class rows.
+  const grouped = useMemo(() => {
+    const byName = new Map<string, {
+      name: string;
+      classIds: string[];
+      primaryId: string;
+      sections: { id: string; name: string }[];
+    }>();
+    for (const c of (classesQ.data ?? [])) {
+      const entry = byName.get(c.name) ?? { name: c.name, classIds: [], primaryId: c.id, sections: [] };
+      entry.classIds.push(c.id);
+      byName.set(c.name, entry);
+    }
+    for (const s of (sectionsQ.data ?? [])) {
+      for (const entry of byName.values()) {
+        if (entry.classIds.includes(s.class_id)) {
+          entry.sections.push({ id: s.id, name: s.name });
+          break;
+        }
+      }
+    }
+    return Array.from(byName.values()).sort(
+      (a, b) => Number(a.name) - Number(b.name) || a.name.localeCompare(b.name),
+    );
+  }, [classesQ.data, sectionsQ.data]);
 
-  const sectionsWithClass = useMemo(
-    () => (sectionsQ.data ?? []).map((s) => ({
-      ...s,
-      class_name: classesQ.data?.find((c) => c.id === s.class_id)?.name ?? "—",
-    })),
-    [sectionsQ.data, classesQ.data],
-  );
-
-  const filteredSections = useMemo(
-    () => (term
-      ? sectionsWithClass.filter((s) =>
-          s.name.toLowerCase().includes(term) || s.class_name.toLowerCase().includes(term))
-      : sectionsWithClass),
-    [sectionsWithClass, term],
-  );
+  const filteredGrouped = useMemo(() => {
+    if (!term) return grouped;
+    return grouped.filter((g) =>
+      g.name.toLowerCase().includes(term) ||
+      g.sections.some((s) => s.name.toLowerCase().includes(term)),
+    );
+  }, [grouped, term]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <PageHeader title="Classes & Sections" subtitle="Organize your school structure." />
 
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search classes or sections…"
-          className="pl-9"
-        />
-      </div>
-
-      <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Classes</h2>
-          {isAdmin && (
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search classes or sections…"
+            className="pl-9"
+          />
+        </div>
+        {isAdmin && (
+          <div className="flex gap-2">
             <Dialog open={openClass} onOpenChange={(o) => { setOpenClass(o); if (!o) setClassName(""); }}>
               <DialogTrigger asChild>
                 <Button size="sm"><Plus className="mr-1 h-4 w-4" />Add class</Button>
@@ -191,9 +202,7 @@ function ClassesPage() {
                       <SelectTrigger><SelectValue placeholder="Select a class (1–12)" /></SelectTrigger>
                       <SelectContent>
                         {CLASS_OPTIONS.map((n) => (
-                          <SelectItem key={n} value={n} disabled={usedClassNames.has(n)}>
-                            {n}{usedClassNames.has(n) ? " (already added)" : ""}
-                          </SelectItem>
+                          <SelectItem key={n} value={n}>{n}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -204,29 +213,9 @@ function ClassesPage() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-          )}
-        </div>
-        <ScrollArea className="max-h-[360px] pr-2">
-          <EntityTable
-            rows={filteredClasses}
-            loading={classesQ.isLoading}
-            columns={[
-              { key: "name", label: "Class" },
-              { key: "grade_level", label: "Grade" },
-            ]}
-            onDelete={isAdmin ? (id) => delClass.mutate(id) : undefined}
-            empty={term ? "No matching classes." : "No classes yet."}
-          />
-        </ScrollArea>
-      </section>
-
-      <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Sections</h2>
-          {isAdmin && (
             <Dialog open={openSec} onOpenChange={(o) => { setOpenSec(o); if (!o) { setSecName(""); setSecClass(""); } }}>
               <DialogTrigger asChild>
-                <Button size="sm"><Plus className="mr-1 h-4 w-4" />Add section</Button>
+                <Button size="sm" variant="secondary"><Plus className="mr-1 h-4 w-4" />Add section</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader><DialogTitle>New section</DialogTitle></DialogHeader>
@@ -253,19 +242,71 @@ function ClassesPage() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+          </div>
+        )}
+      </div>
+
+      <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+        <ScrollArea className="max-h-[480px] pr-2">
+          {classesQ.isLoading ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
+          ) : !filteredGrouped.length ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              {term ? "No matching classes or sections." : "No classes yet."}
+            </p>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-xs uppercase text-muted-foreground">
+                  <th className="py-2 pr-4 font-medium w-32">Class</th>
+                  <th className="py-2 pr-4 font-medium">Sections</th>
+                  {isAdmin && <th className="py-2 text-right w-16" />}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredGrouped.map((g) => (
+                  <tr key={g.name} className="border-b border-border align-top last:border-0">
+                    <td className="py-3 pr-4 font-medium">{g.name}</td>
+                    <td className="py-3 pr-4">
+                      {g.sections.length ? (
+                        <div className="flex flex-wrap gap-2">
+                          {g.sections.map((s) => (
+                            <span key={s.id} className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-xs">
+                              {s.name}
+                              {isAdmin && (
+                                <button
+                                  type="button"
+                                  onClick={() => delSection.mutate(s.id)}
+                                  className="text-muted-foreground hover:text-destructive"
+                                  aria-label={`Delete section ${s.name}`}
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </button>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No sections</span>
+                      )}
+                    </td>
+                    {isAdmin && (
+                      <td className="py-3 text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => g.classIds.forEach((id) => delClass.mutate(id))}
+                          aria-label={`Delete class ${g.name}`}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
-        </div>
-        <ScrollArea className="max-h-[360px] pr-2">
-          <EntityTable
-            rows={filteredSections}
-            loading={sectionsQ.isLoading}
-            columns={[
-              { key: "name", label: "Section" },
-              { key: "class_name", label: "Class" },
-            ]}
-            onDelete={isAdmin ? (id) => delSection.mutate(id) : undefined}
-            empty={term ? "No matching sections." : "No sections yet."}
-          />
         </ScrollArea>
       </section>
     </div>
