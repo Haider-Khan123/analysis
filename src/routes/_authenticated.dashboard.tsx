@@ -22,7 +22,7 @@ function Dashboard() {
     <div className="mx-auto max-w-6xl space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-          Good morning, {profile?.full_name ?? "there"}!
+          Welcome, {profile?.full_name ?? "there"}! Have a nice day.
         </h1>
       </div>
 
@@ -35,13 +35,13 @@ function Dashboard() {
       </div>
 
       <div className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-        <h2 className="text-lg font-semibold">Getting Started</h2>
+        <h2 className="text-lg font-semibold">Get Started</h2>
         <ol className="mt-4 space-y-3 text-sm text-muted-foreground">
-          <li><span className="font-medium text-foreground">1.</span> Create your institute from <span className="font-medium text-foreground">School Profile</span>.</li>
-          <li><span className="font-medium text-foreground">2.</span> Set up your classes and sections.</li>
-          <li><span className="font-medium text-foreground">3.</span> Add teachers and assign them to sections.</li>
-          <li><span className="font-medium text-foreground">4.</span> Enroll students into their class & section.</li>
-          <li><span className="font-medium text-foreground">5.</span> Add parents and link them to their children.</li>
+          <li><span className="font-medium text-foreground">1.</span> Create your institute from the <span className="font-medium text-foreground">School Profile</span> tab.</li>
+          <li><span className="font-medium text-foreground">2.</span> Set up your classes and sections from the <span className="font-medium text-foreground">Classes &amp; Sections</span> tab.</li>
+          <li><span className="font-medium text-foreground">3.</span> Add teachers and assign them to sections from the <span className="font-medium text-foreground">Teachers</span> tab.</li>
+          <li><span className="font-medium text-foreground">4.</span> Enroll students into their class &amp; section from the <span className="font-medium text-foreground">Students</span> tab.</li>
+          <li><span className="font-medium text-foreground">5.</span> Add parents and link them to their children from the <span className="font-medium text-foreground">Parents</span> tab.</li>
         </ol>
       </div>
     </div>
