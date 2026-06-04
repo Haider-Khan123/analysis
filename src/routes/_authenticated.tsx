@@ -136,21 +136,20 @@ function SidebarContent({
 }) {
   // Admins (and users with no role yet, i.e. fresh onboarding) see every tab.
   // Teachers/parents see a limited subset.
+  const isOnboarding = role === "admin" || !role || roles.length === 0;
   const visible = nav.filter((item) => {
-    if (role === "admin" || role === "parent" && false) return true;
+    if (isOnboarding) return true;
     if (role === "teacher")
       return ["/dashboard", "/students", "/classes", "/school-profile"].includes(item.to);
-    if (role === "parent")
-      return ["/dashboard", "/students", "/school-profile"].includes(item.to);
-    return true; // no role yet — show everything (locked where applicable)
+    return ["/dashboard", "/students", "/school-profile"].includes(item.to);
   });
 
   const isLocked = (gate: string | null) => {
     if (!gate) return false;
-    // Gate onboarding for admins AND users with no role yet.
-    if (role !== "admin" && role !== ("" as string) && roleHasFullAccess(role) === false) return false;
+    if (!isOnboarding) return false; // gating only applies during admin onboarding
     return (counts as Record<string, number>)[gate] < 1;
   };
+
 
 
   return (
