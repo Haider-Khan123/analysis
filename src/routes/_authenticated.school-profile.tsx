@@ -1,10 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { createSchoolForAdmin } from "@/lib/school.functions";
+import {
+  createSchoolForAdmin,
+  getMySchool,
+  updateMySchool,
+  deleteMySchool,
+} from "@/lib/school.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,72 +32,46 @@ export const Route = createFileRoute("/_authenticated/school-profile")({
 
 const Req = () => <span className="text-destructive">*</span>;
 
-type SchoolRow = {
-  id: string;
-  name: string;
-  branch: string | null;
-  phone: string | null;
-  address: string | null;
-  email: string | null;
-  logo_url: string | null;
-};
-
 function SchoolProfilePage() {
-  const { roles, refresh } = useAuth();
+  const { roles, isAuthenticated, refresh } = useAuth();
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const createSchool = useServerFn(createSchoolForAdmin);
-  const isAdmin = roles.includes("admin") || roles.length === 0; // new users with no role yet can create
+  const fetchSchool = useServerFn(getMySchool);
+  const updateSchool = useServerFn(updateMySchool);
+  const deleteSchool = useServerFn(deleteMySchool);
+  const isAdmin = roles.includes("admin") || roles.length === 0;
 
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["my-school"],
+    queryFn: () => fetchSchool(),
+    enabled: isAuthenticated,
+  });
+  const school = data?.school ?? null;
+
   const [saving, setSaving] = useState(false);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [school, setSchool] = useState<SchoolRow | null>(null);
 
   const [name, setName] = useState("");
   const [branch, setBranch] = useState("");
   const [phone, setPhone] = useState("");
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
 
-  const load = async () => {
-    setLoading(true);
-    const { data: profile } = await supabase.auth.getUser();
-    const userId = profile.user?.id;
-    if (!userId) return setLoading(false);
-    const { data: prof } = await supabase
-      .from("profiles")
-      .select("school_id")
-      .eq("id", userId)
-      .maybeSingle();
-    if (!prof?.school_id) {
-      setSchool(null);
-      setLoading(false);
-      return;
-    }
-    const { data, error } = await supabase
-      .from("schools")
-      .select("id, name, branch, phone, address, email, logo_url")
-      .eq("id", prof.school_id)
-      .maybeSingle();
-    if (error) toast.error(error.message);
-    if (data) {
-      setSchool(data);
-      setName(data.name);
-      setBranch(data.branch ?? "");
-      setPhone(data.phone ?? "");
-      setLogoDataUrl(data.logo_url);
-    } else {
-      // profile points to a school we can't read (deleted or RLS) — clear stale link.
-      await supabase.from("profiles").update({ school_id: null }).eq("id", userId);
-      await refresh();
-      setSchool(null);
-    }
-    setLoading(false);
-  };
-
+  // Sync local form state when the school loads/changes.
   useEffect(() => {
-    load();
-  }, []);
+    if (school) {
+      setName(school.name);
+      setBranch(school.branch ?? "");
+      setPhone(school.phone ?? "");
+      setLogoDataUrl(school.logo_url);
+    } else {
+      setName("");
+      setBranch("");
+      setPhone("");
+      setLogoDataUrl(null);
+    }
+  }, [school]);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,6 +86,15 @@ function SchoolProfilePage() {
     reader.readAsDataURL(file);
   };
 
+  const refreshAll = async () => {
+    await refresh();
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ["my-school"] }),
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] }),
+    ]);
+    await refetch();
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setCreating(true);
@@ -115,9 +103,8 @@ function SchoolProfilePage() {
         data: { schoolName: name, phone, branch, logoDataUrl },
       });
       if (!res.ok) throw new Error(res.error);
-      await refresh();
       toast.success("Institute created.");
-      load();
+      await refreshAll();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to create institute");
     } finally {
@@ -129,33 +116,42 @@ function SchoolProfilePage() {
     e.preventDefault();
     if (!school) return;
     setSaving(true);
-    const { error } = await supabase
-      .from("schools")
-      .update({
-        name,
-        branch: branch || null,
-        phone: phone || null,
-        logo_url: logoDataUrl,
-      })
-      .eq("id", school.id);
-    setSaving(false);
-    if (error) return toast.error(error.message);
-    toast.success("Institute profile updated.");
-    load();
+    try {
+      const res = await updateSchool({
+        data: {
+          name,
+          branch: branch || null,
+          phone: phone || null,
+          logoDataUrl: logoDataUrl,
+        },
+      });
+      if (!res.ok) throw new Error(res.error);
+      toast.success("Institute profile updated.");
+      await refreshAll();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async () => {
     if (!school) return;
     setDeleting(true);
-    const { error } = await supabase.from("schools").delete().eq("id", school.id);
-    setDeleting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Institute deleted.");
-    await refresh();
-    navigate({ to: "/signup", replace: true });
+    try {
+      const res = await deleteSchool();
+      if (!res.ok) throw new Error(res.error);
+      toast.success("Institute deleted.");
+      await refreshAll();
+      navigate({ to: "/dashboard", replace: true });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete");
+    } finally {
+      setDeleting(false);
+    }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div className="text-sm text-muted-foreground">Loading…</div>;
   }
 
@@ -214,7 +210,7 @@ function SchoolProfilePage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">School Profile</h1>
         <p className="text-sm text-muted-foreground">
-          Manage your institute's information. {!isAdmin && "Admins can edit or delete."}
+          Manage your institute's information.{!isAdmin && " Admins can edit or delete."}
         </p>
       </div>
 
