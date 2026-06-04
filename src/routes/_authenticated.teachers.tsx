@@ -47,6 +47,7 @@ function TeachersPage() {
       setOpen(false);
       setForm({ full_name: "", email: "", phone: "", subject: "" });
       qc.invalidateQueries({ queryKey: ["teachers"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -59,6 +60,7 @@ function TeachersPage() {
     onSuccess: () => {
       toast.success("Teacher removed");
       qc.invalidateQueries({ queryKey: ["teachers"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -71,6 +73,7 @@ function TeachersPage() {
     onSuccess: () => {
       toast.success("Invite sent");
       qc.invalidateQueries({ queryKey: ["teachers"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });

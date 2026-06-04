@@ -48,6 +48,7 @@ function ParentsPage() {
       setOpen(false);
       setForm({ full_name: "", email: "", phone: "", relationship: "" });
       qc.invalidateQueries({ queryKey: ["parents"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -60,6 +61,7 @@ function ParentsPage() {
     onSuccess: () => {
       toast.success("Parent removed");
       qc.invalidateQueries({ queryKey: ["parents"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -72,6 +74,7 @@ function ParentsPage() {
     onSuccess: () => {
       toast.success("Invite sent");
       qc.invalidateQueries({ queryKey: ["parents"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });

@@ -61,6 +61,7 @@ function ClassesPage() {
       toast.success("Class added");
       setOpenClass(false); setClassName(""); setGrade("");
       qc.invalidateQueries({ queryKey: ["classes"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -73,7 +74,9 @@ function ClassesPage() {
     onSuccess: () => {
       toast.success("Class deleted");
       qc.invalidateQueries({ queryKey: ["classes"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
       qc.invalidateQueries({ queryKey: ["sections"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -94,6 +97,7 @@ function ClassesPage() {
       toast.success("Section added");
       setOpenSec(false); setSecName(""); setSecClass("");
       qc.invalidateQueries({ queryKey: ["sections"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -106,6 +110,7 @@ function ClassesPage() {
     onSuccess: () => {
       toast.success("Section deleted");
       qc.invalidateQueries({ queryKey: ["sections"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
