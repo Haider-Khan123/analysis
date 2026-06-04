@@ -134,18 +134,24 @@ function SidebarContent({
   pathname: string;
   counts: { institute: number; classes: number; teachers: number; students: number; parents: number };
 }) {
+  // Admins (and users with no role yet, i.e. fresh onboarding) see every tab.
+  // Teachers/parents see a limited subset.
   const visible = nav.filter((item) => {
-    if (role === "admin") return true;
+    if (role === "admin" || role === "parent" && false) return true;
     if (role === "teacher")
       return ["/dashboard", "/students", "/classes", "/school-profile"].includes(item.to);
-    return ["/dashboard", "/students", "/school-profile"].includes(item.to);
+    if (role === "parent")
+      return ["/dashboard", "/students", "/school-profile"].includes(item.to);
+    return true; // no role yet — show everything (locked where applicable)
   });
 
   const isLocked = (gate: string | null) => {
     if (!gate) return false;
-    if (role !== "admin") return false; // gating applies to the admin onboarding flow
+    // Gate onboarding for admins AND users with no role yet.
+    if (role !== "admin" && role !== ("" as string) && roleHasFullAccess(role) === false) return false;
     return (counts as Record<string, number>)[gate] < 1;
   };
+
 
   return (
     <div className="flex h-full flex-col">
