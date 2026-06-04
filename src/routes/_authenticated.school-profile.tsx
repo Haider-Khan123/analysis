@@ -81,6 +81,11 @@ function SchoolProfilePage() {
       setBranch(data.branch ?? "");
       setPhone(data.phone ?? "");
       setLogoDataUrl(data.logo_url);
+    } else {
+      // profile points to a school we can't read (deleted or RLS) — clear stale link.
+      await supabase.from("profiles").update({ school_id: null }).eq("id", userId);
+      await refresh();
+      setSchool(null);
     }
     setLoading(false);
   };
