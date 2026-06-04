@@ -59,6 +59,7 @@ function StudentsPage() {
       setOpen(false);
       setForm({ full_name: "", admission_number: "", class_id: "", section_id: "" });
       qc.invalidateQueries({ queryKey: ["students"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -71,6 +72,7 @@ function StudentsPage() {
     onSuccess: () => {
       toast.success("Student removed");
       qc.invalidateQueries({ queryKey: ["students"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
