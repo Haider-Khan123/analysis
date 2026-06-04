@@ -36,6 +36,8 @@ function SignupPage() {
   const [phone, setPhone] = useState("");
   const [branch, setBranch] = useState("");
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
