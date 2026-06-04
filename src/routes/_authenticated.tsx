@@ -136,7 +136,7 @@ function SidebarContent({
 }) {
   // Admins (and users with no role yet, i.e. fresh onboarding) see every tab.
   // Teachers/parents see a limited subset.
-  const isOnboarding = role === "admin" || !role || roles.length === 0;
+  const isOnboarding = role === "admin" || !role;
   const visible = nav.filter((item) => {
     if (isOnboarding) return true;
     if (role === "teacher")
