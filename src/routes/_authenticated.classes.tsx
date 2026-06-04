@@ -69,6 +69,7 @@ function ClassesPage() {
     mutationFn: async () => {
       if (!schoolId) throw new Error("No institute found. Please create it in School Profile first.");
       if (usedClassNames.has(className)) throw new Error("This class already exists.");
+      void usedClassNames;
       const { error } = await supabase.from("classes").insert({
         name: className, grade_level: className, school_id: schoolId,
       });
