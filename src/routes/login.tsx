@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: "Log in — Analysis" },
-      { name: "description", content: "Sign in to your Analysis institute management account." },
+      { name: "description", content: "Sign in to your Analysis institute management dashboard." },
     ],
   }),
   component: LoginPage,
@@ -22,8 +23,8 @@ function LoginPage() {
   const { isAuthenticated, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     if (!loading && isAuthenticated) navigate({ to: "/dashboard", replace: true });
@@ -42,22 +43,8 @@ function LoginPage() {
     navigate({ to: "/dashboard", replace: true });
   };
 
-  const handleForgotPassword = async () => {
-    if (!email) {
-      toast.error("Enter your email above first.");
-      return;
-    }
-    setResetting(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    setResetting(false);
-    if (error) toast.error(error.message);
-    else toast.success("Password reset email sent. Check your inbox.");
-  };
-
   return (
-    <AuthShell title="Welcome Back!" subtitle="Sign in to your Analysis account.">
+    <AuthShell title="Welcome Back!" subtitle="Sign in to your Analysis dashboard.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">
@@ -77,23 +64,27 @@ function LoginPage() {
           <Label htmlFor="password">
             Password <span className="text-destructive">*</span>
           </Label>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="Enter your password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={handleForgotPassword}
-            disabled={resetting}
-            className="text-xs font-medium text-primary hover:underline disabled:opacity-50"
-          >
-            {resetting ? "Sending…" : "Forgot password?"}
-          </button>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          <p className="text-xs text-muted-foreground">Contact Admin for any issue.</p>
         </div>
         <Button type="submit" className="w-full" disabled={busy}>
           {busy ? "Signing in…" : "Sign in"}
@@ -102,7 +93,7 @@ function LoginPage() {
       <p className="mt-6 text-center text-sm text-muted-foreground">
         New Institute?{" "}
         <Link to="/signup" className="font-medium text-primary hover:underline">
-          Create your account
+          Create an account
         </Link>
       </p>
     </AuthShell>

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -35,6 +36,8 @@ function SignupPage() {
   const [phone, setPhone] = useState("");
   const [branch, setBranch] = useState("");
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -120,30 +123,52 @@ function SignupPage() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password <Req /></Label>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="new-password"
-            minLength={8}
-            required
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              minLength={8}
+              required
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           <p className="text-xs text-muted-foreground">Minimum 8 characters.</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">Confirm Password <Req /></Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            minLength={8}
-            required
-            placeholder="Re-enter your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              type={showConfirm ? "text" : "password"}
+              autoComplete="new-password"
+              minLength={8}
+              required
+              placeholder="Re-enter your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm((s) => !s)}
+              aria-label={showConfirm ? "Hide password" : "Show password"}
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+            >
+              {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           {confirmPassword && confirmPassword !== password && (
             <p className="text-xs font-medium text-destructive">Password Mismatch</p>
           )}
@@ -159,6 +184,16 @@ function SignupPage() {
           />
         </div>
         <div className="space-y-2">
+          <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
+          <Input
+            id="branch"
+            required
+            placeholder="Enter branch name/ code"
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="phone">Institution Phone <Req /></Label>
           <Input
             id="phone"
@@ -169,16 +204,6 @@ function SignupPage() {
             placeholder="Enter phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
-          <Input
-            id="branch"
-            required
-            placeholder="Enter branch name/ code"
-            value={branch}
-            onChange={(e) => setBranch(e.target.value)}
           />
         </div>
         <div className="space-y-2">

@@ -6,6 +6,7 @@ import {
   Users,
   UserCog,
   School,
+  Building2,
   LogOut,
   Menu,
 } from "lucide-react";
@@ -30,6 +31,7 @@ const nav = [
   { to: "/teachers", label: "Teachers", icon: UserCog },
   { to: "/classes", label: "Classes & Sections", icon: School },
   { to: "/parents", label: "Parents", icon: Users },
+  { to: "/school-profile", label: "School Profile", icon: Building2 },
 ] as const;
 
 function AuthenticatedLayout() {
@@ -102,8 +104,9 @@ function AuthenticatedLayout() {
 function SidebarContent({ role, pathname }: { role: string; pathname: string }) {
   const visible = nav.filter((item) => {
     if (role === "admin") return true;
-    if (role === "teacher") return ["/dashboard", "/students", "/classes"].includes(item.to);
-    return ["/dashboard", "/students"].includes(item.to);
+    if (role === "teacher")
+      return ["/dashboard", "/students", "/classes", "/school-profile"].includes(item.to);
+    return ["/dashboard", "/students", "/school-profile"].includes(item.to);
   });
 
   return (
