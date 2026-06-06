@@ -351,47 +351,104 @@ export type Database = {
           },
         ]
       }
+      student_guardians: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_primary: boolean
+          phone: string
+          relationship: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_primary?: boolean
+          phone: string
+          relationship: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_primary?: boolean
+          phone?: string
+          relationship?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       students: {
         Row: {
+          admission_date: string | null
           admission_number: string | null
+          attendance_id: string | null
           class_id: string | null
           created_at: string
           date_of_birth: string | null
           enrollment_date: string | null
+          first_name: string | null
           full_name: string
           gender: string | null
           id: string
+          last_name: string | null
           notes: string | null
+          photo_url: string | null
           school_id: string
           section_id: string | null
+          status: string
           updated_at: string
         }
         Insert: {
+          admission_date?: string | null
           admission_number?: string | null
+          attendance_id?: string | null
           class_id?: string | null
           created_at?: string
           date_of_birth?: string | null
           enrollment_date?: string | null
+          first_name?: string | null
           full_name: string
           gender?: string | null
           id?: string
+          last_name?: string | null
           notes?: string | null
+          photo_url?: string | null
           school_id: string
           section_id?: string | null
+          status?: string
           updated_at?: string
         }
         Update: {
+          admission_date?: string | null
           admission_number?: string | null
+          attendance_id?: string | null
           class_id?: string | null
           created_at?: string
           date_of_birth?: string | null
           enrollment_date?: string | null
+          first_name?: string | null
           full_name?: string
           gender?: string | null
           id?: string
+          last_name?: string | null
           notes?: string | null
+          photo_url?: string | null
           school_id?: string
           section_id?: string | null
+          status?: string
           updated_at?: string
         }
         Relationships: [
