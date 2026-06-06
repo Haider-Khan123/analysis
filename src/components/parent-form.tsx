@@ -12,9 +12,7 @@ import { Upload, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { titleCase } from "@/lib/utils";
 
-export const PARENT_RELATIONSHIPS = [
-  "father", "mother", "guardian", "grandfather", "grandmother", "uncle", "aunt", "other",
-] as const;
+export const PARENT_RELATIONSHIPS = ["son", "daughter"] as const;
 export type ParentRelationship = typeof PARENT_RELATIONSHIPS[number];
 
 export type ParentStudentLink = {
