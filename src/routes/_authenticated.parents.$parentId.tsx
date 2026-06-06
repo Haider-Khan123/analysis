@@ -159,7 +159,7 @@ function ParentProfilePage() {
             <DialogTrigger asChild><Button variant="outline"><Pencil className="mr-1 h-4 w-4" />Edit</Button></DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader><DialogTitle>Edit Parent</DialogTitle></DialogHeader>
-              {editForm && <ParentForm value={editForm} onChange={setEditForm} />}
+              {editForm && <ParentForm value={editForm} onChange={setEditForm} mode="edit" />}
               <DialogFooter>
                 <Button onClick={() => editForm && update.mutate(editForm)} disabled={update.isPending}>
                   <Save className="mr-1 h-4 w-4" />{update.isPending ? "Saving…" : "Save Changes"}
