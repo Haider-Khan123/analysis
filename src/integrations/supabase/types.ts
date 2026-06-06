@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          created_at: string
+          diff: Json | null
+          entity: string
+          entity_id: string
+          id: string
+          school_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          diff?: Json | null
+          entity: string
+          entity_id: string
+          id?: string
+          school_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          diff?: Json | null
+          entity?: string
+          entity_id?: string
+          id?: string
+          school_id?: string
+        }
+        Relationships: []
+      }
+      class_teachers: {
+        Row: {
+          class_id: string
+          created_at: string
+          id: string
+          school_id: string
+          section_id: string
+          teacher_id: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          id?: string
+          school_id: string
+          section_id: string
+          teacher_id: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          id?: string
+          school_id?: string
+          section_id?: string
+          teacher_id?: string
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           created_at: string
@@ -355,36 +418,114 @@ export type Database = {
           },
         ]
       }
-      teachers: {
+      teacher_classes: {
+        Row: {
+          class_id: string
+          created_at: string
+          id: string
+          teacher_id: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          id?: string
+          teacher_id: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          id?: string
+          teacher_id?: string
+        }
+        Relationships: []
+      }
+      teacher_subjects: {
         Row: {
           created_at: string
-          email: string | null
-          full_name: string
           id: string
+          subject: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          subject: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          subject?: string
+          teacher_id?: string
+        }
+        Relationships: []
+      }
+      teachers: {
+        Row: {
+          address: string | null
+          cnic: string | null
+          created_at: string
+          date_of_birth: string | null
+          department: string | null
+          designation: string | null
+          email: string | null
+          employee_id: string | null
+          first_name: string | null
+          full_name: string
+          gender: string | null
+          id: string
+          joining_date: string | null
+          last_name: string | null
           phone: string | null
+          photo_url: string | null
           school_id: string
+          status: string
           subject: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          address?: string | null
+          cnic?: string | null
           created_at?: string
+          date_of_birth?: string | null
+          department?: string | null
+          designation?: string | null
           email?: string | null
+          employee_id?: string | null
+          first_name?: string | null
           full_name: string
+          gender?: string | null
           id?: string
+          joining_date?: string | null
+          last_name?: string | null
           phone?: string | null
+          photo_url?: string | null
           school_id: string
+          status?: string
           subject?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          address?: string | null
+          cnic?: string | null
           created_at?: string
+          date_of_birth?: string | null
+          department?: string | null
+          designation?: string | null
           email?: string | null
+          employee_id?: string | null
+          first_name?: string | null
           full_name?: string
+          gender?: string | null
           id?: string
+          joining_date?: string | null
+          last_name?: string | null
           phone?: string | null
+          photo_url?: string | null
           school_id?: string
+          status?: string
           subject?: string | null
           updated_at?: string
           user_id?: string | null
