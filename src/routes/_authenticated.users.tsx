@@ -154,12 +154,13 @@ function UserManagement() {
                     <TableHead>Roles</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Created</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                      <TableCell colSpan={8} className="py-8 text-center text-sm text-muted-foreground">
                         No users match the current filters.
                       </TableCell>
                     </TableRow>
@@ -183,6 +184,19 @@ function UserManagement() {
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {new Date(u.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!u.email || resettingEmail === u.email}
+                          onClick={() => handlePasswordReset(u.email)}
+                        >
+                          <KeyRound className="h-3.5 w-3.5" />
+                          <span className="ml-1.5">
+                            {resettingEmail === u.email ? "Sending…" : "Reset Password"}
+                          </span>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
