@@ -192,7 +192,7 @@ export const updateTeacher = createServerFn({ method: "POST" })
       if (before !== v) diff[k] = { from: k === "photo_url" && before ? "[image]" : before, to: k === "photo_url" && v ? "[image]" : v };
     }
 
-    const { error } = await supabaseAdmin.from("teachers").update(patch).eq("id", data.id);
+    const { error } = await supabaseAdmin.from("teachers").update(patch as never).eq("id", data.id);
     if (error) return { ok: false as const, error: error.message };
 
     if (Object.keys(diff).length) {
