@@ -247,7 +247,7 @@ function ClassesPage() {
       </div>
 
       <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-        <ScrollArea className="max-h-[480px] pr-2">
+        <div className="overflow-auto max-h-[480px] rounded-lg border border-border">
           {classesQ.isLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
           ) : !filteredGrouped.length ? (
@@ -256,45 +256,46 @@ function ClassesPage() {
             </p>
           ) : (
             <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left text-xs uppercase text-muted-foreground">
-                  <th className="py-2 pr-4 font-medium w-32">Class</th>
-                  <th className="py-2 pr-4 font-medium">Sections</th>
-                  {isAdmin && <th className="py-2 text-right w-16" />}
+              <thead className="bg-muted/50 sticky top-0 z-10">
+                <tr className="border-b border-border text-center text-xs uppercase text-muted-foreground">
+                  <th className="py-4 px-6 font-medium w-40">Class</th>
+                  <th className="py-4 px-6 font-medium">Sections</th>
+                  {isAdmin && <th className="py-4 px-6 font-medium w-24">Actions</th>}
                 </tr>
               </thead>
               <tbody>
                 {filteredGrouped.map((g) => (
-                  <tr key={g.name} className="border-b border-border align-top last:border-0">
-                    <td className="py-3 pr-4 font-medium">{g.name}</td>
-                    <td className="py-3 pr-4">
+                  <tr key={g.name} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                    <td className="py-5 px-6 text-center font-semibold text-foreground text-base">{g.name}</td>
+                    <td className="py-5 px-6">
                       {g.sections.length ? (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap justify-center gap-3">
                           {g.sections.map((s) => (
-                            <span key={s.id} className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-xs">
+                            <span key={s.id} className="inline-flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-sm font-medium shadow-sm">
                               {s.name}
                               {isAdmin && (
                                 <button
                                   type="button"
                                   onClick={() => delSection.mutate(s.id)}
-                                  className="text-muted-foreground hover:text-destructive"
+                                  className="text-muted-foreground hover:text-destructive transition-colors"
                                   aria-label={`Delete section ${s.name}`}
                                 >
-                                  <Trash2 className="h-3 w-3" />
+                                  <Trash2 className="h-3.5 w-3.5" />
                                 </button>
                               )}
                             </span>
                           ))}
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground">No sections</span>
+                        <span className="text-xs text-muted-foreground block text-center">No sections</span>
                       )}
                     </td>
                     {isAdmin && (
-                      <td className="py-3 text-right">
+                      <td className="py-5 px-6 text-center">
                         <Button
                           variant="ghost"
                           size="icon"
+                          className="mx-auto"
                           onClick={() => g.classIds.forEach((id) => delClass.mutate(id))}
                           aria-label={`Delete class ${g.name}`}
                         >
@@ -307,7 +308,7 @@ function ClassesPage() {
               </tbody>
             </table>
           )}
-        </ScrollArea>
+        </div>
       </section>
     </div>
   );
