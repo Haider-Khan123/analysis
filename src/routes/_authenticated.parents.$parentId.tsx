@@ -252,7 +252,7 @@ function ParentProfilePage() {
                   <th className="py-2 pr-3 font-medium">Class</th>
                   <th className="py-2 pr-3 font-medium">Section</th>
                   <th className="py-2 pr-3 font-medium">Relationship</th>
-                  <th className="py-2 pr-3 font-medium">Primary</th>
+                  
                   {isAdmin && <th className="py-2 text-right" />}
                 </tr>
               </thead>
