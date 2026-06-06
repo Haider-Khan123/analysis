@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
+import { PasswordInput } from "@/components/password-input";
 
 export type TeacherFormValues = {
   employee_id: string;
