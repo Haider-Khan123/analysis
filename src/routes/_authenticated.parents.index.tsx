@@ -50,6 +50,12 @@ function ParentsListPage() {
     },
   });
 
+  const studentsQ = useQuery({
+    queryKey: ["students-all"],
+    queryFn: async () => (await supabase.from("students")
+      .select("id, full_name, admission_number").order("full_name")).data ?? [],
+  });
+
   const add = useMutation({
     mutationFn: async () => {
       if (!schoolId) throw new Error("No institute. Create it in School Profile first.");
@@ -69,12 +75,16 @@ function ParentsListPage() {
           city: form.city || null,
           photo_data_url: form.photo_data_url,
           status: form.status,
-          password: form.password,
+          loginMode: form.loginMode,
+          password: form.password || "",
+          students: form.students.filter((s) => s.student_id),
         },
       });
       if (!res.ok) throw new Error(res.error);
       if (res.loginError) toast.warning(`Parent saved, but login not created: ${res.loginError}`);
+      if (res.linkError) toast.warning(`Some student links failed: ${res.linkError}`);
     },
+
     onSuccess: () => {
       toast.success("Parent added");
       setOpen(false); setForm(emptyParent);
@@ -131,7 +141,7 @@ function ParentsListPage() {
                 <DialogTitle>New Parent</DialogTitle>
                 {schoolName && <p className="text-xs text-muted-foreground">Institute: {schoolName}</p>}
               </DialogHeader>
-              <ParentForm value={form} onChange={setForm} />
+              <ParentForm value={form} onChange={setForm} students={studentsQ.data ?? []} />
               <DialogFooter>
                 <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
                   {add.isPending ? "Saving…" : "Save Parent"}

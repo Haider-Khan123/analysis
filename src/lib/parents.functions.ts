@@ -44,8 +44,16 @@ const ParentInput = z.object({
   status: z.enum(["active", "inactive"]).default("active"),
 });
 
+const StudentLinkInput = z.object({
+  student_id: z.string().uuid(),
+  relationship_type: z.enum(RELATIONSHIP_TYPES),
+  is_primary: z.boolean().default(false),
+});
+
 const CreateParentInput = ParentInput.extend({
-  password: z.string().min(8).max(72),
+  loginMode: z.enum(["password", "invite", "none"]).default("password"),
+  password: z.string().min(8).max(72).optional().or(z.literal("")),
+  students: z.array(StudentLinkInput).default([]),
 });
 
 export const createParent = createServerFn({ method: "POST" })
@@ -88,29 +96,77 @@ export const createParent = createServerFn({ method: "POST" })
 
     // Provision login
     let loginError: string | null = null;
-    const { data: created, error: cErr } = await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: { full_name },
-    });
-    if (cErr || !created.user) {
-      loginError = cErr?.message ?? "Could not create login";
-    } else {
-      await supabaseAdmin.from("profiles").upsert(
-        { id: created.user.id, full_name, email: data.email, school_id: schoolId },
-        { onConflict: "id" });
-      await supabaseAdmin.from("user_roles").upsert(
-        { user_id: created.user.id, role: "parent", school_id: schoolId },
-        { onConflict: "user_id,role,school_id" });
-      await supabaseAdmin.from("parents").update({ user_id: created.user.id }).eq("id", row.id);
+    if (data.loginMode === "password") {
+      if (!data.password) {
+        loginError = "Password required";
+      } else {
+        const { data: created, error: cErr } = await supabaseAdmin.auth.admin.createUser({
+          email: data.email,
+          password: data.password,
+          email_confirm: true,
+          user_metadata: { full_name },
+        });
+        if (cErr || !created.user) {
+          loginError = cErr?.message ?? "Could not create login";
+        } else {
+          await supabaseAdmin.from("profiles").upsert(
+            { id: created.user.id, full_name, email: data.email, school_id: schoolId },
+            { onConflict: "id" });
+          await supabaseAdmin.from("user_roles").upsert(
+            { user_id: created.user.id, role: "parent", school_id: schoolId },
+            { onConflict: "user_id,role,school_id" });
+          await supabaseAdmin.from("parents").update({ user_id: created.user.id }).eq("id", row.id);
+        }
+      }
+    } else if (data.loginMode === "invite") {
+      const redirectTo = `${process.env.PUBLIC_APP_URL ?? ""}/reset-password`;
+      const inv = await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
+        data: { full_name }, redirectTo: redirectTo || undefined,
+      });
+      if (inv.error) {
+        loginError = inv.error.message;
+      } else if (inv.data.user) {
+        await supabaseAdmin.from("profiles").upsert(
+          { id: inv.data.user.id, full_name, email: data.email, school_id: schoolId },
+          { onConflict: "id" });
+        await supabaseAdmin.from("user_roles").upsert(
+          { user_id: inv.data.user.id, role: "parent", school_id: schoolId },
+          { onConflict: "user_id,role,school_id" });
+        await supabaseAdmin.from("parents").update({ user_id: inv.data.user.id }).eq("id", row.id);
+      }
+    }
+
+    // Initial student links
+    const linkErrors: string[] = [];
+    if (data.students.length > 0) {
+      const ids = Array.from(new Set(data.students.map((s) => s.student_id)));
+      const { data: valid } = await supabaseAdmin.from("students")
+        .select("id").in("id", ids).eq("school_id", schoolId);
+      const validSet = new Set((valid ?? []).map((v) => v.id));
+      for (const link of data.students) {
+        if (!validSet.has(link.student_id)) { linkErrors.push("Invalid student skipped"); continue; }
+        if (link.is_primary) {
+          await supabaseAdmin.from("parent_students")
+            .update({ is_primary: false }).eq("student_id", link.student_id).eq("is_primary", true);
+        }
+        const { error: lErr } = await supabaseAdmin.from("parent_students").insert({
+          parent_id: row.id, student_id: link.student_id,
+          relationship_type: link.relationship_type, is_primary: link.is_primary,
+        });
+        if (lErr) linkErrors.push(lErr.message);
+      }
     }
 
     await logAudit(schoolId, context.userId, actorName, "parent", row.id, "create", {
       ...insertRow, photo_url: insertRow.photo_url ? "[image]" : null,
+      students: data.students,
     });
-    return { ok: true as const, id: row.id, loginError };
+    return {
+      ok: true as const, id: row.id, loginError,
+      linkError: linkErrors.length ? linkErrors.join("; ") : null,
+    };
   });
+
 
 const UpdateInput = ParentInput.extend({ id: z.string().uuid() });
 
