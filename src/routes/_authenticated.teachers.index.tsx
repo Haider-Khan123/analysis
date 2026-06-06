@@ -179,20 +179,20 @@ function TeachersPage() {
                           {t.photo_url ? <img src={t.photo_url} alt="" className="h-full w-full object-cover" /> : null}
                         </div>
                         <div>
-                          <div className="font-medium text-foreground hover:underline">{t.full_name}</div>
+                          <div className="font-medium text-foreground hover:underline">{titleCase(t.full_name)}</div>
                           <div className="text-xs text-muted-foreground">{t.email}</div>
                         </div>
                       </Link>
                     </td>
                     <td className="py-3 pr-3">{t.employee_id ?? "—"}</td>
-                    <td className="py-3 pr-3">{t.designation ?? "—"}</td>
-                    <td className="py-3 pr-3">{t.department ?? "—"}</td>
+                    <td className="py-3 pr-3">{titleCase(t.designation) || "—"}</td>
+                    <td className="py-3 pr-3">{titleCase(t.department) || "—"}</td>
                     <td className="py-3 pr-3">
                       <span className={
                         "rounded-full px-2 py-0.5 text-xs " +
                         (t.status === "active" ? "bg-success/10 text-success" : "bg-muted text-muted-foreground")
                       }>
-                        {t.status ?? "active"}
+                        {titleCase(t.status ?? "active")}
                       </span>
                     </td>
                     <td className="py-3 pr-3">
