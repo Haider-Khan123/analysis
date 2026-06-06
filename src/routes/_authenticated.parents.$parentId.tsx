@@ -281,20 +281,6 @@ function ParentProfilePage() {
                           </Select>
                         ) : titleCase(l.relationship_type)}
                       </td>
-                      <td className="py-3 pr-3">
-                        {l.is_primary ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                            <Star className="h-3 w-3" /> Primary
-                          </span>
-                        ) : isAdmin ? (
-                          <Button
-                            size="sm" variant="outline"
-                            onClick={() => updLink.mutate({ link_id: l.id, is_primary: true })}
-                          >
-                            Set Primary
-                          </Button>
-                        ) : "—"}
-                      </td>
                       {isAdmin && (
                         <td className="py-3 text-right">
                           <Button variant="ghost" size="icon" onClick={() => unlink.mutate(l.id)}>
