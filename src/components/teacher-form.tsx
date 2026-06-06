@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
+import { PasswordInput } from "@/components/password-input";
 
 export type TeacherFormValues = {
   employee_id: string;
@@ -138,10 +139,15 @@ export function TeacherForm({
               </Select>
             </Field>
             {value.loginMode === "password" && (
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Password *"><Input type="password" value={value.password} onChange={(e) => set("password", e.target.value)} /></Field>
-                <Field label="Confirm password *"><Input type="password" value={value.confirm_password} onChange={(e) => set("confirm_password", e.target.value)} /></Field>
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Password *"><PasswordInput value={value.password} onChange={(e) => set("password", e.target.value)} /></Field>
+                  <Field label="Confirm password *"><PasswordInput value={value.confirm_password} onChange={(e) => set("confirm_password", e.target.value)} /></Field>
+                </div>
+                {value.confirm_password && value.confirm_password !== value.password && (
+                  <p className="text-xs font-medium text-destructive">Password Mismatch</p>
+                )}
+              </>
             )}
           </>
         )}

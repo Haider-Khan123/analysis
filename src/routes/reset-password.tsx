@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { Label } from "@/components/ui/label";
 import { AuthShell } from "./login";
 
@@ -65,9 +65,8 @@ function ResetPasswordPage() {
           <Label htmlFor="password">
             New password <span className="text-destructive">*</span>
           </Label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="new-password"
             minLength={8}
             required
@@ -80,9 +79,8 @@ function ResetPasswordPage() {
           <Label htmlFor="confirm">
             Confirm password <span className="text-destructive">*</span>
           </Label>
-          <Input
+          <PasswordInput
             id="confirm"
-            type="password"
             autoComplete="new-password"
             minLength={8}
             required

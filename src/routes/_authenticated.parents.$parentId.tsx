@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ArrowLeft, Pencil, Save, Plus, Star, X } from "lucide-react";
+import { ArrowLeft, Pencil, Save, Plus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -252,7 +252,7 @@ function ParentProfilePage() {
                   <th className="py-2 pr-3 font-medium">Class</th>
                   <th className="py-2 pr-3 font-medium">Section</th>
                   <th className="py-2 pr-3 font-medium">Relationship</th>
-                  <th className="py-2 pr-3 font-medium">Primary</th>
+                  
                   {isAdmin && <th className="py-2 text-right" />}
                 </tr>
               </thead>
@@ -280,20 +280,6 @@ function ParentProfilePage() {
                             </SelectContent>
                           </Select>
                         ) : titleCase(l.relationship_type)}
-                      </td>
-                      <td className="py-3 pr-3">
-                        {l.is_primary ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                            <Star className="h-3 w-3" /> Primary
-                          </span>
-                        ) : isAdmin ? (
-                          <Button
-                            size="sm" variant="outline"
-                            onClick={() => updLink.mutate({ link_id: l.id, is_primary: true })}
-                          >
-                            Set Primary
-                          </Button>
-                        ) : "—"}
                       </td>
                       {isAdmin && (
                         <td className="py-3 text-right">
