@@ -48,9 +48,11 @@ export const listAllUsers = createServerFn({ method: "GET" })
       roleByUser.set(r.user_id, arr);
     });
 
-    const teacherByUser = new Map<string, typeof teachers extends Array<infer T> | null ? T : never>();
+    type TeacherRow = NonNullable<typeof teachers>[number];
+    type ParentRow = NonNullable<typeof parents>[number];
+    const teacherByUser = new Map<string, TeacherRow>();
     (teachers ?? []).forEach((t) => { if (t.user_id) teacherByUser.set(t.user_id, t); });
-    const parentByUser = new Map<string, typeof parents extends Array<infer T> | null ? T : never>();
+    const parentByUser = new Map<string, ParentRow>();
     (parents ?? []).forEach((p) => { if (p.user_id) parentByUser.set(p.user_id, p); });
 
     const users: AppUserRow[] = [];
