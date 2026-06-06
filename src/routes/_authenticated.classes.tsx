@@ -190,7 +190,7 @@ function ClassesPage() {
                 <Button size="sm"><Plus className="mr-1 h-4 w-4" />Add class</Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>New class</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>New Class</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label>Institute</Label>
@@ -218,7 +218,7 @@ function ClassesPage() {
                 <Button size="sm" variant="secondary"><Plus className="mr-1 h-4 w-4" />Add section</Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>New section</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>New Section</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label>Institute</Label>
@@ -235,7 +235,7 @@ function ClassesPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2"><Label>Section name</Label><Input value={secName} onChange={(e) => setSecName(e.target.value)} placeholder="e.g. A" /></div>
+                  <div className="space-y-2"><Label>Section Name</Label><Input value={secName} onChange={(e) => setSecName(e.target.value)} placeholder="e.g. A" /></div>
                 </div>
                 <DialogFooter>
                   <Button onClick={() => addSection.mutate()} disabled={!secName || !secClass || !schoolId || addSection.isPending}>Save</Button>

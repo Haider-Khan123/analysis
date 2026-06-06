@@ -89,9 +89,9 @@ function ParentsPage() {
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" />Add parent</Button></DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>New parent</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>New Parent</DialogTitle></DialogHeader>
               <div className="space-y-3">
-                <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} />
+                <Field label="Full Name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} />
                 <Field label="Email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} type="email" />
                 <Field label="Phone" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
                 <Field label="Relationship" value={form.relationship} onChange={(v) => setForm({ ...form, relationship: v })} />
@@ -229,7 +229,7 @@ function ChildrenLinkDialog({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Children of {parentName}</DialogTitle>
+          <DialogTitle>Children Of {parentName}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>

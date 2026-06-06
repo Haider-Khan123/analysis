@@ -91,9 +91,9 @@ function StudentsPage() {
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" />Enroll student</Button></DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Enroll a student</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>Enroll A Student</DialogTitle></DialogHeader>
               <div className="space-y-3">
-                <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} />
+                <Field label="Full Name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} />
                 <Field label="Admission number" value={form.admission_number} onChange={(v) => setForm({ ...form, admission_number: v })} />
                 <div className="space-y-2">
                   <Label>Class</Label>

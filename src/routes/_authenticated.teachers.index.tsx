@@ -122,16 +122,16 @@ function TeachersPage() {
         <PageHeader title="Teachers" subtitle="Manage teaching staff and their logins." />
         {isAdmin && (
           <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setForm(emptyTeacher); }}>
-            <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" />Add teacher</Button></DialogTrigger>
+            <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" />Add Teacher</Button></DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>New teacher</DialogTitle>
+                <DialogTitle>New Teacher</DialogTitle>
                 {schoolName && <p className="text-xs text-muted-foreground">Institute: {schoolName}</p>}
               </DialogHeader>
               <TeacherForm value={form} onChange={setForm} mode="create" />
               <DialogFooter>
                 <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
-                  {add.isPending ? "Saving…" : "Save teacher"}
+                  {add.isPending ? "Saving…" : "Save Teacher"}
                 </Button>
               </DialogFooter>
             </DialogContent>

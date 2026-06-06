@@ -115,7 +115,7 @@ export function TeacherForm({
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Date of birth"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Field>
+          <Field label="Date Of Birth"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Field>
         </div>
         <Field label="CNIC / National ID *"><Input value={value.cnic} onChange={(e) => set("cnic", e.target.value)} placeholder="e.g. 35202-1234567-1" /></Field>
       </TabsContent>
@@ -152,7 +152,7 @@ export function TeacherForm({
 
       <TabsContent value="employment" className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Joining date *"><Input type="date" value={value.joining_date} onChange={(e) => set("joining_date", e.target.value)} /></Field>
+          <Field label="Joining Date *"><Input type="date" value={value.joining_date} onChange={(e) => set("joining_date", e.target.value)} /></Field>
           <Field label="Status">
             <Select value={value.status} onValueChange={(v) => set("status", v as "active" | "inactive")}>
               <SelectTrigger><SelectValue /></SelectTrigger>
