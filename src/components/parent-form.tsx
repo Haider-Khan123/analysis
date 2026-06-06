@@ -125,7 +125,7 @@ export function ParentForm({
     }
     set("students", next);
   };
-  const addLink = () => set("students", [...value.students, { student_id: "", relationship_type: "father", is_primary: false }]);
+  const addLink = () => set("students", [...value.students, { student_id: "", relationship_type: "son", is_primary: false }]);
   const removeLink = (idx: number) => set("students", value.students.filter((_, i) => i !== idx));
 
   const usedIds = new Set(value.students.map((s) => s.student_id).filter(Boolean));
