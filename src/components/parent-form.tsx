@@ -218,7 +218,7 @@ export function ParentForm({
             {value.students.map((link, idx) => {
               const opts = students.filter((s) => s.id === link.student_id || !usedIds.has(s.id));
               return (
-                <div key={idx} className="grid grid-cols-1 gap-3 rounded-md border border-border p-3 md:grid-cols-[2fr_1fr_auto_auto]">
+                <div key={idx} className="grid grid-cols-1 gap-3 rounded-md border border-border p-3 md:grid-cols-[2fr_1fr_auto]">
                   <div className="space-y-1">
                     <Label className="text-xs">Student *</Label>
                     <Select value={link.student_id || undefined} onValueChange={(v) => updateLink(idx, { student_id: v })}>
