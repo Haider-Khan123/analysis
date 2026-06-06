@@ -325,7 +325,7 @@ function AssignmentsPanel({
       <div className="space-y-3 rounded-md border border-border p-3">
         <label className="flex items-center gap-2 text-sm font-medium">
           <Checkbox checked={isClassTeacher} onCheckedChange={(v) => setIsClassTeacher(!!v)} />
-          Is class teacher?
+          Is Class Teacher?
         </label>
         {isClassTeacher && (
           <div className="grid grid-cols-2 gap-3">
