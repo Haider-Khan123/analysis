@@ -11,11 +11,12 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const { profile } = useAuth();
+  const { profile, session } = useAuth();
   const fetchStats = useServerFn(getDashboardStats);
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => fetchStats(),
+    enabled: !!session?.access_token,
   });
 
   return (
