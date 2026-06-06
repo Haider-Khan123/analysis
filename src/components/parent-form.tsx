@@ -23,24 +23,31 @@ export type ParentFormValues = {
   city: string;
   photo_data_url: string | null;
   status: "active" | "inactive";
+  password: string;
+  confirm_password: string;
 };
 
 export const emptyParent: ParentFormValues = {
   parent_id: "", first_name: "", last_name: "", phone: "", alternate_phone: "",
   email: "", cnic: "", occupation: "", address: "", city: "",
   photo_data_url: null, status: "active",
+  password: "", confirm_password: "",
 };
 
 const phoneRegex = /^[+0-9 \-()]{7,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function validateParent(v: ParentFormValues): string | null {
+export function validateParent(v: ParentFormValues, opts: { requireLogin: boolean } = { requireLogin: true }): string | null {
   if (!v.parent_id.trim()) return "Parent ID is required.";
   if (!v.first_name.trim()) return "First name is required.";
   if (!v.last_name.trim()) return "Last name is required.";
   if (!phoneRegex.test(v.phone)) return "Valid primary mobile number is required.";
   if (v.alternate_phone && !phoneRegex.test(v.alternate_phone)) return "Alternate mobile number is invalid.";
-  if (v.email && !emailRegex.test(v.email)) return "Email address is invalid.";
+  if (!emailRegex.test(v.email.trim())) return "Valid email address is required.";
+  if (opts.requireLogin) {
+    if (!v.password || v.password.length < 8) return "Password must be at least 8 characters.";
+    if (v.password !== v.confirm_password) return "Passwords do not match.";
+  }
   return null;
 }
 
@@ -58,12 +65,14 @@ export function parentFromRow(r: Record<string, unknown>): ParentFormValues {
     city: String(r.city ?? ""),
     photo_data_url: (r.photo_url as string) ?? null,
     status: (r.status as "active" | "inactive") ?? "active",
+    password: "",
+    confirm_password: "",
   };
 }
 
 export function ParentForm({
-  value, onChange,
-}: { value: ParentFormValues; onChange: (v: ParentFormValues) => void }) {
+  value, onChange, mode = "create",
+}: { value: ParentFormValues; onChange: (v: ParentFormValues) => void; mode?: "create" | "edit" }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const set = <K extends keyof ParentFormValues>(k: K, v: ParentFormValues[K]) =>
     onChange({ ...value, [k]: v });
@@ -114,9 +123,15 @@ export function ParentForm({
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <FieldText label="Primary Mobile Number *" value={value.phone} onChange={(v) => set("phone", v)} />
           <FieldText label="Alternate Mobile Number" value={value.alternate_phone} onChange={(v) => set("alternate_phone", v)} />
-          <FieldText label="Email Address" value={value.email} onChange={(v) => set("email", v)} type="email" />
+          <FieldText label="Email Address *" value={value.email} onChange={(v) => set("email", v)} type="email" />
           <FieldText label="City" value={value.city} onChange={(v) => set("city", v)} />
         </div>
+        {mode === "create" && (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <FieldText label="Password *" value={value.password} onChange={(v) => set("password", v)} type="password" />
+            <FieldText label="Confirm Password *" value={value.confirm_password} onChange={(v) => set("confirm_password", v)} type="password" />
+          </div>
+        )}
         <div className="space-y-2">
           <Label>Residential Address</Label>
           <Textarea value={value.address} onChange={(e) => set("address", e.target.value)} rows={3} />
