@@ -23,6 +23,7 @@ import {
 import {
   TeacherForm, teacherFromRow, validateTeacher, type TeacherFormValues,
 } from "@/components/teacher-form";
+import { titleCase } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/teachers/$teacherId")({
   head: ({ params }) => ({ meta: [{ title: `Teacher · ${params.teacherId.slice(0, 8)}` }] }),
