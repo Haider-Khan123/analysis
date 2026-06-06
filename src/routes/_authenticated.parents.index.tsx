@@ -62,16 +62,18 @@ function ParentsListPage() {
           last_name: form.last_name,
           phone: form.phone,
           alternate_phone: form.alternate_phone || null,
-          email: form.email || null,
+          email: form.email,
           cnic: form.cnic || null,
           occupation: form.occupation || null,
           address: form.address || null,
           city: form.city || null,
           photo_data_url: form.photo_data_url,
           status: form.status,
+          password: form.password,
         },
       });
       if (!res.ok) throw new Error(res.error);
+      if (res.loginError) toast.warning(`Parent saved, but login not created: ${res.loginError}`);
     },
     onSuccess: () => {
       toast.success("Parent added");
