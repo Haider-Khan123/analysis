@@ -62,13 +62,9 @@ export function validateParent(v: ParentFormValues, opts: { requireLogin: boolea
     if (!v.password || v.password.length < 8) return "Password must be at least 8 characters.";
     if (v.password !== v.confirm_password) return "Passwords do not match.";
   }
-  // primary guardian uniqueness per student
-  const primaryByStudent = new Map<string, number>();
   for (const s of v.students) {
     if (!s.student_id) return "Each linked student must be selected.";
-    if (s.is_primary) primaryByStudent.set(s.student_id, (primaryByStudent.get(s.student_id) ?? 0) + 1);
   }
-  for (const [, n] of primaryByStudent) if (n > 1) return "Only one Primary Guardian per student.";
   return null;
 }
 
