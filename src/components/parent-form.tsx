@@ -4,11 +4,24 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Upload } from "lucide-react";
+import { Upload, Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { titleCase } from "@/lib/utils";
+
+export const PARENT_RELATIONSHIPS = [
+  "father", "mother", "guardian", "grandfather", "grandmother", "uncle", "aunt", "other",
+] as const;
+export type ParentRelationship = typeof PARENT_RELATIONSHIPS[number];
+
+export type ParentStudentLink = {
+  student_id: string;
+  relationship_type: ParentRelationship;
+  is_primary: boolean;
+};
 
 export type ParentFormValues = {
   parent_id: string;
@@ -23,15 +36,18 @@ export type ParentFormValues = {
   city: string;
   photo_data_url: string | null;
   status: "active" | "inactive";
+  loginMode: "password" | "invite" | "none";
   password: string;
   confirm_password: string;
+  students: ParentStudentLink[];
 };
 
 export const emptyParent: ParentFormValues = {
   parent_id: "", first_name: "", last_name: "", phone: "", alternate_phone: "",
   email: "", cnic: "", occupation: "", address: "", city: "",
   photo_data_url: null, status: "active",
-  password: "", confirm_password: "",
+  loginMode: "password", password: "", confirm_password: "",
+  students: [],
 };
 
 const phoneRegex = /^[+0-9 \-()]{7,20}$/;
@@ -44,10 +60,17 @@ export function validateParent(v: ParentFormValues, opts: { requireLogin: boolea
   if (!phoneRegex.test(v.phone)) return "Valid primary mobile number is required.";
   if (v.alternate_phone && !phoneRegex.test(v.alternate_phone)) return "Alternate mobile number is invalid.";
   if (!emailRegex.test(v.email.trim())) return "Valid email address is required.";
-  if (opts.requireLogin) {
+  if (opts.requireLogin && v.loginMode === "password") {
     if (!v.password || v.password.length < 8) return "Password must be at least 8 characters.";
     if (v.password !== v.confirm_password) return "Passwords do not match.";
   }
+  // primary guardian uniqueness per student
+  const primaryByStudent = new Map<string, number>();
+  for (const s of v.students) {
+    if (!s.student_id) return "Each linked student must be selected.";
+    if (s.is_primary) primaryByStudent.set(s.student_id, (primaryByStudent.get(s.student_id) ?? 0) + 1);
+  }
+  for (const [, n] of primaryByStudent) if (n > 1) return "Only one Primary Guardian per student.";
   return null;
 }
 
@@ -65,14 +88,23 @@ export function parentFromRow(r: Record<string, unknown>): ParentFormValues {
     city: String(r.city ?? ""),
     photo_data_url: (r.photo_url as string) ?? null,
     status: (r.status as "active" | "inactive") ?? "active",
+    loginMode: "none",
     password: "",
     confirm_password: "",
+    students: [],
   };
 }
 
+type StudentOpt = { id: string; full_name: string; admission_number: string | null };
+
 export function ParentForm({
-  value, onChange, mode = "create",
-}: { value: ParentFormValues; onChange: (v: ParentFormValues) => void; mode?: "create" | "edit" }) {
+  value, onChange, mode = "create", students = [],
+}: {
+  value: ParentFormValues;
+  onChange: (v: ParentFormValues) => void;
+  mode?: "create" | "edit";
+  students?: StudentOpt[];
+}) {
   const fileRef = useRef<HTMLInputElement>(null);
   const set = <K extends keyof ParentFormValues>(k: K, v: ParentFormValues[K]) =>
     onChange({ ...value, [k]: v });
@@ -85,11 +117,27 @@ export function ParentForm({
     reader.readAsDataURL(file);
   };
 
+  const updateLink = (idx: number, patch: Partial<ParentStudentLink>) => {
+    const next = value.students.slice();
+    next[idx] = { ...next[idx], ...patch };
+    if (patch.is_primary === true) {
+      // enforce single primary per student locally
+      const sid = next[idx].student_id;
+      next.forEach((l, i) => { if (i !== idx && l.student_id === sid) l.is_primary = false; });
+    }
+    set("students", next);
+  };
+  const addLink = () => set("students", [...value.students, { student_id: "", relationship_type: "father", is_primary: false }]);
+  const removeLink = (idx: number) => set("students", value.students.filter((_, i) => i !== idx));
+
+  const usedIds = new Set(value.students.map((s) => s.student_id).filter(Boolean));
+
   return (
     <Tabs defaultValue="basic" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="basic">Basic</TabsTrigger>
         <TabsTrigger value="contact">Contact</TabsTrigger>
+        <TabsTrigger value="students">Students</TabsTrigger>
         <TabsTrigger value="status">Status</TabsTrigger>
       </TabsList>
 
@@ -126,16 +174,94 @@ export function ParentForm({
           <FieldText label="Email Address *" value={value.email} onChange={(v) => set("email", v)} type="email" />
           <FieldText label="City" value={value.city} onChange={(v) => set("city", v)} />
         </div>
+
         {mode === "create" && (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <FieldText label="Password *" value={value.password} onChange={(v) => set("password", v)} type="password" />
-            <FieldText label="Confirm Password *" value={value.confirm_password} onChange={(v) => set("confirm_password", v)} type="password" />
-          </div>
+          <>
+            <div className="space-y-2">
+              <Label>Login Provisioning</Label>
+              <Select value={value.loginMode} onValueChange={(v) => set("loginMode", v as ParentFormValues["loginMode"])}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Login (Add Later)</SelectItem>
+                  <SelectItem value="password">Set Password Now</SelectItem>
+                  <SelectItem value="invite">Send Invite Email</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {value.loginMode === "password" && (
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <FieldText label="Password *" value={value.password} onChange={(v) => set("password", v)} type="password" />
+                <FieldText label="Confirm Password *" value={value.confirm_password} onChange={(v) => set("confirm_password", v)} type="password" />
+              </div>
+            )}
+          </>
         )}
+
         <div className="space-y-2">
           <Label>Residential Address</Label>
           <Textarea value={value.address} onChange={(e) => set("address", e.target.value)} rows={3} />
         </div>
+      </TabsContent>
+
+      <TabsContent value="students" className="space-y-4 pt-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">Link one or more students to this parent.</p>
+          <Button type="button" size="sm" variant="outline" onClick={addLink}>
+            <Plus className="mr-1 h-4 w-4" /> Add Student
+          </Button>
+        </div>
+
+        {value.students.length === 0 ? (
+          <p className="rounded-md border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+            No students linked. Click "Add Student" to link one.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {value.students.map((link, idx) => {
+              const opts = students.filter((s) => s.id === link.student_id || !usedIds.has(s.id));
+              return (
+                <div key={idx} className="grid grid-cols-1 gap-3 rounded-md border border-border p-3 md:grid-cols-[2fr_1fr_auto_auto]">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Student *</Label>
+                    <Select value={link.student_id || undefined} onValueChange={(v) => updateLink(idx, { student_id: v })}>
+                      <SelectTrigger><SelectValue placeholder="Select a student" /></SelectTrigger>
+                      <SelectContent>
+                        {opts.length === 0 ? (
+                          <div className="px-2 py-1.5 text-sm text-muted-foreground">No students available.</div>
+                        ) : opts.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {titleCase(s.full_name)}{s.admission_number ? ` (#${s.admission_number})` : ""}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Relationship *</Label>
+                    <Select value={link.relationship_type}
+                      onValueChange={(v) => updateLink(idx, { relationship_type: v as ParentRelationship })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {PARENT_RELATIONSHIPS.map((r) => (
+                          <SelectItem key={r} value={r}>{titleCase(r)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <label className="flex items-end gap-2 pb-2 text-sm">
+                    <Checkbox checked={link.is_primary} onCheckedChange={(c) => updateLink(idx, { is_primary: c === true })} />
+                    Primary
+                  </label>
+                  <div className="flex items-end pb-1">
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(idx)}>
+                      <X className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </TabsContent>
 
       <TabsContent value="status" className="space-y-4 pt-4">
