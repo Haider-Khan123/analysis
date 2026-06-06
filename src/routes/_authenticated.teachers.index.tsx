@@ -122,7 +122,7 @@ function TeachersPage() {
         <PageHeader title="Teachers" subtitle="Manage teaching staff and their logins." />
         {isAdmin && (
           <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setForm(emptyTeacher); }}>
-            <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" />Add teacher</Button></DialogTrigger>
+            <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" />Add Teacher</Button></DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>New teacher</DialogTitle>
