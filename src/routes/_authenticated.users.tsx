@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Search, Users as UsersIcon, RefreshCw } from "lucide-react";
+import { Search, Users as UsersIcon, RefreshCw, KeyRound } from "lucide-react";
+import { toast } from "sonner";
 import { listAllUsers, type AppUserRow } from "@/lib/users.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,23 @@ function UserManagement() {
 
   const [q, setQ] = useState("");
   const [source, setSource] = useState<SourceFilter>("all");
+  const [resettingEmail, setResettingEmail] = useState<string | null>(null);
+
+  const handlePasswordReset = async (email: string) => {
+    if (!email) return;
+    setResettingEmail(email);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success(`Password reset email sent to ${email}`);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to send reset email");
+    } finally {
+      setResettingEmail(null);
+    }
+  };
 
   // Realtime: refetch on changes to any user-bearing table
   useEffect(() => {
@@ -136,12 +154,13 @@ function UserManagement() {
                     <TableHead>Roles</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Created</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                      <TableCell colSpan={8} className="py-8 text-center text-sm text-muted-foreground">
                         No users match the current filters.
                       </TableCell>
                     </TableRow>
@@ -165,6 +184,19 @@ function UserManagement() {
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {new Date(u.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!u.email || resettingEmail === u.email}
+                          onClick={() => handlePasswordReset(u.email)}
+                        >
+                          <KeyRound className="h-3.5 w-3.5" />
+                          <span className="ml-1.5">
+                            {resettingEmail === u.email ? "Sending…" : "Reset Password"}
+                          </span>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
