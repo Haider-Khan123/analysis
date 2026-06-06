@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   Lock,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";
