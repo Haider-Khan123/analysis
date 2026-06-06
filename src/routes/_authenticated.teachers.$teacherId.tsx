@@ -269,7 +269,7 @@ function AssignmentsPanel({
       </div>
 
       <div>
-        <Label className="text-sm">Subjects</Label>
+        <Label className="text-sm">Subjects <span className="text-destructive">*</span></Label>
         <div className="mt-2 flex flex-wrap gap-2">
           {subjects.map((s) => (
             <span key={s} className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-xs">
@@ -279,7 +279,7 @@ function AssignmentsPanel({
               </button>
             </span>
           ))}
-          {subjects.length === 0 && <span className="text-xs text-muted-foreground">None</span>}
+          {subjects.length === 0 && <span className="text-xs text-destructive">At least one subject is required</span>}
         </div>
         <div className="mt-2 flex gap-2">
           <Input placeholder="Add subject…" value={newSubject} onChange={(e) => setNewSubject(e.target.value)}
