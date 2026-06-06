@@ -106,17 +106,17 @@ function TeacherProfilePage() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
         <Link to="/teachers" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> Back to teachers
+          <ArrowLeft className="h-4 w-4" /> Back To Teachers
         </Link>
         {isAdmin && (
           <Dialog open={editOpen} onOpenChange={(o) => { setEditOpen(o); if (o) setEditForm(teacherFromRow(t)); }}>
             <DialogTrigger asChild><Button variant="outline"><Pencil className="mr-1 h-4 w-4" />Edit</Button></DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader><DialogTitle>Edit teacher</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>Edit Teacher</DialogTitle></DialogHeader>
               {editForm && <TeacherForm value={editForm} onChange={setEditForm} mode="edit" />}
               <DialogFooter>
                 <Button onClick={() => editForm && update.mutate(editForm)} disabled={update.isPending}>
-                  <Save className="mr-1 h-4 w-4" />{update.isPending ? "Saving…" : "Save changes"}
+                  <Save className="mr-1 h-4 w-4" />{update.isPending ? "Saving…" : "Save Changes"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -130,14 +130,14 @@ function TeacherProfilePage() {
             : <div className="grid h-full w-full place-items-center text-xs text-muted-foreground">No photo</div>}
         </div>
         <div className="grid flex-1 grid-cols-1 gap-x-6 gap-y-3 md:grid-cols-2">
-          <Field2 label="Full name" value={titleCase(String(t.full_name ?? ""))} />
+          <Field2 label="Full Name" value={titleCase(String(t.full_name ?? ""))} />
           <Field2 label="Employee ID" value={String(t.employee_id ?? "—")} />
           <Field2 label="CNIC" value={String(t.cnic ?? "—")} />
           <Field2 label="Mobile" value={String(t.phone ?? "—")} />
           <Field2 label="Email" value={String(t.email ?? "—")} />
           <Field2 label="Gender" value={titleCase(String(t.gender ?? "—"))} />
-          <Field2 label="Date of birth" value={String(t.date_of_birth ?? "—")} />
-          <Field2 label="Joining date" value={String(t.joining_date ?? "—")} />
+          <Field2 label="Date Of Birth" value={String(t.date_of_birth ?? "—")} />
+          <Field2 label="Joining Date" value={String(t.joining_date ?? "—")} />
           <Field2 label="Designation" value={titleCase(String(t.designation ?? "—"))} />
           <Field2 label="Department" value={titleCase(String(t.department ?? "—"))} />
           <Field2 label="Status" value={titleCase(String(t.status ?? "active"))} />
