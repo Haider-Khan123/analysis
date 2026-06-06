@@ -113,19 +113,25 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_primary: boolean
           parent_id: string
+          relationship_type: string
           student_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          is_primary?: boolean
           parent_id: string
+          relationship_type?: string
           student_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          is_primary?: boolean
           parent_id?: string
+          relationship_type?: string
           student_id?: string
         }
         Relationships: [
@@ -147,35 +153,65 @@ export type Database = {
       }
       parents: {
         Row: {
+          address: string | null
+          alternate_phone: string | null
+          city: string | null
+          cnic: string | null
           created_at: string
           email: string | null
+          first_name: string | null
           full_name: string
           id: string
+          last_name: string | null
+          occupation: string | null
+          parent_id: string | null
           phone: string | null
+          photo_url: string | null
           relationship: string | null
           school_id: string
+          status: string
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          address?: string | null
+          alternate_phone?: string | null
+          city?: string | null
+          cnic?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name: string
           id?: string
+          last_name?: string | null
+          occupation?: string | null
+          parent_id?: string | null
           phone?: string | null
+          photo_url?: string | null
           relationship?: string | null
           school_id: string
+          status?: string
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          address?: string | null
+          alternate_phone?: string | null
+          city?: string | null
+          cnic?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name?: string
           id?: string
+          last_name?: string | null
+          occupation?: string | null
+          parent_id?: string | null
           phone?: string | null
+          photo_url?: string | null
           relationship?: string | null
           school_id?: string
+          status?: string
           updated_at?: string
           user_id?: string | null
         }
