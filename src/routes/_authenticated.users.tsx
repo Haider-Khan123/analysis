@@ -33,6 +33,23 @@ function UserManagement() {
 
   const [q, setQ] = useState("");
   const [source, setSource] = useState<SourceFilter>("all");
+  const [resettingEmail, setResettingEmail] = useState<string | null>(null);
+
+  const handlePasswordReset = async (email: string) => {
+    if (!email) return;
+    setResettingEmail(email);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success(`Password reset email sent to ${email}`);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to send reset email");
+    } finally {
+      setResettingEmail(null);
+    }
+  };
 
   // Realtime: refetch on changes to any user-bearing table
   useEffect(() => {
