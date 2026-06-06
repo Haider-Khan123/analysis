@@ -227,13 +227,3 @@ function TeachersPage() {
     </div>
   );
 }
-
-// Re-export for routes that depended on the old Field helper
-export function Field({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} />
-    </div>
-  );
-}
