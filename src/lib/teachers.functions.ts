@@ -216,9 +216,9 @@ export const getTeacherDetail = createServerFn({ method: "POST" })
 
     const [subs, cls, secs, ct, audit] = await Promise.all([
       supabaseAdmin.from("teacher_subjects").select("id, subject").eq("teacher_id", data.id),
-      supabaseAdmin.from("teacher_classes").select("id, class_id, classes(name)").eq("teacher_id", data.id),
-      supabaseAdmin.from("section_teachers").select("id, section_id, sections(name, class_id, classes(name))").eq("teacher_id", data.id),
-      supabaseAdmin.from("class_teachers").select("id, class_id, section_id, classes(name), sections(name)").eq("teacher_id", data.id),
+      supabaseAdmin.from("teacher_classes").select("id, class_id").eq("teacher_id", data.id),
+      supabaseAdmin.from("section_teachers").select("id, section_id").eq("teacher_id", data.id),
+      supabaseAdmin.from("class_teachers").select("id, class_id, section_id").eq("teacher_id", data.id),
       supabaseAdmin.from("audit_logs").select("id, action, diff, actor_name, created_at")
         .eq("entity", "teacher").eq("entity_id", data.id).order("created_at", { ascending: false }).limit(50),
     ]);
