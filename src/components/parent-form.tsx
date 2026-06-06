@@ -246,10 +246,6 @@ export function ParentForm({
                       </SelectContent>
                     </Select>
                   </div>
-                  <label className="flex items-end gap-2 pb-2 text-sm">
-                    <Checkbox checked={link.is_primary} onCheckedChange={(c) => updateLink(idx, { is_primary: c === true })} />
-                    Primary
-                  </label>
                   <div className="flex items-end pb-1">
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(idx)}>
                       <X className="h-4 w-4 text-destructive" />
