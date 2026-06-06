@@ -9,6 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Upload, Plus, X } from "lucide-react";
+import { PasswordInput } from "@/components/password-input";
 import { toast } from "sonner";
 import { titleCase } from "@/lib/utils";
 
