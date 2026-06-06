@@ -183,10 +183,21 @@ export function ParentForm({
               </Select>
             </div>
             {value.loginMode === "password" && (
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <FieldText label="Password *" value={value.password} onChange={(v) => set("password", v)} type="password" />
-                <FieldText label="Confirm Password *" value={value.confirm_password} onChange={(v) => set("confirm_password", v)} type="password" />
-              </div>
+              <>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label>Password *</Label>
+                    <PasswordInput value={value.password} onChange={(e) => set("password", e.target.value)} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Confirm Password *</Label>
+                    <PasswordInput value={value.confirm_password} onChange={(e) => set("confirm_password", e.target.value)} />
+                  </div>
+                </div>
+                {value.confirm_password && value.confirm_password !== value.password && (
+                  <p className="text-xs font-medium text-destructive">Password Mismatch</p>
+                )}
+              </>
             )}
           </>
         )}
