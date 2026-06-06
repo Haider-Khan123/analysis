@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -12,9 +12,7 @@ import { Upload, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { titleCase } from "@/lib/utils";
 
-export const PARENT_RELATIONSHIPS = [
-  "father", "mother", "guardian", "grandfather", "grandmother", "uncle", "aunt", "other",
-] as const;
+export const PARENT_RELATIONSHIPS = ["son", "daughter"] as const;
 export type ParentRelationship = typeof PARENT_RELATIONSHIPS[number];
 
 export type ParentStudentLink = {
@@ -64,13 +62,9 @@ export function validateParent(v: ParentFormValues, opts: { requireLogin: boolea
     if (!v.password || v.password.length < 8) return "Password must be at least 8 characters.";
     if (v.password !== v.confirm_password) return "Passwords do not match.";
   }
-  // primary guardian uniqueness per student
-  const primaryByStudent = new Map<string, number>();
   for (const s of v.students) {
     if (!s.student_id) return "Each linked student must be selected.";
-    if (s.is_primary) primaryByStudent.set(s.student_id, (primaryByStudent.get(s.student_id) ?? 0) + 1);
   }
-  for (const [, n] of primaryByStudent) if (n > 1) return "Only one Primary Guardian per student.";
   return null;
 }
 
@@ -127,7 +121,7 @@ export function ParentForm({
     }
     set("students", next);
   };
-  const addLink = () => set("students", [...value.students, { student_id: "", relationship_type: "father", is_primary: false }]);
+  const addLink = () => set("students", [...value.students, { student_id: "", relationship_type: "son", is_primary: false }]);
   const removeLink = (idx: number) => set("students", value.students.filter((_, i) => i !== idx));
 
   const usedIds = new Set(value.students.map((s) => s.student_id).filter(Boolean));
@@ -220,7 +214,7 @@ export function ParentForm({
             {value.students.map((link, idx) => {
               const opts = students.filter((s) => s.id === link.student_id || !usedIds.has(s.id));
               return (
-                <div key={idx} className="grid grid-cols-1 gap-3 rounded-md border border-border p-3 md:grid-cols-[2fr_1fr_auto_auto]">
+                <div key={idx} className="grid grid-cols-1 gap-3 rounded-md border border-border p-3 md:grid-cols-[2fr_1fr_auto]">
                   <div className="space-y-1">
                     <Label className="text-xs">Student *</Label>
                     <Select value={link.student_id || undefined} onValueChange={(v) => updateLink(idx, { student_id: v })}>
@@ -248,10 +242,6 @@ export function ParentForm({
                       </SelectContent>
                     </Select>
                   </div>
-                  <label className="flex items-end gap-2 pb-2 text-sm">
-                    <Checkbox checked={link.is_primary} onCheckedChange={(c) => updateLink(idx, { is_primary: c === true })} />
-                    Primary
-                  </label>
                   <div className="flex items-end pb-1">
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(idx)}>
                       <X className="h-4 w-4 text-destructive" />
