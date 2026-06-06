@@ -35,7 +35,7 @@ const ParentInput = z.object({
   last_name: z.string().trim().min(1).max(60),
   phone: z.string().trim().regex(phoneRegex, "Invalid mobile number"),
   alternate_phone: z.string().trim().regex(phoneRegex).optional().nullable().or(z.literal("")),
-  email: z.string().trim().email().max(160).optional().nullable().or(z.literal("")),
+  email: z.string().trim().email().max(160),
   cnic: z.string().trim().max(40).optional().nullable().or(z.literal("")),
   occupation: z.string().trim().max(120).optional().nullable().or(z.literal("")),
   address: z.string().trim().max(400).optional().nullable().or(z.literal("")),
@@ -44,9 +44,13 @@ const ParentInput = z.object({
   status: z.enum(["active", "inactive"]).default("active"),
 });
 
+const CreateParentInput = ParentInput.extend({
+  password: z.string().min(8).max(72),
+});
+
 export const createParent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i) => ParentInput.parse(i))
+  .inputValidator((i) => CreateParentInput.parse(i))
   .handler(async ({ data, context }) => {
     const guard = await assertAdminSchool(context.userId);
     if ("error" in guard) return { ok: false as const, error: guard.error };
@@ -55,6 +59,10 @@ export const createParent = createServerFn({ method: "POST" })
     const { data: dup } = await supabaseAdmin.from("parents")
       .select("id").eq("school_id", schoolId).eq("parent_id", data.parent_id).maybeSingle();
     if (dup) return { ok: false as const, error: "Parent ID already exists in this institute." };
+
+    const { data: dupEmail } = await supabaseAdmin.from("parents")
+      .select("id").eq("school_id", schoolId).ilike("email", data.email).maybeSingle();
+    if (dupEmail) return { ok: false as const, error: "Email already exists in this institute." };
 
     const full_name = `${data.first_name} ${data.last_name}`.trim();
     const insertRow = {
@@ -65,7 +73,7 @@ export const createParent = createServerFn({ method: "POST" })
       full_name,
       phone: data.phone,
       alternate_phone: data.alternate_phone || null,
-      email: data.email || null,
+      email: data.email,
       cnic: data.cnic || null,
       occupation: data.occupation || null,
       address: data.address || null,
@@ -78,10 +86,30 @@ export const createParent = createServerFn({ method: "POST" })
       .insert(insertRow).select("id").single();
     if (error || !row) return { ok: false as const, error: error?.message ?? "Insert failed" };
 
+    // Provision login
+    let loginError: string | null = null;
+    const { data: created, error: cErr } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: { full_name },
+    });
+    if (cErr || !created.user) {
+      loginError = cErr?.message ?? "Could not create login";
+    } else {
+      await supabaseAdmin.from("profiles").upsert(
+        { id: created.user.id, full_name, email: data.email, school_id: schoolId },
+        { onConflict: "id" });
+      await supabaseAdmin.from("user_roles").upsert(
+        { user_id: created.user.id, role: "parent", school_id: schoolId },
+        { onConflict: "user_id,role,school_id" });
+      await supabaseAdmin.from("parents").update({ user_id: created.user.id }).eq("id", row.id);
+    }
+
     await logAudit(schoolId, context.userId, actorName, "parent", row.id, "create", {
       ...insertRow, photo_url: insertRow.photo_url ? "[image]" : null,
     });
-    return { ok: true as const, id: row.id };
+    return { ok: true as const, id: row.id, loginError };
   });
 
 const UpdateInput = ParentInput.extend({ id: z.string().uuid() });
