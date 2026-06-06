@@ -21,7 +21,7 @@ import {
 } from "@/components/teacher-form";
 import { PageHeader } from "./_authenticated.classes";
 
-export const Route = createFileRoute("/_authenticated/teachers")({
+export const Route = createFileRoute("/_authenticated/teachers/")({
   head: () => ({ meta: [{ title: "Teachers — Analysis" }] }),
   component: TeachersPage,
 });
