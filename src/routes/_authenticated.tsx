@@ -54,14 +54,14 @@ const gateMessages: Record<string, string> = {
 };
 
 function AuthenticatedLayout() {
-  const { isAuthenticated, loading, profile, roles, signOut } = useAuth();
+  const { isAuthenticated, loading, profile, roles, signOut, session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const fetchStats = useServerFn(getDashboardStats);
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => fetchStats(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !!session?.access_token,
   });
 
   useEffect(() => {
