@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader, EntityTable } from "./_authenticated.classes";
-import { Field } from "./_authenticated.teachers";
+import { Field } from "@/components/field";
 import { inviteUserForRow } from "@/lib/school.functions";
 
 export const Route = createFileRoute("/_authenticated/parents")({
