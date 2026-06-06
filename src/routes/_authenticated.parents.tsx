@@ -229,7 +229,7 @@ function ChildrenLinkDialog({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Children of {parentName}</DialogTitle>
+          <DialogTitle>Children Of {parentName}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
