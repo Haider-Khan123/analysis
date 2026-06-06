@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export const RELATIONSHIP_TYPES = [
-  "father", "mother", "guardian", "grandfather", "grandmother", "uncle", "aunt", "other",
+  "son", "daughter",
 ] as const;
 export type RelationshipType = typeof RELATIONSHIP_TYPES[number];
 
