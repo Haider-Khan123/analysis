@@ -187,27 +187,6 @@ function TeacherProfilePage() {
         </section>
       )}
 
-      <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-        <h2 className="mb-3 text-lg font-semibold">Audit log</h2>
-        {d.audit.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No changes recorded.</p>
-        ) : (
-          <ScrollArea className="max-h-[360px] pr-2">
-            <ul className="space-y-3 text-sm">
-              {d.audit.map((a) => (
-                <li key={a.id} className="border-b border-border pb-2 last:border-0">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium capitalize">{a.action}</span>
-                    <span className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">by {a.actor_name ?? "—"}</div>
-                  {a.diff ? <pre className="mt-1 max-h-40 overflow-auto rounded bg-muted/40 p-2 text-xs">{JSON.stringify(a.diff, null, 2)}</pre> : null}
-                </li>
-              ))}
-            </ul>
-          </ScrollArea>
-        )}
-      </section>
     </div>
   );
 }
