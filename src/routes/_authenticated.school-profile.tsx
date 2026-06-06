@@ -235,7 +235,7 @@ function SchoolProfilePage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete this institute?</AlertDialogTitle>
+                    <AlertDialogTitle>Delete This Institute?</AlertDialogTitle>
                     <AlertDialogDescription>
                       This action cannot be undone. All institute data, classes,
                       students, teachers, and parents under this institute will be
