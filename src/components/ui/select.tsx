@@ -89,10 +89,12 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         ref={ref}
-        onOpenAutoFocus={(e) => {
-          if (searchable) {
-            e.preventDefault();
-            // Defer so Radix doesn't steal focus back
+        onCloseAutoFocus={(e) => {
+          // restore default Radix close-focus behavior
+          if (props.onCloseAutoFocus) props.onCloseAutoFocus(e);
+        }}
+        onFocus={(e) => {
+          if (searchable && inputRef.current && !e.currentTarget.contains(document.activeElement)) {
             setTimeout(() => inputRef.current?.focus(), 0);
           }
         }}
