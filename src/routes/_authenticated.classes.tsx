@@ -190,7 +190,7 @@ function ClassesPage() {
                 <Button size="sm"><Plus className="mr-1 h-4 w-4" />Add class</Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>New class</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>New Class</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label>Institute</Label>
