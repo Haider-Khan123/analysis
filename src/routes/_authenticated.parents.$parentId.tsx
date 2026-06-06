@@ -69,7 +69,7 @@ function ParentProfilePage() {
 
   const update = useMutation({
     mutationFn: async (v: ParentFormValues) => {
-      const err = validateParent(v);
+      const err = validateParent(v, { requireLogin: false });
       if (err) throw new Error(err);
       const res = await updateFn({
         data: {
