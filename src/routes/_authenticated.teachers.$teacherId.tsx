@@ -23,6 +23,7 @@ import {
 import {
   TeacherForm, teacherFromRow, validateTeacher, type TeacherFormValues,
 } from "@/components/teacher-form";
+import { titleCase } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/teachers/$teacherId")({
   head: ({ params }) => ({ meta: [{ title: `Teacher · ${params.teacherId.slice(0, 8)}` }] }),
@@ -129,17 +130,17 @@ function TeacherProfilePage() {
             : <div className="grid h-full w-full place-items-center text-xs text-muted-foreground">No photo</div>}
         </div>
         <div className="grid flex-1 grid-cols-1 gap-x-6 gap-y-3 md:grid-cols-2">
-          <Field2 label="Full name" value={String(t.full_name ?? "")} />
+          <Field2 label="Full name" value={titleCase(String(t.full_name ?? ""))} />
           <Field2 label="Employee ID" value={String(t.employee_id ?? "—")} />
           <Field2 label="CNIC" value={String(t.cnic ?? "—")} />
           <Field2 label="Mobile" value={String(t.phone ?? "—")} />
           <Field2 label="Email" value={String(t.email ?? "—")} />
-          <Field2 label="Gender" value={String(t.gender ?? "—")} />
+          <Field2 label="Gender" value={titleCase(String(t.gender ?? "—"))} />
           <Field2 label="Date of birth" value={String(t.date_of_birth ?? "—")} />
           <Field2 label="Joining date" value={String(t.joining_date ?? "—")} />
-          <Field2 label="Designation" value={String(t.designation ?? "—")} />
-          <Field2 label="Department" value={String(t.department ?? "—")} />
-          <Field2 label="Status" value={String(t.status ?? "active")} />
+          <Field2 label="Designation" value={titleCase(String(t.designation ?? "—"))} />
+          <Field2 label="Department" value={titleCase(String(t.department ?? "—"))} />
+          <Field2 label="Status" value={titleCase(String(t.status ?? "active"))} />
           <Field2 label="Login" value={t.user_id ? "Active" : "Not set"} />
           <div className="md:col-span-2"><Field2 label="Address" value={String(t.address ?? "—")} /></div>
         </div>
