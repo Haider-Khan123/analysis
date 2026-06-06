@@ -235,7 +235,7 @@ function ClassesPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2"><Label>Section name</Label><Input value={secName} onChange={(e) => setSecName(e.target.value)} placeholder="e.g. A" /></div>
+                  <div className="space-y-2"><Label>Section Name</Label><Input value={secName} onChange={(e) => setSecName(e.target.value)} placeholder="e.g. A" /></div>
                 </div>
                 <DialogFooter>
                   <Button onClick={() => addSection.mutate()} disabled={!secName || !secClass || !schoolId || addSection.isPending}>Save</Button>
