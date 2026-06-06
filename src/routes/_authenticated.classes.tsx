@@ -218,7 +218,7 @@ function ClassesPage() {
                 <Button size="sm" variant="secondary"><Plus className="mr-1 h-4 w-4" />Add section</Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>New section</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>New Section</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label>Institute</Label>
