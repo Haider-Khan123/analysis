@@ -113,7 +113,7 @@ function AuthenticatedLayout() {
             <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium capitalize text-primary">
               {role}
             </span>
-            <Button variant="ghost" size="sm" onClick={() => signOut().then(() => navigate({ to: "/" }))}>
+            <Button variant="ghost" size="sm" onClick={() => signOut().then(() => navigate({ to: "/login" }))}>
               <LogOut className="h-4 w-4" />
               <span className="ml-2 hidden sm:inline">Sign out</span>
             </Button>
