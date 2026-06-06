@@ -64,7 +64,7 @@ function ParentProfilePage() {
 
   const [linkOpen, setLinkOpen] = useState(false);
   const [linkStudentId, setLinkStudentId] = useState("");
-  const [linkRelationship, setLinkRelationship] = useState<RelationshipType>("guardian");
+  const [linkRelationship, setLinkRelationship] = useState<RelationshipType>("son");
   const [linkPrimary, setLinkPrimary] = useState(false);
 
   const update = useMutation({
@@ -105,7 +105,7 @@ function ParentProfilePage() {
     },
     onSuccess: () => {
       toast.success("Student linked");
-      setLinkOpen(false); setLinkStudentId(""); setLinkRelationship("guardian"); setLinkPrimary(false);
+      setLinkOpen(false); setLinkStudentId(""); setLinkRelationship("son"); setLinkPrimary(false);
       qc.invalidateQueries({ queryKey: ["parent-detail", parentId] });
     },
     onError: (e: Error) => toast.error(e.message),
