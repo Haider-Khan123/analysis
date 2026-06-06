@@ -265,7 +265,7 @@ function AssignmentsPanel({
     <section className="space-y-5 rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Teaching Assignments</h2>
-        <Button onClick={save} disabled={saving}><Save className="mr-1 h-4 w-4" />{saving ? "Saving…" : "Save assignments"}</Button>
+        <Button onClick={save} disabled={saving}><Save className="mr-1 h-4 w-4" />{saving ? "Saving…" : "Save Assignments"}</Button>
       </div>
 
       <div>
