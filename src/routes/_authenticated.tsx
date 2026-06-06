@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard,
@@ -57,12 +57,20 @@ function AuthenticatedLayout() {
   const { isAuthenticated, loading, profile, roles, signOut, session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const fetchStats = useServerFn(getDashboardStats);
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => fetchStats(),
     enabled: isAuthenticated && !!session?.access_token,
   });
+
+  const handleSignOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await signOut();
+    await navigate({ to: "/login", replace: true });
+  };
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -113,7 +121,7 @@ function AuthenticatedLayout() {
             <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium capitalize text-primary">
               {role}
             </span>
-            <Button variant="ghost" size="sm" onClick={() => signOut().then(() => navigate({ to: "/login" }))}>
+            <Button variant="ghost" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4" />
               <span className="ml-2 hidden sm:inline">Sign out</span>
             </Button>
