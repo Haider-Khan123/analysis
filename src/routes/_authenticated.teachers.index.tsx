@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useCurrentSchool } from "@/lib/use-current-school";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { titleCase } from "@/lib/utils";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
