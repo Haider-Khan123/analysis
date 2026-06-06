@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -198,5 +198,3 @@ export function teacherFromRow(row: Record<string, unknown>): TeacherFormValues 
   };
 }
 
-// Suppress unused-import warning on useEffect (kept for potential future use)
-void useEffect;
