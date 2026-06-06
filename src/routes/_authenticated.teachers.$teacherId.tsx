@@ -249,6 +249,9 @@ function AssignmentsPanel({
   };
 
   const save = async () => {
+    if (subjects.length === 0) { toast.error("At least one subject is required."); return; }
+    if (classIds.size === 0) { toast.error("At least one class is required."); return; }
+    if (sectionIds.size === 0) { toast.error("At least one section is required."); return; }
     if (isClassTeacher && (!ctClass || !ctSection)) { toast.error("Pick class & section for class teacher."); return; }
     setSaving(true);
     try {
@@ -290,7 +293,7 @@ function AssignmentsPanel({
 
       <div className="grid gap-5 md:grid-cols-2">
         <div>
-          <Label className="text-sm">Classes</Label>
+          <Label className="text-sm">Classes <span className="text-destructive">*</span></Label>
           <ScrollArea className="mt-2 max-h-48 rounded-md border border-border p-2">
             {uniqueClasses.length === 0 && <span className="text-xs text-muted-foreground">No classes</span>}
             <div className="space-y-1.5">
@@ -304,7 +307,7 @@ function AssignmentsPanel({
           </ScrollArea>
         </div>
         <div>
-          <Label className="text-sm">Sections</Label>
+          <Label className="text-sm">Sections <span className="text-destructive">*</span></Label>
           <ScrollArea className="mt-2 max-h-48 rounded-md border border-border p-2">
             {sections.length === 0 && <span className="text-xs text-muted-foreground">No sections</span>}
             <div className="space-y-1.5">
