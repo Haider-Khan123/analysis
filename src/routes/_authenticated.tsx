@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   Lock,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";
@@ -42,6 +43,7 @@ const nav = [
   { to: "/teachers", label: "Teachers", icon: UserCog, gate: "classes" as const },
   { to: "/students", label: "Students", icon: GraduationCap, gate: "teachers" as const },
   { to: "/parents", label: "Parents", icon: Users, gate: "students" as const },
+  { to: "/users", label: "User Management", icon: ShieldCheck, gate: null, adminOnly: true },
 ] as const;
 
 const gateMessages: Record<string, string> = {
