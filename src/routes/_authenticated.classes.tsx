@@ -15,7 +15,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 export const Route = createFileRoute("/_authenticated/classes")({
   head: () => ({ meta: [{ title: "Classes & Sections — Analysis" }] }),
