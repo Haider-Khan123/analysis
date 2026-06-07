@@ -44,9 +44,10 @@ function AdminDashboard({ enabled }: { enabled: boolean }) {
 
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard label="Institute" value={data?.counts.institute ?? 0} icon={Building2} loading={isLoading} />
         <StatCard label="Classes" value={data?.counts.classes ?? 0} icon={School} loading={isLoading} />
+        <StatCard label="Sections" value={data?.counts.sections ?? 0} icon={Layers} loading={isLoading} />
         <StatCard label="Teachers" value={data?.counts.teachers ?? 0} icon={UserCog} loading={isLoading} />
         <StatCard label="Students" value={data?.counts.students ?? 0} icon={GraduationCap} loading={isLoading} />
         <StatCard label="Parents" value={data?.counts.parents ?? 0} icon={Users} loading={isLoading} />

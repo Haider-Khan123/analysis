@@ -164,15 +164,16 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       .maybeSingle();
 
     if (!profile?.school_id) {
-      return { schoolId: null, counts: { institute: 0, students: 0, teachers: 0, classes: 0, parents: 0 }, schoolName: null };
+      return { schoolId: null, counts: { institute: 0, students: 0, teachers: 0, classes: 0, sections: 0, parents: 0 }, schoolName: null };
     }
 
     const schoolId = profile.school_id;
-    const [{ data: school }, students, teachers, classes, parents] = await Promise.all([
+    const [{ data: school }, students, teachers, classes, sections, parents] = await Promise.all([
       supabaseAdmin.from("schools").select("name").eq("id", schoolId).maybeSingle(),
       supabaseAdmin.from("students").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
       supabaseAdmin.from("teachers").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
       supabaseAdmin.from("classes").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
+      supabaseAdmin.from("sections").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
       supabaseAdmin.from("parents").select("id", { count: "exact", head: true }).eq("school_id", schoolId),
     ]);
 
@@ -184,6 +185,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
         students: students.count ?? 0,
         teachers: teachers.count ?? 0,
         classes: classes.count ?? 0,
+        sections: sections.count ?? 0,
         parents: parents.count ?? 0,
       },
     };
