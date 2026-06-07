@@ -30,6 +30,7 @@ function MarkAttendancePage() {
   const fetchRoster = useServerFn(getSectionRoster);
   const save = useServerFn(saveAttendance);
   const qc = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: scope } = useQuery({
     queryKey: ["att-scope"],
