@@ -151,8 +151,8 @@ function SidebarContent({
   const visible = nav.filter((item) => {
     if (isOnboarding) return true;
     if (role === "teacher")
-      return ["/dashboard", "/students", "/classes", "/school-profile"].includes(item.to);
-    return ["/dashboard", "/students", "/school-profile"].includes(item.to);
+      return ["/dashboard", "/classes", "/students", "/parents"].includes(item.to);
+    return ["/dashboard", "/students"].includes(item.to);
   });
 
   const isLocked = (gate: string | null) => {
