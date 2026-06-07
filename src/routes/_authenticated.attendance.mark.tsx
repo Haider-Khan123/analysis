@@ -140,7 +140,7 @@ function MarkAttendancePage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">
-              Students {roster?.students.length ? `(${roster.students.length})` : ""}
+              Students {roster?.ok && roster.students.length ? `(${roster.students.length})` : ""}
             </CardTitle>
             {roster && !roster.editable && (
               <Badge variant="outline">Locked — past date (admin can edit)</Badge>
