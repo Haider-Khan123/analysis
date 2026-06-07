@@ -57,9 +57,6 @@ export const createStudent = createServerFn({ method: "POST" })
     if ("error" in guard) return { ok: false as const, error: guard.error };
     const { schoolId, actorName } = guard;
 
-    const { data: dupA } = await supabaseAdmin.from("students")
-      .select("id").eq("school_id", schoolId).eq("attendance_id", data.attendance_id).maybeSingle();
-    if (dupA) return { ok: false as const, error: "Attendance ID already exists in this institute." };
     const { data: dupAdm } = await supabaseAdmin.from("students")
       .select("id").eq("school_id", schoolId).eq("admission_number", data.admission_number).maybeSingle();
     if (dupAdm) return { ok: false as const, error: "Admission number already exists in this institute." };
