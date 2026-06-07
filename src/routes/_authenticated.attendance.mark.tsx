@@ -89,9 +89,14 @@ function MarkAttendancePage() {
     }),
     onSuccess: (res, isDraft) => {
       if (!res.ok) { toast.error(res.error); return; }
-      toast.success(isDraft ? "Draft saved" : `Attendance saved (${res.count})`);
       qc.invalidateQueries({ queryKey: ["att-roster"] });
       qc.invalidateQueries({ queryKey: ["att-history"] });
+      if (isDraft) {
+        toast.success("Draft saved");
+      } else {
+        toast.success("Attendance Submitted Successfully");
+        navigate({ to: "/attendance/history" });
+      }
     },
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
