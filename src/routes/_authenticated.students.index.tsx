@@ -153,8 +153,8 @@ function StudentsListPage() {
               <StudentForm
                 value={form}
                 onChange={setForm}
-                classes={classesQ.data ?? []}
-                sections={sectionsQ.data ?? []}
+                classes={classesList}
+                sections={sectionsList}
               />
               <DialogFooter>
                 <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
