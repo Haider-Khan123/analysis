@@ -311,7 +311,7 @@ export const getAttendanceHistory = createServerFn({ method: "POST" })
     }
 
     let q = supabaseAdmin.from("attendance_records")
-      .select("id, attendance_date, status, remarks, student_id, section_id, class_id, marked_by, updated_at")
+      .select("id, attendance_date, status, remarks, student_id, section_id, class_id, marked_by, updated_at, created_at")
       .eq("school_id", actor.schoolId)
       .gte("attendance_date", data.from)
       .lte("attendance_date", data.to)
@@ -333,14 +333,58 @@ export const getAttendanceHistory = createServerFn({ method: "POST" })
     const sMap = new Map((students ?? []).map((s) => [s.id, s]));
     const pMap = new Map((profiles ?? []).map((p) => [p.id, p.full_name]));
 
+    const cutoffMs = 24 * 60 * 60 * 1000;
+    const now = Date.now();
     return {
-      rows: list.map((r) => ({
-        ...r,
-        student_name: sMap.get(r.student_id)?.full_name ?? "—",
-        attendance_id: sMap.get(r.student_id)?.attendance_id ?? null,
-        marked_by_name: r.marked_by ? (pMap.get(r.marked_by) ?? "—") : "—",
-      })),
+      rows: list.map((r) => {
+        const createdMs = new Date(r.created_at).getTime();
+        const withinWindow = now - createdMs <= cutoffMs;
+        return {
+          ...r,
+          student_name: sMap.get(r.student_id)?.full_name ?? "—",
+          attendance_id: sMap.get(r.student_id)?.attendance_id ?? null,
+          marked_by_name: r.marked_by ? (pMap.get(r.marked_by) ?? "—") : "—",
+          can_edit: actor.isAdmin || withinWindow,
+        };
+      }),
     };
+  });
+
+// ---------- update single record (24h window for teachers) ----------
+export const updateAttendanceRecord = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) => z.object({
+    recordId: z.string().uuid(),
+    status: z.enum(["present", "absent", "late", "leave"]),
+    remarks: z.string().trim().max(300).optional().nullable(),
+  }).parse(i))
+  .handler(async ({ data, context }) => {
+    const actor = await getActor(context.userId);
+    if (!actor.schoolId) return { ok: false as const, error: "No school." };
+
+    const { data: rec } = await supabaseAdmin.from("attendance_records")
+      .select("id, section_id, school_id, created_at")
+      .eq("id", data.recordId).maybeSingle();
+    if (!rec || rec.school_id !== actor.schoolId) return { ok: false as const, error: "Record not found." };
+
+    if (!actor.isAdmin) {
+      const ok = await teacherCanMarkSection(context.userId, rec.section_id);
+      if (!ok) return { ok: false as const, error: "Not assigned to this section." };
+      const ageMs = Date.now() - new Date(rec.created_at).getTime();
+      if (ageMs > 24 * 60 * 60 * 1000) {
+        return { ok: false as const, error: "Edit window (24 hours) has expired." };
+      }
+    }
+
+    const { error } = await supabaseAdmin.from("attendance_records")
+      .update({
+        status: data.status,
+        remarks: data.remarks || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", data.recordId);
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
   });
 
 async function getTeacherSectionIds(userId: string): Promise<string[]> {
