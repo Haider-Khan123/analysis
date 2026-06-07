@@ -130,13 +130,13 @@ function StudentsListPage() {
 
   const term = search.trim().toLowerCase();
   const rows = useMemo(() => {
-    const list = studentsQ.data ?? [];
+    const list = studentsData;
     if (!term) return list;
     return list.filter((s) =>
       [s.full_name, s.attendance_id, s.admission_number]
         .some((v) => (v ?? "").toString().toLowerCase().includes(term))
     );
-  }, [studentsQ.data, term]);
+  }, [studentsData, term]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
