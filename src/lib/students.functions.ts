@@ -117,11 +117,6 @@ export const updateStudent = createServerFn({ method: "POST" })
       .select("*").eq("id", data.id).eq("school_id", schoolId).maybeSingle();
     if (!existing) return { ok: false as const, error: "Student not found." };
 
-    if (data.attendance_id !== existing.attendance_id) {
-      const { data: dup } = await supabaseAdmin.from("students")
-        .select("id").eq("school_id", schoolId).eq("attendance_id", data.attendance_id).neq("id", data.id).maybeSingle();
-      if (dup) return { ok: false as const, error: "Attendance ID already exists." };
-    }
     if (data.admission_number !== existing.admission_number) {
       const { data: dup } = await supabaseAdmin.from("students")
         .select("id").eq("school_id", schoolId).eq("admission_number", data.admission_number).neq("id", data.id).maybeSingle();
