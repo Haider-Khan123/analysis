@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      attendance_records: {
+        Row: {
+          attendance_date: string
+          class_id: string
+          created_at: string
+          id: string
+          is_draft: boolean
+          marked_by: string | null
+          remarks: string | null
+          school_id: string
+          section_id: string
+          status: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          attendance_date: string
+          class_id: string
+          created_at?: string
+          id?: string
+          is_draft?: boolean
+          marked_by?: string | null
+          remarks?: string | null
+          school_id: string
+          section_id: string
+          status?: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          attendance_date?: string
+          class_id?: string
+          created_at?: string
+          id?: string
+          is_draft?: boolean
+          marked_by?: string | null
+          remarks?: string | null
+          school_id?: string
+          section_id?: string
+          status?: Database["public"]["Enums"]["attendance_status"]
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      attendance_settings: {
+        Row: {
+          created_at: string
+          edit_cutoff_hours: number
+          id: string
+          low_attendance_threshold: number
+          school_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          edit_cutoff_hours?: number
+          id?: string
+          low_attendance_threshold?: number
+          school_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          edit_cutoff_hours?: number
+          id?: string
+          low_attendance_threshold?: number
+          school_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -108,6 +180,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          metadata: Json | null
+          school_id: string | null
+          student_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          metadata?: Json | null
+          school_id?: string | null
+          student_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          metadata?: Json | null
+          school_id?: string | null
+          student_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       parent_students: {
         Row: {
@@ -678,9 +789,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_parent_of_student: { Args: { _student_id: string }; Returns: boolean }
+      is_teacher_of_section: { Args: { _section_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "teacher" | "parent"
+      attendance_status: "present" | "absent" | "late" | "leave"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -809,6 +923,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "teacher", "parent"],
+      attendance_status: ["present", "absent", "late", "leave"],
     },
   },
 } as const

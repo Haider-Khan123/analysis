@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Building2, GraduationCap, UserCog, School, Users, Layers } from "lucide-react";
 import { getDashboardStats } from "@/lib/school.functions";
 import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
+import { getMyChildrenAttendance } from "@/lib/attendance.functions";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -13,7 +14,9 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function Dashboard() {
   const { profile, session, roles, loading } = useAuth();
-  const isTeacher = roles.includes("teacher") && !roles.includes("admin");
+  const isAdmin = roles.includes("admin");
+  const isTeacher = roles.includes("teacher") && !isAdmin;
+  const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
   const rolesReady = !loading && roles.length > 0;
 
   return (
@@ -25,6 +28,8 @@ function Dashboard() {
       </div>
       {!rolesReady ? (
         <p className="text-sm text-muted-foreground">Loading your dashboard…</p>
+      ) : isParent ? (
+        <ParentDashboard enabled={!!session?.access_token} />
       ) : isTeacher ? (
         <TeacherDashboard enabled={!!session?.access_token} />
       ) : (
@@ -33,6 +38,54 @@ function Dashboard() {
     </div>
   );
 }
+
+function ParentDashboard({ enabled }: { enabled: boolean }) {
+  const fetchChildren = useServerFn(getMyChildrenAttendance);
+  const today = new Date();
+  const monthAgo = new Date(today.getTime() - 30 * 86400_000);
+  const { data, isLoading } = useQuery({
+    queryKey: ["parent-children-attendance"],
+    queryFn: () => fetchChildren({ data: { from: monthAgo.toISOString().slice(0,10), to: today.toISOString().slice(0,10) } }),
+    enabled,
+  });
+  if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
+  const children = data?.children ?? [];
+  if (children.length === 0) {
+    return <p className="text-sm text-muted-foreground">No linked children found. Contact your school administrator.</p>;
+  }
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {children.map((c) => (
+        <div key={c.id} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold">{c.full_name}</p>
+              <p className="text-xs text-muted-foreground">ID: {c.attendance_id ?? "—"}</p>
+            </div>
+            <span className={`text-2xl font-bold ${c.percentage < 75 ? "text-destructive" : "text-primary"}`}>{c.percentage}%</span>
+          </div>
+          <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs">
+            <Stat label="Present" v={c.present} />
+            <Stat label="Absent" v={c.absent} />
+            <Stat label="Late" v={c.late} />
+            <Stat label="Leave" v={c.leave} />
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">Last 30 days · {c.total} school days</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Stat({ label, v }: { label: string; v: number }) {
+  return (
+    <div className="rounded-md bg-muted/40 py-2">
+      <p className="text-base font-semibold">{v}</p>
+      <p className="text-muted-foreground">{label}</p>
+    </div>
+  );
+}
+
 
 function AdminDashboard({ enabled }: { enabled: boolean }) {
   const fetchStats = useServerFn(getDashboardStats);

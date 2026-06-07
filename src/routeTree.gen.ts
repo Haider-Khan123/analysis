@@ -19,14 +19,21 @@ import { Route as AuthenticatedTeachersRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated.students'
 import { Route as AuthenticatedSchoolProfileRouteImport } from './routes/_authenticated.school-profile'
 import { Route as AuthenticatedParentsRouteImport } from './routes/_authenticated.parents'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated.classes'
+import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated.attendance'
 import { Route as AuthenticatedTeachersIndexRouteImport } from './routes/_authenticated.teachers.index'
 import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authenticated.students.index'
 import { Route as AuthenticatedParentsIndexRouteImport } from './routes/_authenticated.parents.index'
+import { Route as AuthenticatedAttendanceIndexRouteImport } from './routes/_authenticated.attendance.index'
 import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated.teachers.$teacherId'
 import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated.students.$studentId'
 import { Route as AuthenticatedParentsParentIdRouteImport } from './routes/_authenticated.parents.$parentId'
+import { Route as AuthenticatedAttendanceSettingsRouteImport } from './routes/_authenticated.attendance.settings'
+import { Route as AuthenticatedAttendanceReportsRouteImport } from './routes/_authenticated.attendance.reports'
+import { Route as AuthenticatedAttendanceMarkRouteImport } from './routes/_authenticated.attendance.mark'
+import { Route as AuthenticatedAttendanceHistoryRouteImport } from './routes/_authenticated.attendance.history'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -78,6 +85,12 @@ const AuthenticatedParentsRoute = AuthenticatedParentsRouteImport.update({
   path: '/parents',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -86,6 +99,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
   id: '/classes',
   path: '/classes',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedTeachersIndexRoute =
@@ -106,6 +124,12 @@ const AuthenticatedParentsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedParentsRoute,
   } as any)
+const AuthenticatedAttendanceIndexRoute =
+  AuthenticatedAttendanceIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
 const AuthenticatedTeachersTeacherIdRoute =
   AuthenticatedTeachersTeacherIdRouteImport.update({
     id: '/$teacherId',
@@ -124,22 +148,53 @@ const AuthenticatedParentsParentIdRoute =
     path: '/$parentId',
     getParentRoute: () => AuthenticatedParentsRoute,
   } as any)
+const AuthenticatedAttendanceSettingsRoute =
+  AuthenticatedAttendanceSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedAttendanceReportsRoute =
+  AuthenticatedAttendanceReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedAttendanceMarkRoute =
+  AuthenticatedAttendanceMarkRouteImport.update({
+    id: '/mark',
+    path: '/mark',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedAttendanceHistoryRoute =
+  AuthenticatedAttendanceHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/attendance': typeof AuthenticatedAttendanceRouteWithChildren
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/parents': typeof AuthenticatedParentsRouteWithChildren
   '/school-profile': typeof AuthenticatedSchoolProfileRoute
   '/students': typeof AuthenticatedStudentsRouteWithChildren
   '/teachers': typeof AuthenticatedTeachersRouteWithChildren
   '/users': typeof AuthenticatedUsersRoute
+  '/attendance/history': typeof AuthenticatedAttendanceHistoryRoute
+  '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
+  '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
+  '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
   '/parents/$parentId': typeof AuthenticatedParentsParentIdRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
+  '/attendance/': typeof AuthenticatedAttendanceIndexRoute
   '/parents/': typeof AuthenticatedParentsIndexRoute
   '/students/': typeof AuthenticatedStudentsIndexRoute
   '/teachers/': typeof AuthenticatedTeachersIndexRoute
@@ -151,11 +206,17 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/school-profile': typeof AuthenticatedSchoolProfileRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/attendance/history': typeof AuthenticatedAttendanceHistoryRoute
+  '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
+  '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
+  '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
   '/parents/$parentId': typeof AuthenticatedParentsParentIdRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
+  '/attendance': typeof AuthenticatedAttendanceIndexRoute
   '/parents': typeof AuthenticatedParentsIndexRoute
   '/students': typeof AuthenticatedStudentsIndexRoute
   '/teachers': typeof AuthenticatedTeachersIndexRoute
@@ -167,16 +228,23 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/attendance': typeof AuthenticatedAttendanceRouteWithChildren
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/parents': typeof AuthenticatedParentsRouteWithChildren
   '/_authenticated/school-profile': typeof AuthenticatedSchoolProfileRoute
   '/_authenticated/students': typeof AuthenticatedStudentsRouteWithChildren
   '/_authenticated/teachers': typeof AuthenticatedTeachersRouteWithChildren
   '/_authenticated/users': typeof AuthenticatedUsersRoute
+  '/_authenticated/attendance/history': typeof AuthenticatedAttendanceHistoryRoute
+  '/_authenticated/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
+  '/_authenticated/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
+  '/_authenticated/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
   '/_authenticated/parents/$parentId': typeof AuthenticatedParentsParentIdRoute
   '/_authenticated/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/_authenticated/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
+  '/_authenticated/attendance/': typeof AuthenticatedAttendanceIndexRoute
   '/_authenticated/parents/': typeof AuthenticatedParentsIndexRoute
   '/_authenticated/students/': typeof AuthenticatedStudentsIndexRoute
   '/_authenticated/teachers/': typeof AuthenticatedTeachersIndexRoute
@@ -188,16 +256,23 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/attendance'
     | '/classes'
     | '/dashboard'
+    | '/notifications'
     | '/parents'
     | '/school-profile'
     | '/students'
     | '/teachers'
     | '/users'
+    | '/attendance/history'
+    | '/attendance/mark'
+    | '/attendance/reports'
+    | '/attendance/settings'
     | '/parents/$parentId'
     | '/students/$studentId'
     | '/teachers/$teacherId'
+    | '/attendance/'
     | '/parents/'
     | '/students/'
     | '/teachers/'
@@ -209,11 +284,17 @@ export interface FileRouteTypes {
     | '/signup'
     | '/classes'
     | '/dashboard'
+    | '/notifications'
     | '/school-profile'
     | '/users'
+    | '/attendance/history'
+    | '/attendance/mark'
+    | '/attendance/reports'
+    | '/attendance/settings'
     | '/parents/$parentId'
     | '/students/$studentId'
     | '/teachers/$teacherId'
+    | '/attendance'
     | '/parents'
     | '/students'
     | '/teachers'
@@ -224,16 +305,23 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/_authenticated/attendance'
     | '/_authenticated/classes'
     | '/_authenticated/dashboard'
+    | '/_authenticated/notifications'
     | '/_authenticated/parents'
     | '/_authenticated/school-profile'
     | '/_authenticated/students'
     | '/_authenticated/teachers'
     | '/_authenticated/users'
+    | '/_authenticated/attendance/history'
+    | '/_authenticated/attendance/mark'
+    | '/_authenticated/attendance/reports'
+    | '/_authenticated/attendance/settings'
     | '/_authenticated/parents/$parentId'
     | '/_authenticated/students/$studentId'
     | '/_authenticated/teachers/$teacherId'
+    | '/_authenticated/attendance/'
     | '/_authenticated/parents/'
     | '/_authenticated/students/'
     | '/_authenticated/teachers/'
@@ -319,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParentsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -331,6 +426,13 @@ declare module '@tanstack/react-router' {
       path: '/classes'
       fullPath: '/classes'
       preLoaderRoute: typeof AuthenticatedClassesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/attendance': {
+      id: '/_authenticated/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AuthenticatedAttendanceRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/teachers/': {
@@ -354,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParentsIndexRouteImport
       parentRoute: typeof AuthenticatedParentsRoute
     }
+    '/_authenticated/attendance/': {
+      id: '/_authenticated/attendance/'
+      path: '/'
+      fullPath: '/attendance/'
+      preLoaderRoute: typeof AuthenticatedAttendanceIndexRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
     '/_authenticated/teachers/$teacherId': {
       id: '/_authenticated/teachers/$teacherId'
       path: '/$teacherId'
@@ -375,8 +484,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParentsParentIdRouteImport
       parentRoute: typeof AuthenticatedParentsRoute
     }
+    '/_authenticated/attendance/settings': {
+      id: '/_authenticated/attendance/settings'
+      path: '/settings'
+      fullPath: '/attendance/settings'
+      preLoaderRoute: typeof AuthenticatedAttendanceSettingsRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/attendance/reports': {
+      id: '/_authenticated/attendance/reports'
+      path: '/reports'
+      fullPath: '/attendance/reports'
+      preLoaderRoute: typeof AuthenticatedAttendanceReportsRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/attendance/mark': {
+      id: '/_authenticated/attendance/mark'
+      path: '/mark'
+      fullPath: '/attendance/mark'
+      preLoaderRoute: typeof AuthenticatedAttendanceMarkRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/attendance/history': {
+      id: '/_authenticated/attendance/history'
+      path: '/history'
+      fullPath: '/attendance/history'
+      preLoaderRoute: typeof AuthenticatedAttendanceHistoryRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
   }
 }
+
+interface AuthenticatedAttendanceRouteChildren {
+  AuthenticatedAttendanceHistoryRoute: typeof AuthenticatedAttendanceHistoryRoute
+  AuthenticatedAttendanceMarkRoute: typeof AuthenticatedAttendanceMarkRoute
+  AuthenticatedAttendanceReportsRoute: typeof AuthenticatedAttendanceReportsRoute
+  AuthenticatedAttendanceSettingsRoute: typeof AuthenticatedAttendanceSettingsRoute
+  AuthenticatedAttendanceIndexRoute: typeof AuthenticatedAttendanceIndexRoute
+}
+
+const AuthenticatedAttendanceRouteChildren: AuthenticatedAttendanceRouteChildren =
+  {
+    AuthenticatedAttendanceHistoryRoute: AuthenticatedAttendanceHistoryRoute,
+    AuthenticatedAttendanceMarkRoute: AuthenticatedAttendanceMarkRoute,
+    AuthenticatedAttendanceReportsRoute: AuthenticatedAttendanceReportsRoute,
+    AuthenticatedAttendanceSettingsRoute: AuthenticatedAttendanceSettingsRoute,
+    AuthenticatedAttendanceIndexRoute: AuthenticatedAttendanceIndexRoute,
+  }
+
+const AuthenticatedAttendanceRouteWithChildren =
+  AuthenticatedAttendanceRoute._addFileChildren(
+    AuthenticatedAttendanceRouteChildren,
+  )
 
 interface AuthenticatedParentsRouteChildren {
   AuthenticatedParentsParentIdRoute: typeof AuthenticatedParentsParentIdRoute
@@ -422,8 +581,10 @@ const AuthenticatedTeachersRouteWithChildren =
   )
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRouteWithChildren
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedParentsRoute: typeof AuthenticatedParentsRouteWithChildren
   AuthenticatedSchoolProfileRoute: typeof AuthenticatedSchoolProfileRoute
   AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRouteWithChildren
@@ -432,8 +593,10 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAttendanceRoute: AuthenticatedAttendanceRouteWithChildren,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedParentsRoute: AuthenticatedParentsRouteWithChildren,
   AuthenticatedSchoolProfileRoute: AuthenticatedSchoolProfileRoute,
   AuthenticatedStudentsRoute: AuthenticatedStudentsRouteWithChildren,
