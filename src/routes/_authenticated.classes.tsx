@@ -264,7 +264,7 @@ function ClassesPage() {
 
       <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
         <div className="overflow-auto max-h-[480px] rounded-lg border border-border">
-          {classesQ.isLoading ? (
+          {isClassesLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
           ) : !filteredGrouped.length ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
