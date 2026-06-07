@@ -19,6 +19,7 @@ import {
   StudentForm, emptyStudent, validateStudent, type StudentFormValues,
 } from "@/components/student-form";
 import { createStudent, deleteStudent } from "@/lib/students.functions";
+import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
 
 export const Route = createFileRoute("/_authenticated/students/")({
   head: () => ({ meta: [{ title: "Students — Analysis" }] }),
@@ -29,6 +30,7 @@ function StudentsListPage() {
   const { roles } = useAuth();
   const { schoolId, schoolName } = useCurrentSchool();
   const isAdmin = roles.includes("admin") || roles.length === 0;
+  const isTeacher = roles.includes("teacher") && !roles.includes("admin");
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<StudentFormValues>(emptyStudent);
@@ -36,6 +38,13 @@ function StudentsListPage() {
 
   const create = useServerFn(createStudent);
   const remove = useServerFn(deleteStudent);
+  const fetchScope = useServerFn(getTeacherScopedData);
+
+  const scopeQ = useQuery({
+    queryKey: ["teacher-scope"],
+    queryFn: () => fetchScope(),
+    enabled: isTeacher,
+  });
 
   const studentsQ = useQuery({
     queryKey: ["students"],
@@ -46,18 +55,26 @@ function StudentsListPage() {
       if (error) throw error;
       return data;
     },
+    enabled: !isTeacher,
   });
   const classesQ = useQuery({
     queryKey: ["classes"],
     queryFn: async () => (await supabase.from("classes").select("id, name").order("name")).data ?? [],
+    enabled: !isTeacher,
   });
   const sectionsQ = useQuery({
     queryKey: ["sections"],
     queryFn: async () => (await supabase.from("sections").select("id, name, class_id").order("name")).data ?? [],
+    enabled: !isTeacher,
   });
 
-  const classMap = Object.fromEntries((classesQ.data ?? []).map((c) => [c.id, c.name]));
-  const sectionMap = Object.fromEntries((sectionsQ.data ?? []).map((s) => [s.id, s.name]));
+  const studentsData = isTeacher ? (scopeQ.data?.students ?? []) : (studentsQ.data ?? []);
+  const classesList = isTeacher ? (scopeQ.data?.classes ?? []) : (classesQ.data ?? []);
+  const sectionsList = isTeacher ? (scopeQ.data?.sections ?? []) : (sectionsQ.data ?? []);
+  const studentsLoading = isTeacher ? scopeQ.isLoading : studentsQ.isLoading;
+
+  const classMap = Object.fromEntries(classesList.map((c) => [c.id, c.name]));
+  const sectionMap = Object.fromEntries(sectionsList.map((s) => [s.id, s.name]));
 
   const add = useMutation({
     mutationFn: async () => {
