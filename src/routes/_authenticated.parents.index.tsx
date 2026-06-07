@@ -140,13 +140,13 @@ function ParentsListPage() {
 
   const term = search.trim().toLowerCase();
   const rows = useMemo(() => {
-    const list = parentsQ.data ?? [];
+    const list = parentsData;
     if (!term) return list;
     return list.filter((p) =>
       [p.full_name, p.parent_id, p.phone, p.cnic]
         .some((v) => (v ?? "").toString().toLowerCase().includes(term))
     );
-  }, [parentsQ.data, term]);
+  }, [parentsData, term]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
