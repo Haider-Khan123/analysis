@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useNavigate, useLocation } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -168,6 +168,9 @@ function SidebarContent({
 
   const showAttendance = isAdmin || isTeacher || isParent;
   const attItems = attendanceNav.filter((i) => isAdmin || !i.adminOnly);
+  const onAttendance = pathname.startsWith("/attendance");
+  const [attOpen, setAttOpen] = useState(onAttendance);
+  useEffect(() => { if (onAttendance) setAttOpen(true); }, [onAttendance]);
 
   const isLocked = (gate: string | null) => {
     if (!gate || !isOnboarding) return false;
@@ -210,12 +213,20 @@ function SidebarContent({
           {showAttendance && !isParent && (
             <div className="pt-3">
               <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Attendance</p>
-              <Link to="/attendance/mark"
-                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                  pathname.startsWith("/attendance") ? "bg-primary/10 text-primary" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
-                <ClipboardCheck className="h-4 w-4" /> Attendance Management
-              </Link>
-              {pathname.startsWith("/attendance") && (
+              <button
+                type="button"
+                onClick={() => setAttOpen((v) => !v)}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium",
+                  onAttendance ? "bg-primary/10 text-primary" : "text-sidebar-foreground hover:bg-sidebar-accent",
+                )}
+                aria-expanded={attOpen}
+              >
+                <ClipboardCheck className="h-4 w-4" />
+                <span className="flex-1">Attendance Management</span>
+                <span className={cn("text-xs transition-transform", attOpen ? "rotate-90" : "")}>›</span>
+              </button>
+              {attOpen && (
                 <div className="ml-7 mt-1 space-y-0.5 border-l border-border pl-3">
                   {attItems.map((i) => (
                     <Link key={i.to} to={i.to}
