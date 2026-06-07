@@ -58,11 +58,13 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
+  const isTeacherOnly = roles.includes("teacher") && !roles.includes("admin");
   const fetchStats = useServerFn(getDashboardStats);
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => fetchStats(),
-    enabled: isAuthenticated && !!session?.access_token,
+    // Teachers don't need (or correctly see) school-wide stats — skip the call.
+    enabled: isAuthenticated && !!session?.access_token && !isTeacherOnly,
   });
 
   const handleSignOut = async () => {
