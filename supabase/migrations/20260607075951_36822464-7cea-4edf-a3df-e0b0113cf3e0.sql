@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS public.students_school_attendance_uidx;
