@@ -159,12 +159,12 @@ function ClassesPage() {
       primaryId: string;
       sections: { id: string; name: string }[];
     }>();
-    for (const c of (classesQ.data ?? [])) {
+    for (const c of classesData) {
       const entry = byName.get(c.name) ?? { name: c.name, classIds: [], primaryId: c.id, sections: [] };
       entry.classIds.push(c.id);
       byName.set(c.name, entry);
     }
-    for (const s of (sectionsQ.data ?? [])) {
+    for (const s of sectionsData) {
       for (const entry of byName.values()) {
         if (entry.classIds.includes(s.class_id)) {
           entry.sections.push({ id: s.id, name: s.name });
@@ -175,7 +175,7 @@ function ClassesPage() {
     return Array.from(byName.values()).sort(
       (a, b) => Number(a.name) - Number(b.name) || a.name.localeCompare(b.name),
     );
-  }, [classesQ.data, sectionsQ.data]);
+  }, [classesData, sectionsData]);
 
   const filteredGrouped = useMemo(() => {
     if (!term) return grouped;
