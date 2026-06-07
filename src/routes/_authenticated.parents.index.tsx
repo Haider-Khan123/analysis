@@ -160,7 +160,7 @@ function ParentsListPage() {
                 <DialogTitle>New Parent</DialogTitle>
                 {schoolName && <p className="text-xs text-muted-foreground">Institute: {schoolName}</p>}
               </DialogHeader>
-              <ParentForm value={form} onChange={setForm} students={studentsQ.data ?? []} />
+              <ParentForm value={form} onChange={setForm} students={studentsList} />
               <DialogFooter>
                 <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
                   {add.isPending ? "Saving…" : "Save Parent"}
