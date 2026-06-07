@@ -30,12 +30,12 @@ const nav = [
   { to: "/users", label: "User Management", icon: ShieldCheck, gate: null, adminOnly: true },
 ] as const;
 
-const attendanceNav = [
+const attendanceNav: ReadonlyArray<{ to: string; label: string; adminOnly?: boolean }> = [
   { to: "/attendance/mark", label: "Mark Attendance" },
   { to: "/attendance/history", label: "Attendance History" },
   { to: "/attendance/reports", label: "Attendance Reports" },
   { to: "/attendance/settings", label: "Attendance Settings", adminOnly: true },
-] as const;
+];
 
 const gateMessages: Record<string, string> = {
   institute: "Create your institute in School Profile first.",
