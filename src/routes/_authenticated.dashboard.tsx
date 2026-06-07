@@ -12,8 +12,9 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const { profile, session, roles } = useAuth();
+  const { profile, session, roles, loading } = useAuth();
   const isTeacher = roles.includes("teacher") && !roles.includes("admin");
+  const rolesReady = !loading && roles.length > 0;
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -22,7 +23,9 @@ function Dashboard() {
           Welcome, {profile?.full_name ?? "there"}! Have a nice day.
         </h1>
       </div>
-      {isTeacher ? (
+      {!rolesReady ? (
+        <p className="text-sm text-muted-foreground">Loading your dashboard…</p>
+      ) : isTeacher ? (
         <TeacherDashboard enabled={!!session?.access_token} />
       ) : (
         <AdminDashboard enabled={!!session?.access_token} />
@@ -69,6 +72,8 @@ function TeacherDashboard({ enabled }: { enabled: boolean }) {
     queryKey: ["teacher-scope"],
     queryFn: () => fetchScope(),
     enabled,
+    refetchOnMount: "always",
+    staleTime: 0,
   });
 
   return (
