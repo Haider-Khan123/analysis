@@ -3,33 +3,17 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
-  LayoutDashboard,
-  GraduationCap,
-  Users,
-  UserCog,
-  School,
-  Building2,
-  LogOut,
-  Menu,
-  Lock,
-  ShieldCheck,
+  LayoutDashboard, GraduationCap, Users, UserCog, School, Building2,
+  LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";
+import { listMyNotifications } from "@/lib/notifications.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-  SheetHeader,
-} from "@/components/ui/sheet";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -46,6 +30,13 @@ const nav = [
   { to: "/users", label: "User Management", icon: ShieldCheck, gate: null, adminOnly: true },
 ] as const;
 
+const attendanceNav = [
+  { to: "/attendance/mark", label: "Mark Attendance" },
+  { to: "/attendance/history", label: "Attendance History" },
+  { to: "/attendance/reports", label: "Attendance Reports" },
+  { to: "/attendance/settings", label: "Attendance Settings", adminOnly: true },
+] as const;
+
 const gateMessages: Record<string, string> = {
   institute: "Create your institute in School Profile first.",
   classes: "Add at least one class & section first.",
@@ -54,18 +45,37 @@ const gateMessages: Record<string, string> = {
 };
 
 function AuthenticatedLayout() {
-  const { isAuthenticated, loading, profile, roles, signOut, session } = useAuth();
+  const { isAuthenticated, loading, profile, roles, signOut, session, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const isTeacherOnly = roles.includes("teacher") && !roles.includes("admin");
+  const isAdmin = roles.includes("admin");
+  const isTeacher = roles.includes("teacher") && !isAdmin;
+  const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
   const fetchStats = useServerFn(getDashboardStats);
+  const fetchNotifs = useServerFn(listMyNotifications);
+
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => fetchStats(),
-    // Teachers don't need (or correctly see) school-wide stats — skip the call.
-    enabled: isAuthenticated && !!session?.access_token && !isTeacherOnly,
+    enabled: isAuthenticated && !!session?.access_token && !isTeacher && !isParent,
   });
+
+  const { data: notifData } = useQuery({
+    queryKey: ["my-notifications"],
+    queryFn: () => fetchNotifs(),
+    enabled: isAuthenticated && !!session?.access_token,
+  });
+  const unread = (notifData?.notifications ?? []).filter((n) => !n.is_read).length;
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const ch = supabase.channel("notif-layout-" + user.id)
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+        () => queryClient.invalidateQueries({ queryKey: ["my-notifications"] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user?.id, queryClient]);
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
@@ -75,9 +85,7 @@ function AuthenticatedLayout() {
   };
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      navigate({ to: "/login", replace: true });
-    }
+    if (!loading && !isAuthenticated) navigate({ to: "/login", replace: true });
   }, [isAuthenticated, loading, navigate]);
 
   if (loading || !isAuthenticated) {
@@ -88,14 +96,13 @@ function AuthenticatedLayout() {
     );
   }
 
-  // Empty roles = fresh user/onboarding — treat as admin for sidebar visibility.
   const role = roles[0] ?? "admin";
   const counts = stats?.counts ?? { institute: 0, classes: 0, teachers: 0, students: 0, parents: 0 };
 
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 flex-col border-r border-border bg-sidebar md:flex">
-        <SidebarContent role={role} pathname={location.pathname} counts={counts} />
+        <SidebarContent role={role} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
       </aside>
 
       <div className="flex flex-1 flex-col">
@@ -108,10 +115,8 @@ function AuthenticatedLayout() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
-                <SheetHeader className="sr-only">
-                  <SheetTitle>Navigation</SheetTitle>
-                </SheetHeader>
-                <SidebarContent role={role} pathname={location.pathname} counts={counts} />
+                <SheetHeader className="sr-only"><SheetTitle>Navigation</SheetTitle></SheetHeader>
+                <SidebarContent role={role} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
               </SheetContent>
             </Sheet>
             <div>
@@ -120,9 +125,17 @@ function AuthenticatedLayout() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium capitalize text-primary">
-              {role}
-            </span>
+            <Link to="/notifications" className="relative">
+              <Button variant="ghost" size="icon">
+                <Bell className="h-5 w-5" />
+              </Button>
+              {unread > 0 && (
+                <Badge variant="destructive" className="absolute -right-1 -top-1 h-5 min-w-5 justify-center px-1 text-[10px]">
+                  {unread > 99 ? "99+" : unread}
+                </Badge>
+              )}
+            </Link>
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium capitalize text-primary">{role}</span>
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4" />
               <span className="ml-2 hidden sm:inline">Sign out</span>
@@ -139,86 +152,96 @@ function AuthenticatedLayout() {
 }
 
 function SidebarContent({
-  role,
-  pathname,
-  counts,
+  role, isAdmin, isTeacher, isParent, pathname, counts,
 }: {
-  role: string;
+  role: string; isAdmin: boolean; isTeacher: boolean; isParent: boolean;
   pathname: string;
   counts: { institute: number; classes: number; teachers: number; students: number; parents: number };
 }) {
-  // Admins (and users with no role yet, i.e. fresh onboarding) see every tab.
-  // Teachers/parents see a limited subset.
   const isOnboarding = role === "admin" || !role;
   const visible = nav.filter((item) => {
+    if (isParent) return ["/dashboard"].includes(item.to);
+    if (isTeacher) return ["/dashboard", "/classes", "/students", "/parents"].includes(item.to);
     if (isOnboarding) return true;
-    if (role === "teacher")
-      return ["/dashboard", "/classes", "/students", "/parents"].includes(item.to);
-    return ["/dashboard", "/students"].includes(item.to);
+    return ["/dashboard"].includes(item.to);
   });
 
+  const showAttendance = isAdmin || isTeacher || isParent;
+  const attItems = attendanceNav.filter((i) => isAdmin || !i.adminOnly);
+
   const isLocked = (gate: string | null) => {
-    if (!gate) return false;
-    if (!isOnboarding) return false; // gating only applies during admin onboarding
+    if (!gate || !isOnboarding) return false;
     return (counts as Record<string, number>)[gate] < 1;
   };
-
-
 
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b border-border px-6 py-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-          A
-        </div>
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">A</div>
         <span className="text-lg font-semibold tracking-tight">Analysis</span>
       </div>
       <TooltipProvider delayDuration={150}>
-        <nav className="flex-1 space-y-1 p-3">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {visible.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.to;
             const locked = isLocked(item.gate);
-
             if (locked) {
               return (
                 <Tooltip key={item.to}>
                   <TooltipTrigger asChild>
-                    <div
-                      aria-disabled
-                      className={cn(
-                        "flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                        "text-muted-foreground/60",
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span className="flex-1">{item.label}</span>
-                      <Lock className="h-3.5 w-3.5" />
+                    <div aria-disabled className="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground/60">
+                      <Icon className="h-4 w-4" /><span className="flex-1">{item.label}</span><Lock className="h-3.5 w-3.5" />
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent side="right">
-                    {gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}
-                  </TooltipContent>
+                  <TooltipContent side="right">{gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}</TooltipContent>
                 </Tooltip>
               );
             }
-
             return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
+              <Link key={item.to} to={item.to}
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  active ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <Icon className="h-4 w-4" />{item.label}
               </Link>
             );
           })}
+
+          {showAttendance && !isParent && (
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Attendance</p>
+              <Link to="/attendance/mark"
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                  pathname.startsWith("/attendance") ? "bg-primary/10 text-primary" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <ClipboardCheck className="h-4 w-4" /> Attendance Management
+              </Link>
+              {pathname.startsWith("/attendance") && (
+                <div className="ml-7 mt-1 space-y-0.5 border-l border-border pl-3">
+                  {attItems.map((i) => (
+                    <Link key={i.to} to={i.to}
+                      className={cn("block rounded-md px-2 py-1 text-xs",
+                        pathname === i.to ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground")}>
+                      {i.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {isParent && (
+            <Link to="/attendance/history"
+              className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                pathname.startsWith("/attendance") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+              <ClipboardCheck className="h-4 w-4" /> My Children's Attendance
+            </Link>
+          )}
+
+          <Link to="/notifications"
+            className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+              pathname === "/notifications" ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+            <Bell className="h-4 w-4" /> Notifications
+          </Link>
         </nav>
       </TooltipProvider>
     </div>
