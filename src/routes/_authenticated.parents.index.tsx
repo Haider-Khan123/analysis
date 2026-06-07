@@ -183,7 +183,7 @@ function ParentsListPage() {
 
       <div className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
         <ScrollArea className="max-h-[60vh] pr-2">
-          {parentsQ.isLoading ? (
+          {parentsLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
           ) : !rows.length ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
