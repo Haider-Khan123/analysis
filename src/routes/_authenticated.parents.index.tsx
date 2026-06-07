@@ -20,6 +20,7 @@ import {
 } from "@/components/parent-form";
 import { createParent, deleteParent } from "@/lib/parents.functions";
 import { inviteUserForRow } from "@/lib/school.functions";
+import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
 
 export const Route = createFileRoute("/_authenticated/parents/")({
   head: () => ({ meta: [{ title: "Parents — Analysis" }] }),
@@ -30,6 +31,7 @@ function ParentsListPage() {
   const { roles } = useAuth();
   const { schoolId, schoolName } = useCurrentSchool();
   const isAdmin = roles.includes("admin") || roles.length === 0;
+  const isTeacher = roles.includes("teacher") && !roles.includes("admin");
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<ParentFormValues>(emptyParent);
@@ -38,6 +40,13 @@ function ParentsListPage() {
   const create = useServerFn(createParent);
   const remove = useServerFn(deleteParent);
   const invite = useServerFn(inviteUserForRow);
+  const fetchScope = useServerFn(getTeacherScopedData);
+
+  const scopeQ = useQuery({
+    queryKey: ["teacher-scope"],
+    queryFn: () => fetchScope(),
+    enabled: isTeacher,
+  });
 
   const parentsQ = useQuery({
     queryKey: ["parents"],
@@ -48,13 +57,23 @@ function ParentsListPage() {
       if (error) throw error;
       return data;
     },
+    enabled: !isTeacher,
   });
 
   const studentsQ = useQuery({
     queryKey: ["students-all"],
     queryFn: async () => (await supabase.from("students")
       .select("id, full_name, admission_number").order("full_name")).data ?? [],
+    enabled: !isTeacher,
   });
+
+  const parentsData = isTeacher ? (scopeQ.data?.parents ?? []) : (parentsQ.data ?? []);
+  const studentsList = isTeacher
+    ? (scopeQ.data?.students ?? []).map((s) => ({
+        id: s.id, full_name: s.full_name, admission_number: s.admission_number,
+      }))
+    : (studentsQ.data ?? []);
+  const parentsLoading = isTeacher ? scopeQ.isLoading : parentsQ.isLoading;
 
   const add = useMutation({
     mutationFn: async () => {
@@ -121,13 +140,13 @@ function ParentsListPage() {
 
   const term = search.trim().toLowerCase();
   const rows = useMemo(() => {
-    const list = parentsQ.data ?? [];
+    const list = parentsData;
     if (!term) return list;
     return list.filter((p) =>
       [p.full_name, p.parent_id, p.phone, p.cnic]
         .some((v) => (v ?? "").toString().toLowerCase().includes(term))
     );
-  }, [parentsQ.data, term]);
+  }, [parentsData, term]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
@@ -141,7 +160,7 @@ function ParentsListPage() {
                 <DialogTitle>New Parent</DialogTitle>
                 {schoolName && <p className="text-xs text-muted-foreground">Institute: {schoolName}</p>}
               </DialogHeader>
-              <ParentForm value={form} onChange={setForm} students={studentsQ.data ?? []} />
+              <ParentForm value={form} onChange={setForm} students={studentsList} />
               <DialogFooter>
                 <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
                   {add.isPending ? "Saving…" : "Save Parent"}
@@ -164,7 +183,7 @@ function ParentsListPage() {
 
       <div className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
         <ScrollArea className="max-h-[60vh] pr-2">
-          {parentsQ.isLoading ? (
+          {parentsLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
           ) : !rows.length ? (
             <p className="py-8 text-center text-sm text-muted-foreground">

@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Plus, Trash2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useCurrentSchool } from "@/lib/use-current-school";
+import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +30,15 @@ function ClassesPage() {
   const { roles } = useAuth();
   const { schoolId, schoolName } = useCurrentSchool();
   const isAdmin = roles.includes("admin") || roles.length === 0;
+  const isTeacher = roles.includes("teacher") && !roles.includes("admin");
   const qc = useQueryClient();
+
+  const fetchScope = useServerFn(getTeacherScopedData);
+  const scopeQ = useQuery({
+    queryKey: ["teacher-scope"],
+    queryFn: () => fetchScope(),
+    enabled: isTeacher,
+  });
 
   const classesQ = useQuery({
     queryKey: ["classes"],
@@ -38,6 +48,7 @@ function ClassesPage() {
       if (error) throw error;
       return data;
     },
+    enabled: !isTeacher,
   });
 
   const sectionsQ = useQuery({
@@ -48,17 +59,22 @@ function ClassesPage() {
       if (error) throw error;
       return data;
     },
+    enabled: !isTeacher,
   });
+
+  const classesData = isTeacher ? (scopeQ.data?.classes ?? []) : (classesQ.data ?? []);
+  const sectionsData = isTeacher ? (scopeQ.data?.sections ?? []) : (sectionsQ.data ?? []);
+  const isClassesLoading = isTeacher ? scopeQ.isLoading : classesQ.isLoading;
 
   // Dedupe classes by name for dropdowns / display
   const uniqueClasses = useMemo(() => {
     const seen = new Set<string>();
-    return (classesQ.data ?? []).filter((c) => {
+    return classesData.filter((c) => {
       if (seen.has(c.name)) return false;
       seen.add(c.name);
       return true;
     }).sort((a, b) => Number(a.name) - Number(b.name) || a.name.localeCompare(b.name));
-  }, [classesQ.data]);
+  }, [classesData]);
 
   const usedClassNames = useMemo(() => new Set(uniqueClasses.map((c) => c.name)), [uniqueClasses]);
 
@@ -143,12 +159,12 @@ function ClassesPage() {
       primaryId: string;
       sections: { id: string; name: string }[];
     }>();
-    for (const c of (classesQ.data ?? [])) {
+    for (const c of classesData) {
       const entry = byName.get(c.name) ?? { name: c.name, classIds: [], primaryId: c.id, sections: [] };
       entry.classIds.push(c.id);
       byName.set(c.name, entry);
     }
-    for (const s of (sectionsQ.data ?? [])) {
+    for (const s of sectionsData) {
       for (const entry of byName.values()) {
         if (entry.classIds.includes(s.class_id)) {
           entry.sections.push({ id: s.id, name: s.name });
@@ -159,7 +175,7 @@ function ClassesPage() {
     return Array.from(byName.values()).sort(
       (a, b) => Number(a.name) - Number(b.name) || a.name.localeCompare(b.name),
     );
-  }, [classesQ.data, sectionsQ.data]);
+  }, [classesData, sectionsData]);
 
   const filteredGrouped = useMemo(() => {
     if (!term) return grouped;
@@ -248,7 +264,7 @@ function ClassesPage() {
 
       <section className="rounded-xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
         <div className="overflow-auto max-h-[480px] rounded-lg border border-border">
-          {classesQ.isLoading ? (
+          {isClassesLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
           ) : !filteredGrouped.length ? (
             <p className="py-8 text-center text-sm text-muted-foreground">

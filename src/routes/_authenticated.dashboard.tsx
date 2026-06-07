@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Building2, GraduationCap, UserCog, School, Users } from "lucide-react";
+import { Building2, GraduationCap, UserCog, School, Users, Layers } from "lucide-react";
 import { getDashboardStats } from "@/lib/school.functions";
+import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -11,13 +12,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const { profile, session } = useAuth();
-  const fetchStats = useServerFn(getDashboardStats);
-  const { data, isLoading } = useQuery({
-    queryKey: ["dashboard-stats"],
-    queryFn: () => fetchStats(),
-    enabled: !!session?.access_token,
-  });
+  const { profile, session, roles } = useAuth();
+  const isTeacher = roles.includes("teacher") && !roles.includes("admin");
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -26,7 +22,25 @@ function Dashboard() {
           Welcome, {profile?.full_name ?? "there"}! Have a nice day.
         </h1>
       </div>
+      {isTeacher ? (
+        <TeacherDashboard enabled={!!session?.access_token} />
+      ) : (
+        <AdminDashboard enabled={!!session?.access_token} />
+      )}
+    </div>
+  );
+}
 
+function AdminDashboard({ enabled }: { enabled: boolean }) {
+  const fetchStats = useServerFn(getDashboardStats);
+  const { data, isLoading } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: () => fetchStats(),
+    enabled,
+  });
+
+  return (
+    <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard label="Institute" value={data?.counts.institute ?? 0} icon={Building2} loading={isLoading} />
         <StatCard label="Classes" value={data?.counts.classes ?? 0} icon={School} loading={isLoading} />
@@ -45,6 +59,24 @@ function Dashboard() {
           <li><span className="font-medium text-foreground">5.</span> Add parents and link them to their children from the <span className="font-medium text-foreground">Parents</span> tab.</li>
         </ol>
       </div>
+    </>
+  );
+}
+
+function TeacherDashboard({ enabled }: { enabled: boolean }) {
+  const fetchScope = useServerFn(getTeacherScopedData);
+  const { data, isLoading } = useQuery({
+    queryKey: ["teacher-scope"],
+    queryFn: () => fetchScope(),
+    enabled,
+  });
+
+  return (
+    <div className="mx-auto grid max-w-2xl grid-cols-1 gap-5 sm:grid-cols-2">
+      <StatCard label="Classes" value={data?.counts.classes ?? 0} icon={School} loading={isLoading} />
+      <StatCard label="Sections" value={data?.counts.sections ?? 0} icon={Layers} loading={isLoading} />
+      <StatCard label="Students" value={data?.counts.students ?? 0} icon={GraduationCap} loading={isLoading} />
+      <StatCard label="Parents" value={data?.counts.parents ?? 0} icon={Users} loading={isLoading} />
     </div>
   );
 }
