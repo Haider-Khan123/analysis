@@ -60,6 +60,8 @@ function HistoryPage() {
   const fetchHistory = useServerFn(getAttendanceHistory);
   const updateRecord = useServerFn(updateAttendanceRecord);
   const qc = useQueryClient();
+  const { roles } = useAuth();
+  const isParent = roles.includes("parent") && !roles.includes("admin") && !roles.includes("teacher");
 
   const today = new Date();
   const monthAgo = new Date(today.getTime() - 30 * 86400_000);
