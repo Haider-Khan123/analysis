@@ -97,7 +97,7 @@ function DynamicCards({ from, to, userId }: { from: string; to: string; userId: 
   }, [userId, qc]);
 
   return (
-    <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 justify-items-center">
+    <div className="mx-auto grid max-w-2xl grid-cols-2 gap-4 justify-items-center">
       <CountCard label="Attendance" value={data?.attendance ?? 0} icon={CalendarCheck} loading={isLoading} />
       <CountCard label="Homework" value={data?.homework ?? 0} icon={BookOpen} loading={isLoading} />
       <CountCard label="Student Progress" value={data?.progress ?? 0} icon={LineChart} loading={isLoading} />
