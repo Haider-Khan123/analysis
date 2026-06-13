@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard, GraduationCap, Users, UserCog, School, Building2,
-  LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell,
+  LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell, BookOpen, TrendingUp,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";

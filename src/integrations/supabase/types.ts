@@ -181,6 +181,117 @@ export type Database = {
           },
         ]
       }
+      homework: {
+        Row: {
+          assigned_date: string
+          class_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string
+          id: string
+          school_id: string
+          scope: Database["public"]["Enums"]["homework_scope"]
+          section_id: string | null
+          subject: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_date?: string
+          class_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date: string
+          id?: string
+          school_id: string
+          scope?: Database["public"]["Enums"]["homework_scope"]
+          section_id?: string | null
+          subject: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_date?: string
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string
+          id?: string
+          school_id?: string
+          scope?: Database["public"]["Enums"]["homework_scope"]
+          section_id?: string | null
+          subject?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "homework_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "homework_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "homework_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      homework_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          homework_id: string
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          homework_id: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          homework_id?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "homework_attachments_homework_id_fkey"
+            columns: ["homework_id"]
+            isOneToOne: false
+            referencedRelation: "homework"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -537,6 +648,101 @@ export type Database = {
         }
         Relationships: []
       }
+      student_progress: {
+        Row: {
+          behavior: Database["public"]["Enums"]["behavior_rating"] | null
+          class_id: string | null
+          created_at: string
+          id: string
+          improvements: string | null
+          notes: string | null
+          participation:
+            | Database["public"]["Enums"]["participation_level"]
+            | null
+          record_date: string
+          school_id: string
+          section_id: string | null
+          strengths: string | null
+          student_id: string
+          subject: string | null
+          teacher_user_id: string
+          title: string | null
+          type: Database["public"]["Enums"]["progress_type"]
+          updated_at: string
+        }
+        Insert: {
+          behavior?: Database["public"]["Enums"]["behavior_rating"] | null
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          notes?: string | null
+          participation?:
+            | Database["public"]["Enums"]["participation_level"]
+            | null
+          record_date?: string
+          school_id: string
+          section_id?: string | null
+          strengths?: string | null
+          student_id: string
+          subject?: string | null
+          teacher_user_id: string
+          title?: string | null
+          type: Database["public"]["Enums"]["progress_type"]
+          updated_at?: string
+        }
+        Update: {
+          behavior?: Database["public"]["Enums"]["behavior_rating"] | null
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          notes?: string | null
+          participation?:
+            | Database["public"]["Enums"]["participation_level"]
+            | null
+          record_date?: string
+          school_id?: string
+          section_id?: string | null
+          strengths?: string | null
+          student_id?: string
+          subject?: string | null
+          teacher_user_id?: string
+          title?: string | null
+          type?: Database["public"]["Enums"]["progress_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_progress_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_progress_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_progress_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       students: {
         Row: {
           admission_date: string | null
@@ -795,6 +1001,10 @@ export type Database = {
     Enums: {
       app_role: "admin" | "teacher" | "parent"
       attendance_status: "present" | "absent" | "late" | "leave"
+      behavior_rating: "excellent" | "good" | "average" | "needs_improvement"
+      homework_scope: "class" | "section"
+      participation_level: "highly_active" | "active" | "moderate" | "passive"
+      progress_type: "observation" | "behavior" | "participation" | "academic"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -924,6 +1134,10 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "teacher", "parent"],
       attendance_status: ["present", "absent", "late", "leave"],
+      behavior_rating: ["excellent", "good", "average", "needs_improvement"],
+      homework_scope: ["class", "section"],
+      participation_level: ["highly_active", "active", "moderate", "passive"],
+      progress_type: ["observation", "behavior", "participation", "academic"],
     },
   },
 } as const
