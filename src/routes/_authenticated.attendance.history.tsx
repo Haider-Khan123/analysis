@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { useAuth } from "@/lib/auth-context";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/attendance/history")({
   component: HistoryPage,
