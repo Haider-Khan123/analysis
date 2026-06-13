@@ -304,7 +304,16 @@ export const getAttendanceHistory = createServerFn({ method: "POST" })
     if (!actor.schoolId) return { rows: [] };
 
     let scopeSectionIds: string[] | null = null;
-    if (!actor.isAdmin) {
+    let scopeStudentIds: string[] | null = null;
+    if (actor.isParent && !actor.isAdmin && !actor.isTeacher) {
+      const { data: parent } = await supabaseAdmin
+        .from("parents").select("id").eq("user_id", context.userId).maybeSingle();
+      if (!parent) return { rows: [] };
+      const { data: links } = await supabaseAdmin
+        .from("parent_students").select("student_id").eq("parent_id", parent.id);
+      scopeStudentIds = (links ?? []).map((l) => l.student_id);
+      if (scopeStudentIds.length === 0) return { rows: [] };
+    } else if (!actor.isAdmin) {
       const scope = await getTeacherSectionIds(context.userId);
       scopeSectionIds = scope;
       if (scope.length === 0) return { rows: [] };
@@ -320,6 +329,7 @@ export const getAttendanceHistory = createServerFn({ method: "POST" })
     if (data.classId) q = q.eq("class_id", data.classId);
     if (data.studentId) q = q.eq("student_id", data.studentId);
     if (scopeSectionIds) q = q.in("section_id", scopeSectionIds);
+    if (scopeStudentIds) q = q.in("student_id", scopeStudentIds);
 
     const { data: records } = await q;
     const list = records ?? [];
