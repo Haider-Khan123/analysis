@@ -23,6 +23,7 @@ function ParentProgressPage() {
     queryFn: () => fetch({ data: { studentId: studentId || null, from: from || null, to: to || null } }),
   });
 
+  const dateSelected = !!(from || to);
   const rows = data?.rows ?? [];
   const latestAcademic = rows.filter((r) => r.type === "academic").slice(0, 3);
   const latestBehavior = rows.filter((r) => r.type === "behavior").slice(0, 3);
@@ -60,7 +61,11 @@ function ParentProgressPage() {
         </CardContent>
       </Card>
 
-      {isLoading ? <p className="text-sm text-muted-foreground">Loading…</p> : (
+      {!dateSelected ? (
+        <p className="text-sm text-muted-foreground">Select a date range to view progress records.</p>
+      ) : isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading…</p>
+      ) : (
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Section title="Latest Teacher Remarks" rows={latestRemarks} />
