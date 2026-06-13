@@ -38,7 +38,7 @@ function ParentHomeworkPage() {
 
       <Card>
         <CardHeader><CardTitle className="text-base">Filters</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">Child</label>
             <Select value={studentId || "all"} onValueChange={(v) => setStudentId(v === "all" ? "" : v)}>
@@ -48,10 +48,6 @@ function ParentHomeworkPage() {
                 {(data?.children ?? []).map((c) => <SelectItem key={c.id} value={c.id}>{c.full_name}</SelectItem>)}
               </SelectContent>
             </Select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">Subject</label>
-            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. Math" />
           </div>
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">From</label>
