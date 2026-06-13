@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ProgressForm } from "@/components/progress-form";
 import { listProgress } from "@/lib/progress.functions";
+import { useProgressEntry } from "@/lib/progress-entry-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/_authenticated/progress/participation")({
@@ -19,10 +21,36 @@ const tone: Record<string, string> = {
 
 function ParticipationPage() {
   const list = useServerFn(listProgress);
+  const { studentId, entry, setSection } = useProgressEntry();
   const { data } = useQuery({ queryKey: ["progress-participation"], queryFn: () => list({ data: { type: "participation" } }) });
+  const disabled = !studentId;
+  const v = entry.participation;
+
   return (
     <div className="space-y-4">
-      <ProgressForm type="participation" title="Participation Tracking" invalidateKey="progress-participation" />
+      <Card>
+        <CardHeader><CardTitle className="text-base">Participation Tracking</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          {disabled && <p className="text-xs text-muted-foreground">Select a student above to enable this section.</p>}
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">Participation Level *</label>
+            <Select disabled={disabled} value={v.participation} onValueChange={(val) => setSection("participation", { ...v, participation: val as typeof v.participation })}>
+              <SelectTrigger><SelectValue placeholder="Select level" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="highly_active">Highly Active</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="moderate">Moderate</SelectItem>
+                <SelectItem value="passive">Passive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">Notes</label>
+            <Textarea disabled={disabled} rows={3} value={v.notes} onChange={(e) => setSection("participation", { ...v, notes: e.target.value })} />
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader><CardTitle className="text-base">Recent Participation Records</CardTitle></CardHeader>
         <CardContent className="space-y-2 text-sm">

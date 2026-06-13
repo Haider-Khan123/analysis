@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ProgressForm } from "@/components/progress-form";
 import { listProgress } from "@/lib/progress.functions";
+import { useProgressEntry } from "@/lib/progress-entry-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/_authenticated/progress/academic")({
   component: AcademicPage,
@@ -11,10 +13,44 @@ export const Route = createFileRoute("/_authenticated/progress/academic")({
 
 function AcademicPage() {
   const list = useServerFn(listProgress);
+  const { studentId, entry, setSection } = useProgressEntry();
   const { data } = useQuery({ queryKey: ["progress-academic"], queryFn: () => list({ data: { type: "academic" } }) });
+  const disabled = !studentId;
+  const v = entry.academic;
+
   return (
     <div className="space-y-4">
-      <ProgressForm type="academic" title="Academic Remark" invalidateKey="progress-academic" />
+      <Card>
+        <CardHeader><CardTitle className="text-base">Academic Remark</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          {disabled && <p className="text-xs text-muted-foreground">Select a student above to enable this section.</p>}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Subject *</label>
+              <Input disabled={disabled} value={v.subject} onChange={(e) => setSection("academic", { ...v, subject: e.target.value })} placeholder="e.g. Mathematics" />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Remark Title</label>
+              <Input disabled={disabled} value={v.title} onChange={(e) => setSection("academic", { ...v, title: e.target.value })} placeholder="Short headline" />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">Academic Remark</label>
+            <Textarea disabled={disabled} rows={3} value={v.notes} onChange={(e) => setSection("academic", { ...v, notes: e.target.value })} placeholder="Overall academic feedback" />
+          </div>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Strengths</label>
+              <Textarea disabled={disabled} rows={2} value={v.strengths} onChange={(e) => setSection("academic", { ...v, strengths: e.target.value })} />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Areas for Improvement</label>
+              <Textarea disabled={disabled} rows={2} value={v.improvements} onChange={(e) => setSection("academic", { ...v, improvements: e.target.value })} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader><CardTitle className="text-base">Recent Academic Remarks</CardTitle></CardHeader>
         <CardContent className="space-y-2 text-sm">
