@@ -1,23 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Building2, GraduationCap, UserCog, School, Users, Layers } from "lucide-react";
+import { Building2, GraduationCap, UserCog, School, Users, Layers, CalendarCheck, BookOpen, LineChart, Bell } from "lucide-react";
 import { getDashboardStats } from "@/lib/school.functions";
 import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
-import { getMyChildrenAttendance } from "@/lib/attendance.functions";
+import { getDashboardCounts } from "@/lib/dashboard.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Analysis" }] }),
   component: Dashboard,
 });
 
+const today = () => new Date().toISOString().slice(0, 10);
+
 function Dashboard() {
-  const { profile, session, roles, loading } = useAuth();
+  const { profile, session, roles, loading, user } = useAuth();
   const isAdmin = roles.includes("admin");
   const isTeacher = roles.includes("teacher") && !isAdmin;
   const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
   const rolesReady = !loading && roles.length > 0;
+
+  const [from, setFrom] = useState<string>(today());
+  const [to, setTo] = useState<string>(today());
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -26,11 +35,18 @@ function Dashboard() {
           Welcome, {profile?.full_name ?? "there"}! Have a nice day.
         </h1>
       </div>
+
+      {rolesReady && (
+        <DateFilter from={from} to={to} onFrom={setFrom} onTo={setTo} />
+      )}
+
+      {rolesReady && session?.access_token && (
+        <DynamicCards from={from} to={to} userId={user?.id ?? ""} />
+      )}
+
       {!rolesReady ? (
         <p className="text-sm text-muted-foreground">Loading your dashboard…</p>
-      ) : isParent ? (
-        <ParentDashboard enabled={!!session?.access_token} />
-      ) : isTeacher ? (
+      ) : isParent ? null : isTeacher ? (
         <TeacherDashboard enabled={!!session?.access_token} />
       ) : (
         <AdminDashboard enabled={!!session?.access_token} />
@@ -39,53 +55,70 @@ function Dashboard() {
   );
 }
 
-function ParentDashboard({ enabled }: { enabled: boolean }) {
-  const fetchChildren = useServerFn(getMyChildrenAttendance);
-  const today = new Date();
-  const monthAgo = new Date(today.getTime() - 30 * 86400_000);
+function DateFilter({
+  from, to, onFrom, onTo,
+}: { from: string; to: string; onFrom: (v: string) => void; onTo: (v: string) => void }) {
+  return (
+    <div className="mx-auto flex max-w-2xl flex-wrap items-end justify-center gap-4 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="from">From</Label>
+        <Input id="from" type="date" value={from} onChange={(e) => onFrom(e.target.value)} className="w-44" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="to">To</Label>
+        <Input id="to" type="date" value={to} onChange={(e) => onTo(e.target.value)} className="w-44" />
+      </div>
+    </div>
+  );
+}
+
+function DynamicCards({ from, to, userId }: { from: string; to: string; userId: string }) {
+  const fetchCounts = useServerFn(getDashboardCounts);
+  const qc = useQueryClient();
   const { data, isLoading } = useQuery({
-    queryKey: ["parent-children-attendance"],
-    queryFn: () => fetchChildren({ data: { from: monthAgo.toISOString().slice(0,10), to: today.toISOString().slice(0,10) } }),
-    enabled,
+    queryKey: ["dashboard-counts", from, to],
+    queryFn: () => fetchCounts({ data: { from, to } }),
   });
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
-  const children = data?.children ?? [];
-  if (children.length === 0) {
-    return <p className="text-sm text-muted-foreground">No linked children found. Contact your school administrator.</p>;
-  }
+
+  // Real-time: invalidate counts on changes to relevant tables
+  useEffect(() => {
+    if (!userId) return;
+    const ch = supabase.channel("dashboard-counts-" + userId)
+      .on("postgres_changes", { event: "*", schema: "public", table: "attendance_records" },
+        () => qc.invalidateQueries({ queryKey: ["dashboard-counts"] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "homework" },
+        () => qc.invalidateQueries({ queryKey: ["dashboard-counts"] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "student_progress" },
+        () => qc.invalidateQueries({ queryKey: ["dashboard-counts"] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
+        () => qc.invalidateQueries({ queryKey: ["dashboard-counts"] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [userId, qc]);
+
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      {children.map((c) => (
-        <div key={c.id} className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-semibold">{c.full_name}</p>
-              <p className="text-xs text-muted-foreground">ID: {c.attendance_id ?? "—"}</p>
-            </div>
-            <span className={`text-2xl font-bold ${c.percentage < 75 ? "text-destructive" : "text-primary"}`}>{c.percentage}%</span>
-          </div>
-          <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs">
-            <Stat label="Present" v={c.present} />
-            <Stat label="Absent" v={c.absent} />
-            <Stat label="Late" v={c.late} />
-            <Stat label="Leave" v={c.leave} />
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">Last 30 days · {c.total} school days</p>
-        </div>
-      ))}
+    <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 justify-items-center">
+      <CountCard label="Attendance" value={data?.attendance ?? 0} icon={CalendarCheck} loading={isLoading} />
+      <CountCard label="Homework" value={data?.homework ?? 0} icon={BookOpen} loading={isLoading} />
+      <CountCard label="Student Progress" value={data?.progress ?? 0} icon={LineChart} loading={isLoading} />
+      <CountCard label="Notifications" value={data?.notifications ?? 0} icon={Bell} loading={isLoading} />
     </div>
   );
 }
 
-function Stat({ label, v }: { label: string; v: number }) {
+function CountCard({
+  label, value, icon: Icon, loading,
+}: { label: string; value: number; icon: React.ComponentType<{ className?: string }>; loading?: boolean }) {
   return (
-    <div className="rounded-md bg-muted/40 py-2">
-      <p className="text-base font-semibold">{v}</p>
-      <p className="text-muted-foreground">{label}</p>
+    <div className="w-full rounded-xl border border-border bg-card p-5 text-center shadow-[var(--shadow-card)]">
+      <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Icon className="h-5 w-5" />
+      </div>
+      <p className="text-sm font-medium text-muted-foreground">{label}</p>
+      <p className="mt-2 text-3xl font-bold tabular-nums">{loading ? "—" : value}</p>
     </div>
   );
 }
-
 
 function AdminDashboard({ enabled }: { enabled: boolean }) {
   const fetchStats = useServerFn(getDashboardStats);
@@ -141,16 +174,8 @@ function TeacherDashboard({ enabled }: { enabled: boolean }) {
 }
 
 function StatCard({
-  label,
-  value,
-  icon: Icon,
-  loading,
-}: {
-  label: string;
-  value: number;
-  icon: React.ComponentType<{ className?: string }>;
-  loading?: boolean;
-}) {
+  label, value, icon: Icon, loading,
+}: { label: string; value: number; icon: React.ComponentType<{ className?: string }>; loading?: boolean }) {
   return (
     <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
       <div className="flex items-center justify-between">
