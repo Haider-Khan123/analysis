@@ -323,21 +323,27 @@ function SidebarContent({
 
           {isParent && (
             <>
-              <Link to="/attendance/history"
-                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                  pathname.startsWith("/attendance") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
-                <ClipboardCheck className="h-4 w-4" /> My Children's Attendance
-              </Link>
-              <Link to="/parent-homework"
-                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                  pathname.startsWith("/parent-homework") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
-                <BookOpen className="h-4 w-4" /> Homework
-              </Link>
-              <Link to="/parent-progress"
-                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                  pathname.startsWith("/parent-progress") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
-                <TrendingUp className="h-4 w-4" /> Student Progress
-              </Link>
+              <div className="pt-3">
+                <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Attendance</p>
+                <Link to="/attendance/history"
+                  className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                    pathname.startsWith("/attendance") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                  <ClipboardCheck className="h-4 w-4" /> My Children's Attendance
+                </Link>
+              </div>
+              <div className="pt-3">
+                <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Academics</p>
+                <Link to="/parent-homework"
+                  className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                    pathname.startsWith("/parent-homework") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                  <BookOpen className="h-4 w-4" /> Homework
+                </Link>
+                <Link to="/parent-progress"
+                  className={cn("mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                    pathname.startsWith("/parent-progress") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                  <TrendingUp className="h-4 w-4" /> Student Progress
+                </Link>
+              </div>
             </>
           )}
 

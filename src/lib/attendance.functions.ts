@@ -571,3 +571,74 @@ export const updateAttendanceSettings = createServerFn({ method: "POST" })
     );
     return { ok: true as const };
   });
+
+// ---------- attendance percentage report (per student) ----------
+export const getAttendancePercentageReport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) => z.object({
+    from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  }).parse(i))
+  .handler(async ({ data, context }) => {
+    const actor = await getActor(context.userId);
+    if (!actor.schoolId) return { rows: [] };
+
+    let scopeStudentIds: string[] | null = null;
+    let scopeSectionIds: string[] | null = null;
+    if (actor.isParent && !actor.isAdmin && !actor.isTeacher) {
+      const { data: parent } = await supabaseAdmin
+        .from("parents").select("id").eq("user_id", context.userId).maybeSingle();
+      if (!parent) return { rows: [] };
+      const { data: links } = await supabaseAdmin
+        .from("parent_students").select("student_id").eq("parent_id", parent.id);
+      scopeStudentIds = (links ?? []).map((l) => l.student_id);
+      if (scopeStudentIds.length === 0) return { rows: [] };
+    } else if (!actor.isAdmin) {
+      scopeSectionIds = await getTeacherSectionIds(context.userId);
+      if (scopeSectionIds.length === 0) return { rows: [] };
+    }
+
+    let q = supabaseAdmin.from("attendance_records")
+      .select("student_id, status")
+      .eq("school_id", actor.schoolId)
+      .gte("attendance_date", data.from)
+      .lte("attendance_date", data.to);
+    if (scopeStudentIds) q = q.in("student_id", scopeStudentIds);
+    if (scopeSectionIds) q = q.in("section_id", scopeSectionIds);
+
+    const { data: records } = await q;
+    const agg = new Map<string, { total: number; attended: number }>();
+    (records ?? []).forEach((r) => {
+      const v = agg.get(r.student_id) ?? { total: 0, attended: 0 };
+      v.total++;
+      if (r.status === "present" || r.status === "late") v.attended++;
+      agg.set(r.student_id, v);
+    });
+    const sids = Array.from(agg.keys());
+    if (sids.length === 0) return { rows: [] };
+
+    const { data: students } = await supabaseAdmin.from("students")
+      .select("id, full_name, class_id, section_id").in("id", sids);
+    const classIds = Array.from(new Set((students ?? []).map((s) => s.class_id).filter(Boolean) as string[]));
+    const sectionIds = Array.from(new Set((students ?? []).map((s) => s.section_id).filter(Boolean) as string[]));
+    const [{ data: classes }, { data: sections }] = await Promise.all([
+      classIds.length ? supabaseAdmin.from("classes").select("id, name").in("id", classIds) : Promise.resolve({ data: [] }),
+      sectionIds.length ? supabaseAdmin.from("sections").select("id, name").in("id", sectionIds) : Promise.resolve({ data: [] }),
+    ]);
+    const cMap = new Map((classes ?? []).map((c) => [c.id, c.name]));
+    const sMap = new Map((sections ?? []).map((s) => [s.id, s.name]));
+
+    const rows = (students ?? []).map((s) => {
+      const v = agg.get(s.id)!;
+      return {
+        student_id: s.id,
+        student_name: s.full_name,
+        class_name: cMap.get(s.class_id ?? "") ?? "—",
+        section_name: sMap.get(s.section_id ?? "") ?? "—",
+        total: v.total,
+        attended: v.attended,
+        percentage: v.total ? Math.round((v.attended / v.total) * 1000) / 10 : 0,
+      };
+    }).sort((a, b) => a.student_name.localeCompare(b.student_name));
+    return { rows };
+  });
