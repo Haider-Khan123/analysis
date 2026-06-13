@@ -341,11 +341,14 @@ function SidebarContent({
             </>
           )}
 
-          <Link to="/notifications"
-            className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-              pathname === "/notifications" ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
-            <Bell className="h-4 w-4" /> Notifications
-          </Link>
+          <div className="pt-3">
+            <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notifications</p>
+            <Link to="/notifications"
+              className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                pathname === "/notifications" ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+              <Bell className="h-4 w-4" /> Notifications
+            </Link>
+          </div>
         </nav>
       </TooltipProvider>
     </div>
