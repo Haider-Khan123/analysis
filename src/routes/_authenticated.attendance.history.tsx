@@ -24,6 +24,8 @@ import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 
+import { useAuth } from "@/lib/auth-context";
+
 export const Route = createFileRoute("/_authenticated/attendance/history")({
   component: HistoryPage,
 });
