@@ -186,6 +186,7 @@ function SidebarContent({
   });
 
   const showAttendance = isAdmin || isTeacher || isParent;
+  const showAdministration = isAdmin || isTeacher;
   const attItems = attendanceNav.filter((i) => isAdmin || !i.adminOnly);
   const onAttendance = pathname.startsWith("/attendance");
   const [attOpen, setAttOpen] = useState(onAttendance);
