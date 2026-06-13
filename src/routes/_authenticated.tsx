@@ -266,12 +266,79 @@ function SidebarContent({
             </div>
           )}
 
+          {showHomework && (
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Academics</p>
+              <button
+                type="button"
+                onClick={() => setHwOpen((v) => !v)}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium",
+                  onHomework ? "bg-primary/10 text-primary" : "text-sidebar-foreground hover:bg-sidebar-accent",
+                )}
+                aria-expanded={hwOpen}
+              >
+                <BookOpen className="h-4 w-4" />
+                <span className="flex-1">Homework Management</span>
+                <span className={cn("text-xs transition-transform", hwOpen ? "rotate-90" : "")}>›</span>
+              </button>
+              {hwOpen && (
+                <div className="ml-7 mt-1 space-y-0.5 border-l border-border pl-3">
+                  {homeworkNav.map((i) => (
+                    <Link key={i.to} to={i.to}
+                      className={cn("block rounded-md px-2 py-1 text-xs",
+                        pathname === i.to ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground")}>
+                      {i.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setPrOpen((v) => !v)}
+                className={cn(
+                  "mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium",
+                  onProgress ? "bg-primary/10 text-primary" : "text-sidebar-foreground hover:bg-sidebar-accent",
+                )}
+                aria-expanded={prOpen}
+              >
+                <TrendingUp className="h-4 w-4" />
+                <span className="flex-1">Student Progress</span>
+                <span className={cn("text-xs transition-transform", prOpen ? "rotate-90" : "")}>›</span>
+              </button>
+              {prOpen && (
+                <div className="ml-7 mt-1 space-y-0.5 border-l border-border pl-3">
+                  {progressNav.map((i) => (
+                    <Link key={i.to} to={i.to}
+                      className={cn("block rounded-md px-2 py-1 text-xs",
+                        pathname === i.to ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground")}>
+                      {i.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {isParent && (
-            <Link to="/attendance/history"
-              className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                pathname.startsWith("/attendance") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
-              <ClipboardCheck className="h-4 w-4" /> My Children's Attendance
-            </Link>
+            <>
+              <Link to="/attendance/history"
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                  pathname.startsWith("/attendance") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <ClipboardCheck className="h-4 w-4" /> My Children's Attendance
+              </Link>
+              <Link to="/parent-homework"
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                  pathname.startsWith("/parent-homework") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <BookOpen className="h-4 w-4" /> Homework
+              </Link>
+              <Link to="/parent-progress"
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                  pathname.startsWith("/parent-progress") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <TrendingUp className="h-4 w-4" /> Student Progress
+              </Link>
+            </>
           )}
 
           <Link to="/notifications"
