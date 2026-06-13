@@ -240,6 +240,36 @@ function SidebarContent({
             );
           })}
 
+          {showAdministration && (
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Administration</p>
+              {adminNav.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.to;
+                const locked = isLocked(item.gate);
+                if (locked) {
+                  return (
+                    <Tooltip key={item.to}>
+                      <TooltipTrigger asChild>
+                        <div aria-disabled className="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground/60">
+                          <Icon className="h-4 w-4" /><span className="flex-1">{item.label}</span><Lock className="h-3.5 w-3.5" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">{gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}</TooltipContent>
+                    </Tooltip>
+                  );
+                }
+                return (
+                  <Link key={item.to} to={item.to}
+                    className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      active ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                    <Icon className="h-4 w-4" />{item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
           {showAttendance && !isParent && (
             <div className="pt-3">
               <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Attendance</p>
