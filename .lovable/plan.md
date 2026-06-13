@@ -1,81 +1,109 @@
+## Scope
+
+Build two modules end-to-end in one pass, mirroring the existing Attendance module's patterns (server fns + RLS + sidebar submenu + parent view + in-app notifications):
+
+1. **Homework Management**
+2. **Student Progress Tracking**
 
 ## 1. Database (single migration)
 
-New tables (all RLS-enabled, with GRANTs to authenticated + service_role):
+### Homework
+- `homework` table — `school_id`, `class_id`, `section_id`, `subject`, `title`, `description`, `assigned_date`, `due_date`, `created_by` (teacher user_id), `scope` ('class'|'section'), timestamps
+- `homework_attachments` — `homework_id`, `file_name`, `file_path`, `mime_type`, `size`
+- Storage bucket `homework-attachments` (private), with RLS on `storage.objects`
 
-- `attendance_records` — one row per (student, date)
-  - `student_id`, `class_id`, `section_id`, `school_id`, `attendance_date`, `status` (enum: present/absent/late/leave), `remarks`, `marked_by` (teacher user_id), `is_draft`, `created_at`, `updated_at`
-  - Unique constraint: `(student_id, attendance_date)`
-- `attendance_settings` — per school: `low_attendance_threshold` (default 75), edit cutoff is "same day" (fixed for now; field stored for future)
-- `notifications` — `user_id` (recipient), `type`, `title`, `body`, `student_id`, `is_read`, `created_at`
-- Enum: `attendance_status`
+### Progress
+- enum `progress_type`: `observation | behavior | participation | academic`
+- enum `behavior_rating`: `excellent | good | average | needs_improvement`
+- enum `participation_level`: `highly_active | active | moderate | passive`
+- `student_progress` — `student_id`, `class_id`, `section_id`, `school_id`, `teacher_id` (user_id), `record_date`, `type`, `title`, `notes`, `subject` (academic only), `behavior_rating`, `participation_level`, `strengths`, `improvements`, timestamps
 
-RLS:
-- Teachers can SELECT/INSERT/UPDATE attendance only for sections they're assigned to (via security-definer function `is_teacher_of_section(section_id)`).
-- Same-day edit only; after that → admin-only update.
-- Admins manage all in their school.
-- Parents SELECT attendance only for their linked students (`is_parent_of_student`).
-- Notifications: recipient sees own; service_role inserts.
+### Security
+- All public-schema tables: GRANT to authenticated + service_role; enable RLS
+- Reuse `is_teacher_of_section(section_id)` and `is_parent_of_student(student_id)` helpers
+- Teachers: full CRUD scoped to their assigned sections / their own students
+- Parents: SELECT only for linked students
+- Admins: full access in their school
+- Storage policies: teachers upload/delete only for sections they own; parents/teachers read for linked rows
 
-Realtime enabled on `notifications`.
+## 2. Server functions
 
-## 2. Server functions (`src/lib/attendance.functions.ts`)
+`src/lib/homework.functions.ts`
+- `createHomework`, `updateHomework`, `deleteHomework`
+- `listHomework({ filters })` — teacher/admin scoped
+- `getHomework(id)` with attachments
+- `getHomeworkForParent({ studentId?, subject?, from?, to? })`
+- `getTeacherHomeworkWidgets()` — due today, recent, upcoming
+- `getParentHomeworkWidgets()` — pending, upcoming, recent
+- `uploadHomeworkAttachment` (signed URL) + `removeAttachment`
+- On create → notify linked parents ("New Homework Assigned")
+- Cron-style helper invoked on parent fetch: flag overdue/due tomorrow (no cron needed phase 1; surface via widget query)
 
-- `getEnrolledStudents({ classId, sectionId })` — teacher-scoped
-- `getAttendanceForDate({ sectionId, date })` — returns existing records merged with roster
-- `saveAttendance({ sectionId, date, records[], isDraft })` — upserts; same-day rule enforced; triggers notifications on absent/late and consecutive-3
-- `getAttendanceHistory({ filters })`
-- `getStudentAnalytics({ studentId, from, to })`
-- `getClassAnalytics({ classId, sectionId, from, to })`
-- `getLowAttendanceStudents({ threshold })`
-- Parent: `getMyChildrenAttendance()`, `getChildAttendanceSummary({ studentId, from, to })`
-- Notifications: `getMyNotifications()`, `markNotificationRead(id)`
+`src/lib/progress.functions.ts`
+- `createProgressRecord` (one fn, validates by type)
+- `updateProgressRecord`, `deleteProgressRecord`
+- `listProgress({ filters })`
+- `getProgressForParent({ studentId, from, to })`
+- `getTeacherProgressWidgets()` — recent observations, students needing attention (latest behavior = needs_improvement), recent remarks
+- `getParentProgressWidgets({ studentId })` — recent feedback, latest academic, behavior summary
+- Notify parents on insert; for behavior `needs_improvement` send "Significant Behavior Concern"
 
-## 3. Parent role wiring
-
-- Add `parent` to sidebar nav resolution
-- Parent dashboard route: `_authenticated.parent-dashboard.tsx` (or branch in dashboard) with attendance summary cards per linked child
-- On parent creation, allow linking `user_id` (existing column) — admins invite parent via existing User Management flow with role `parent`
-- Parents only see: Dashboard + Attendance (children) + Notifications
-
-## 4. New routes
+## 3. Routes
 
 ```
-_authenticated.attendance.tsx                 (layout with subnav)
-_authenticated.attendance.index.tsx           → redirect to mark
-_authenticated.attendance.mark.tsx            Mark Attendance (teacher)
-_authenticated.attendance.history.tsx         History
-_authenticated.attendance.reports.tsx         Reports (daily/monthly/student/low)
-_authenticated.attendance.settings.tsx        Admin: threshold
-_authenticated.parent.attendance.tsx          Parent: children summary + history
-_authenticated.notifications.tsx              In-app notifications list
+_authenticated.homework.tsx                  (layout)
+_authenticated.homework.index.tsx            → redirect to list
+_authenticated.homework.create.tsx           Create (teacher)
+_authenticated.homework.list.tsx             List + edit/delete
+_authenticated.homework.$homeworkId.edit.tsx Edit
+_authenticated.homework.history.tsx          History + filters
+_authenticated.homework.reports.tsx          Reports (counts by class/subject + CSV)
+_authenticated.parent-homework.tsx           Parent: child filter + list + attachments
+
+_authenticated.progress.tsx                  (layout)
+_authenticated.progress.index.tsx            → redirect to observations
+_authenticated.progress.observations.tsx     Daily observations CRUD
+_authenticated.progress.behavior.tsx         Behavior tracking
+_authenticated.progress.participation.tsx    Participation tracking
+_authenticated.progress.academic.tsx         Academic remarks
+_authenticated.progress.history.tsx          Combined history + filters
+_authenticated.progress.reports.tsx          Reports (per-student summary + CSV)
+_authenticated.parent-progress.tsx           Parent: overview + timeline
 ```
 
-## 5. Sidebar updates (`_authenticated.tsx`)
+## 4. Sidebar (`_authenticated.tsx`)
 
-Add **Attendance Management** with submenu (Mark / History / Reports / Settings).
-- Admin: sees all submenus
-- Teacher: Mark, History, Reports (settings hidden)
-- Parent: hidden; instead sees "My Children" attendance link
-- Bell icon header with unread notification count (realtime subscription)
+Add two collapsible groups using the same `useState` toggle pattern as Attendance:
 
-## 6. Notifications engine
+- **Homework Management** (admin + teacher): Create / List / History / Reports
+- **Student Progress Tracking** (admin + teacher): Daily Observations / Behavior / Participation / Academic Remarks / Progress History / Progress Reports
 
-In `saveAttendance` server fn (admin client), after upsert:
-- For each absent/late record, insert notification for each linked parent (`user_id`)
-- Check last 3 school-day records per absent student → if all absent, insert "consecutive absence" notification
+For parents: add two single links:
+- "Homework" → `/parent-homework`
+- "Student Progress" → `/parent-progress`
 
-## 7. UI details
+## 5. Dashboard widgets
 
-- Mark Attendance: class+section+date pickers, table with radio group per student (Present/Absent/Late/Leave) + remarks, "Bulk Present" button, Save Draft + Submit buttons
-- Defaults all to Present
-- Same-day edit allowed; otherwise table is read-only with badge "Locked — admin only"
-- Reports use existing date-picker + Table; CSV export via simple client-side blob
+`_authenticated.dashboard.tsx`:
+- **Teacher branch**: append two widget rows (Homework due today / recent / upcoming; Recent observations / Students needing attention / Recent remarks)
+- **Parent branch**: append two widget rows (Pending homework / Upcoming / Recent; Recent feedback / Latest academic / Behavior summary)
 
-## Out of scope (this pass)
+## 6. Notifications
 
-- SMS/email channels (Phase 2 per spec)
-- Admin approval workflow UI for post-cutoff edits — admins can edit directly via RLS; explicit approval queue deferred
-- Attendance analytics charts beyond numeric summaries (kept tabular to ship in one pass)
+Reuse `notifications` table + `insertNotification` helper from `notifications.functions.ts`. Add new `type` strings: `homework_new`, `homework_due_tomorrow`, `homework_overdue`, `progress_new`, `progress_academic`, `progress_behavior_concern`. Already realtime-enabled, bell badge already wired.
 
-Confirm and I'll execute the migration first, then build the code in parallel batches.
+`homework_due_tomorrow` / `homework_overdue`: phase 1 evaluated lazily when parent opens dashboard/homework view (idempotent insert keyed on `(user_id, type, homework_id)` via a uniqueness check), so no cron is required.
+
+## 7. Storage
+
+Create bucket `homework-attachments` (private). Upload via signed-URL pattern from existing patterns; render download links via signed URLs in server fns. Validate MIME (PDF/DOCX/images) and size (≤ 10MB) server-side.
+
+## Out of scope (phase 1)
+
+- Email/SMS channels
+- Student submission/upload flows (only teacher assigns)
+- Rich-text descriptions (plain textarea)
+- Bulk import
+- Cron-driven daily digest (lazy eval covers due-tomorrow/overdue)
+
+Confirm and I'll execute: migration first → storage bucket → code in parallel batches.
