@@ -136,6 +136,7 @@ function HistoryPage() {
               </div>
             </>
           )}
+        </CardContent>
       </Card>
 
       <Card>
