@@ -24,6 +24,9 @@ import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 
+import { useAuth } from "@/lib/auth-context";
+import { cn } from "@/lib/utils";
+
 export const Route = createFileRoute("/_authenticated/attendance/history")({
   component: HistoryPage,
 });
@@ -58,6 +61,8 @@ function HistoryPage() {
   const fetchHistory = useServerFn(getAttendanceHistory);
   const updateRecord = useServerFn(updateAttendanceRecord);
   const qc = useQueryClient();
+  const { roles } = useAuth();
+  const isParent = roles.includes("parent") && !roles.includes("admin") && !roles.includes("teacher");
 
   const today = new Date();
   const monthAgo = new Date(today.getTime() - 30 * 86400_000);
@@ -99,7 +104,7 @@ function HistoryPage() {
     <div className="space-y-4">
       <Card>
         <CardHeader><CardTitle className="text-base">Filters</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <CardContent className={cn("grid gap-3", isParent ? "grid-cols-1 md:grid-cols-2" : "grid-cols-2 md:grid-cols-4")}>
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">From</label>
             <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -108,26 +113,30 @@ function HistoryPage() {
             <label className="mb-1 block text-xs text-muted-foreground">To</label>
             <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
           </div>
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">Class</label>
-            <Select value={classId || "all"} onValueChange={(v) => { setClassId(v === "all" ? "" : v); setSectionId(""); }}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All classes</SelectItem>
-                {(scope?.classes ?? []).map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">Section</label>
-            <Select value={sectionId || "all"} onValueChange={(v) => setSectionId(v === "all" ? "" : v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All sections</SelectItem>
-                {sections.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
+          {!isParent && (
+            <>
+              <div>
+                <label className="mb-1 block text-xs text-muted-foreground">Class</label>
+                <Select value={classId || "all"} onValueChange={(v) => { setClassId(v === "all" ? "" : v); setSectionId(""); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All classes</SelectItem>
+                    {(scope?.classes ?? []).map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-muted-foreground">Section</label>
+                <Select value={sectionId || "all"} onValueChange={(v) => setSectionId(v === "all" ? "" : v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All sections</SelectItem>
+                    {sections.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
