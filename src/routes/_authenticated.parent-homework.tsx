@@ -21,13 +21,12 @@ const STATUS: Record<string, string> = {
 function ParentHomeworkPage() {
   const fetch = useServerFn(getParentHomework);
   const [studentId, setStudentId] = useState<string>("");
-  const [subject, setSubject] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["parent-hw", studentId, subject, from, to],
-    queryFn: () => fetch({ data: { studentId: studentId || null, subject: subject || null, from: from || null, to: to || null } }),
+    queryKey: ["parent-hw", studentId, from, to],
+    queryFn: () => fetch({ data: { studentId: studentId || null, subject: null, from: from || null, to: to || null } }),
   });
 
   return (
@@ -39,7 +38,7 @@ function ParentHomeworkPage() {
 
       <Card>
         <CardHeader><CardTitle className="text-base">Filters</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">Child</label>
             <Select value={studentId || "all"} onValueChange={(v) => setStudentId(v === "all" ? "" : v)}>
@@ -49,10 +48,6 @@ function ParentHomeworkPage() {
                 {(data?.children ?? []).map((c) => <SelectItem key={c.id} value={c.id}>{c.full_name}</SelectItem>)}
               </SelectContent>
             </Select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs text-muted-foreground">Subject</label>
-            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. Math" />
           </div>
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">From</label>
