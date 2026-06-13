@@ -23,11 +23,14 @@ export const Route = createFileRoute("/_authenticated")({
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, gate: null },
   { to: "/school-profile", label: "School Profile", icon: Building2, gate: null },
-  { to: "/classes", label: "Classes & Sections", icon: School, gate: "institute" as const },
   { to: "/teachers", label: "Teachers", icon: UserCog, gate: "classes" as const },
+  { to: "/users", label: "User Management", icon: ShieldCheck, gate: null, adminOnly: true },
+] as const;
+
+const adminNav = [
+  { to: "/classes", label: "Classes & Sections", icon: School, gate: "institute" as const },
   { to: "/students", label: "Students", icon: GraduationCap, gate: "teachers" as const },
   { to: "/parents", label: "Parents", icon: Users, gate: "students" as const },
-  { to: "/users", label: "User Management", icon: ShieldCheck, gate: null, adminOnly: true },
 ] as const;
 
 const attendanceNav: ReadonlyArray<{ to: string; label: string; adminOnly?: boolean }> = [
