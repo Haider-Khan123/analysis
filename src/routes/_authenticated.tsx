@@ -188,6 +188,16 @@ function SidebarContent({
   const [attOpen, setAttOpen] = useState(onAttendance);
   useEffect(() => { if (onAttendance) setAttOpen(true); }, [onAttendance]);
 
+  const showHomework = isAdmin || isTeacher;
+  const onHomework = pathname.startsWith("/homework");
+  const [hwOpen, setHwOpen] = useState(onHomework);
+  useEffect(() => { if (onHomework) setHwOpen(true); }, [onHomework]);
+
+  const showProgress = isAdmin || isTeacher;
+  const onProgress = pathname.startsWith("/progress");
+  const [prOpen, setPrOpen] = useState(onProgress);
+  useEffect(() => { if (onProgress) setPrOpen(true); }, [onProgress]);
+
   const isLocked = (gate: string | null) => {
     if (!gate || !isOnboarding) return false;
     return (counts as Record<string, number>)[gate] < 1;
