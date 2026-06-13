@@ -153,6 +153,85 @@ async function notifyParents(args: {
   if (rows.length) await supabaseAdmin.from("notifications").insert(rows);
 }
 
+const BatchInput = z.object({
+  studentId: z.string().uuid(),
+  recordDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  observation: z.object({ title: z.string().trim().max(160).optional().nullable(), notes: z.string().trim().max(4000).optional().nullable() }),
+  behavior: z.object({ behavior: z.enum(["excellent", "good", "average", "needs_improvement"]), notes: z.string().trim().max(4000).optional().nullable() }),
+  participation: z.object({ participation: z.enum(["highly_active", "active", "moderate", "passive"]), notes: z.string().trim().max(4000).optional().nullable() }),
+  academic: z.object({
+    subject: z.string().trim().min(1).max(80),
+    title: z.string().trim().max(160).optional().nullable(),
+    notes: z.string().trim().max(4000).optional().nullable(),
+    strengths: z.string().trim().max(2000).optional().nullable(),
+    improvements: z.string().trim().max(2000).optional().nullable(),
+  }),
+});
+
+export const submitProgressBatch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) => BatchInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const actor = await getActor(context.userId);
+    if (!actor.schoolId) return { ok: false as const, error: "No school." };
+
+    const { data: student } = await supabaseAdmin.from("students")
+      .select("id, school_id, class_id, section_id, full_name").eq("id", data.studentId).maybeSingle();
+    if (!student || student.school_id !== actor.schoolId) return { ok: false as const, error: "Student not found." };
+
+    if (!actor.isAdmin) {
+      const sIds = await getTeacherSectionIds(context.userId);
+      if (!student.section_id || !sIds.includes(student.section_id)) {
+        return { ok: false as const, error: "Not assigned to this student." };
+      }
+    }
+
+    const base = {
+      school_id: actor.schoolId,
+      student_id: student.id,
+      class_id: student.class_id,
+      section_id: student.section_id,
+      teacher_user_id: context.userId,
+      record_date: data.recordDate,
+    };
+
+    const rows = [
+      { ...base, type: "observation" as const, title: data.observation.title || null, notes: data.observation.notes || null,
+        subject: null, behavior: null, participation: null, strengths: null, improvements: null },
+      { ...base, type: "behavior" as const, title: null, notes: data.behavior.notes || null,
+        subject: null, behavior: data.behavior.behavior, participation: null, strengths: null, improvements: null },
+      { ...base, type: "participation" as const, title: null, notes: data.participation.notes || null,
+        subject: null, behavior: null, participation: data.participation.participation, strengths: null, improvements: null },
+      { ...base, type: "academic" as const, title: data.academic.title || null, notes: data.academic.notes || null,
+        subject: data.academic.subject, behavior: null, participation: null,
+        strengths: data.academic.strengths || null, improvements: data.academic.improvements || null },
+    ];
+
+    const { error } = await supabaseAdmin.from("student_progress").insert(rows);
+    if (error) return { ok: false as const, error: error.message };
+
+    try {
+      const { data: profile } = await supabaseAdmin.from("profiles").select("full_name").eq("id", context.userId).maybeSingle();
+      const teacherName = profile?.full_name ?? "Teacher";
+      const { data: links } = await supabaseAdmin.from("parent_students").select("parent_id").eq("student_id", student.id);
+      const parentIds = Array.from(new Set((links ?? []).map((l) => l.parent_id)));
+      if (parentIds.length) {
+        const { data: parents } = await supabaseAdmin.from("parents").select("user_id").in("id", parentIds);
+        const userIds = (parents ?? []).map((p) => p.user_id).filter(Boolean) as string[];
+        if (userIds.length) {
+          await supabaseAdmin.from("notifications").insert(userIds.map((uid) => ({
+            user_id: uid, school_id: actor.schoolId, type: "progress_batch",
+            title: `Student Progress Tracking by ${teacherName}`,
+            body: `New progress record submitted for ${student.full_name}.`,
+            student_id: student.id,
+          })));
+        }
+      }
+    } catch (e) { console.error("progress batch notify", e); }
+
+    return { ok: true as const };
+  });
+
 export const updateProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => z.object({
