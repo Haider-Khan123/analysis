@@ -37,6 +37,22 @@ const attendanceNav: ReadonlyArray<{ to: string; label: string; adminOnly?: bool
   { to: "/attendance/settings", label: "Attendance Settings", adminOnly: true },
 ];
 
+const homeworkNav: ReadonlyArray<{ to: string; label: string }> = [
+  { to: "/homework/create", label: "Create Homework" },
+  { to: "/homework/list", label: "Homework List" },
+  { to: "/homework/history", label: "History" },
+  { to: "/homework/reports", label: "Reports" },
+];
+
+const progressNav: ReadonlyArray<{ to: string; label: string }> = [
+  { to: "/progress/observations", label: "Daily Observations" },
+  { to: "/progress/behavior", label: "Behavior" },
+  { to: "/progress/participation", label: "Participation" },
+  { to: "/progress/academic", label: "Academic Remarks" },
+  { to: "/progress/history", label: "Progress History" },
+  { to: "/progress/reports", label: "Reports" },
+];
+
 const gateMessages: Record<string, string> = {
   institute: "Create your institute in School Profile first.",
   classes: "Add at least one class & section first.",
