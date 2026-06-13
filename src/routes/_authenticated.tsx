@@ -180,7 +180,7 @@ function SidebarContent({
   const isOnboarding = role === "admin" || !role;
   const visible = nav.filter((item) => {
     if (isParent) return ["/dashboard"].includes(item.to);
-    if (isTeacher) return ["/dashboard", "/classes", "/students", "/parents"].includes(item.to);
+    if (isTeacher) return ["/dashboard"].includes(item.to);
     if (isOnboarding) return true;
     return ["/dashboard"].includes(item.to);
   });
