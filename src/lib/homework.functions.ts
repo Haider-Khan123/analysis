@@ -192,7 +192,7 @@ async function notifyParentsOfHomework(args: { homeworkId: string; schoolId: str
         title: "New Homework Assigned",
         body: `${args.subject}: ${args.title} (due ${args.dueDate})`,
         student_id: l.student_id,
-        metadata: { homework_id: args.homeworkId } as Record<string, unknown>,
+        metadata: { homework_id: args.homeworkId } as unknown as never,
       };
     })
     .filter((n): n is NonNullable<typeof n> => !!n);
