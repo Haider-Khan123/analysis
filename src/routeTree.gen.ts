@@ -18,22 +18,39 @@ import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedTeachersRouteImport } from './routes/_authenticated.teachers'
 import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated.students'
 import { Route as AuthenticatedSchoolProfileRouteImport } from './routes/_authenticated.school-profile'
+import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated.progress'
 import { Route as AuthenticatedParentsRouteImport } from './routes/_authenticated.parents'
+import { Route as AuthenticatedParentProgressRouteImport } from './routes/_authenticated.parent-progress'
+import { Route as AuthenticatedParentHomeworkRouteImport } from './routes/_authenticated.parent-homework'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
+import { Route as AuthenticatedHomeworkRouteImport } from './routes/_authenticated.homework'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated.classes'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated.attendance'
 import { Route as AuthenticatedTeachersIndexRouteImport } from './routes/_authenticated.teachers.index'
 import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authenticated.students.index'
+import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated.progress.index'
 import { Route as AuthenticatedParentsIndexRouteImport } from './routes/_authenticated.parents.index'
+import { Route as AuthenticatedHomeworkIndexRouteImport } from './routes/_authenticated.homework.index'
 import { Route as AuthenticatedAttendanceIndexRouteImport } from './routes/_authenticated.attendance.index'
 import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated.teachers.$teacherId'
 import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated.students.$studentId'
+import { Route as AuthenticatedProgressReportsRouteImport } from './routes/_authenticated.progress.reports'
+import { Route as AuthenticatedProgressParticipationRouteImport } from './routes/_authenticated.progress.participation'
+import { Route as AuthenticatedProgressObservationsRouteImport } from './routes/_authenticated.progress.observations'
+import { Route as AuthenticatedProgressHistoryRouteImport } from './routes/_authenticated.progress.history'
+import { Route as AuthenticatedProgressBehaviorRouteImport } from './routes/_authenticated.progress.behavior'
+import { Route as AuthenticatedProgressAcademicRouteImport } from './routes/_authenticated.progress.academic'
 import { Route as AuthenticatedParentsParentIdRouteImport } from './routes/_authenticated.parents.$parentId'
+import { Route as AuthenticatedHomeworkReportsRouteImport } from './routes/_authenticated.homework.reports'
+import { Route as AuthenticatedHomeworkListRouteImport } from './routes/_authenticated.homework.list'
+import { Route as AuthenticatedHomeworkHistoryRouteImport } from './routes/_authenticated.homework.history'
+import { Route as AuthenticatedHomeworkCreateRouteImport } from './routes/_authenticated.homework.create'
 import { Route as AuthenticatedAttendanceSettingsRouteImport } from './routes/_authenticated.attendance.settings'
 import { Route as AuthenticatedAttendanceReportsRouteImport } from './routes/_authenticated.attendance.reports'
 import { Route as AuthenticatedAttendanceMarkRouteImport } from './routes/_authenticated.attendance.mark'
 import { Route as AuthenticatedAttendanceHistoryRouteImport } from './routes/_authenticated.attendance.history'
+import { Route as AuthenticatedHomeworkHomeworkIdEditRouteImport } from './routes/_authenticated.homework.$homeworkId.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -80,17 +97,39 @@ const AuthenticatedSchoolProfileRoute =
     path: '/school-profile',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProgressRoute = AuthenticatedProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedParentsRoute = AuthenticatedParentsRouteImport.update({
   id: '/parents',
   path: '/parents',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedParentProgressRoute =
+  AuthenticatedParentProgressRouteImport.update({
+    id: '/parent-progress',
+    path: '/parent-progress',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedParentHomeworkRoute =
+  AuthenticatedParentHomeworkRouteImport.update({
+    id: '/parent-homework',
+    path: '/parent-homework',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedNotificationsRoute =
   AuthenticatedNotificationsRouteImport.update({
     id: '/notifications',
     path: '/notifications',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedHomeworkRoute = AuthenticatedHomeworkRouteImport.update({
+  id: '/homework',
+  path: '/homework',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -118,11 +157,23 @@ const AuthenticatedStudentsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedStudentsRoute,
   } as any)
+const AuthenticatedProgressIndexRoute =
+  AuthenticatedProgressIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
 const AuthenticatedParentsIndexRoute =
   AuthenticatedParentsIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedParentsRoute,
+  } as any)
+const AuthenticatedHomeworkIndexRoute =
+  AuthenticatedHomeworkIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
 const AuthenticatedAttendanceIndexRoute =
   AuthenticatedAttendanceIndexRouteImport.update({
@@ -142,11 +193,71 @@ const AuthenticatedStudentsStudentIdRoute =
     path: '/$studentId',
     getParentRoute: () => AuthenticatedStudentsRoute,
   } as any)
+const AuthenticatedProgressReportsRoute =
+  AuthenticatedProgressReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressParticipationRoute =
+  AuthenticatedProgressParticipationRouteImport.update({
+    id: '/participation',
+    path: '/participation',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressObservationsRoute =
+  AuthenticatedProgressObservationsRouteImport.update({
+    id: '/observations',
+    path: '/observations',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressHistoryRoute =
+  AuthenticatedProgressHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressBehaviorRoute =
+  AuthenticatedProgressBehaviorRouteImport.update({
+    id: '/behavior',
+    path: '/behavior',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressAcademicRoute =
+  AuthenticatedProgressAcademicRouteImport.update({
+    id: '/academic',
+    path: '/academic',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
 const AuthenticatedParentsParentIdRoute =
   AuthenticatedParentsParentIdRouteImport.update({
     id: '/$parentId',
     path: '/$parentId',
     getParentRoute: () => AuthenticatedParentsRoute,
+  } as any)
+const AuthenticatedHomeworkReportsRoute =
+  AuthenticatedHomeworkReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedHomeworkListRoute =
+  AuthenticatedHomeworkListRouteImport.update({
+    id: '/list',
+    path: '/list',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedHomeworkHistoryRoute =
+  AuthenticatedHomeworkHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedHomeworkCreateRoute =
+  AuthenticatedHomeworkCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
 const AuthenticatedAttendanceSettingsRoute =
   AuthenticatedAttendanceSettingsRouteImport.update({
@@ -172,6 +283,12 @@ const AuthenticatedAttendanceHistoryRoute =
     path: '/history',
     getParentRoute: () => AuthenticatedAttendanceRoute,
   } as any)
+const AuthenticatedHomeworkHomeworkIdEditRoute =
+  AuthenticatedHomeworkHomeworkIdEditRouteImport.update({
+    id: '/$homeworkId/edit',
+    path: '/$homeworkId/edit',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -181,8 +298,12 @@ export interface FileRoutesByFullPath {
   '/attendance': typeof AuthenticatedAttendanceRouteWithChildren
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/homework': typeof AuthenticatedHomeworkRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/parent-homework': typeof AuthenticatedParentHomeworkRoute
+  '/parent-progress': typeof AuthenticatedParentProgressRoute
   '/parents': typeof AuthenticatedParentsRouteWithChildren
+  '/progress': typeof AuthenticatedProgressRouteWithChildren
   '/school-profile': typeof AuthenticatedSchoolProfileRoute
   '/students': typeof AuthenticatedStudentsRouteWithChildren
   '/teachers': typeof AuthenticatedTeachersRouteWithChildren
@@ -191,13 +312,26 @@ export interface FileRoutesByFullPath {
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/homework/create': typeof AuthenticatedHomeworkCreateRoute
+  '/homework/history': typeof AuthenticatedHomeworkHistoryRoute
+  '/homework/list': typeof AuthenticatedHomeworkListRoute
+  '/homework/reports': typeof AuthenticatedHomeworkReportsRoute
   '/parents/$parentId': typeof AuthenticatedParentsParentIdRoute
+  '/progress/academic': typeof AuthenticatedProgressAcademicRoute
+  '/progress/behavior': typeof AuthenticatedProgressBehaviorRoute
+  '/progress/history': typeof AuthenticatedProgressHistoryRoute
+  '/progress/observations': typeof AuthenticatedProgressObservationsRoute
+  '/progress/participation': typeof AuthenticatedProgressParticipationRoute
+  '/progress/reports': typeof AuthenticatedProgressReportsRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/attendance/': typeof AuthenticatedAttendanceIndexRoute
+  '/homework/': typeof AuthenticatedHomeworkIndexRoute
   '/parents/': typeof AuthenticatedParentsIndexRoute
+  '/progress/': typeof AuthenticatedProgressIndexRoute
   '/students/': typeof AuthenticatedStudentsIndexRoute
   '/teachers/': typeof AuthenticatedTeachersIndexRoute
+  '/homework/$homeworkId/edit': typeof AuthenticatedHomeworkHomeworkIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -207,19 +341,34 @@ export interface FileRoutesByTo {
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/parent-homework': typeof AuthenticatedParentHomeworkRoute
+  '/parent-progress': typeof AuthenticatedParentProgressRoute
   '/school-profile': typeof AuthenticatedSchoolProfileRoute
   '/users': typeof AuthenticatedUsersRoute
   '/attendance/history': typeof AuthenticatedAttendanceHistoryRoute
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/homework/create': typeof AuthenticatedHomeworkCreateRoute
+  '/homework/history': typeof AuthenticatedHomeworkHistoryRoute
+  '/homework/list': typeof AuthenticatedHomeworkListRoute
+  '/homework/reports': typeof AuthenticatedHomeworkReportsRoute
   '/parents/$parentId': typeof AuthenticatedParentsParentIdRoute
+  '/progress/academic': typeof AuthenticatedProgressAcademicRoute
+  '/progress/behavior': typeof AuthenticatedProgressBehaviorRoute
+  '/progress/history': typeof AuthenticatedProgressHistoryRoute
+  '/progress/observations': typeof AuthenticatedProgressObservationsRoute
+  '/progress/participation': typeof AuthenticatedProgressParticipationRoute
+  '/progress/reports': typeof AuthenticatedProgressReportsRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/attendance': typeof AuthenticatedAttendanceIndexRoute
+  '/homework': typeof AuthenticatedHomeworkIndexRoute
   '/parents': typeof AuthenticatedParentsIndexRoute
+  '/progress': typeof AuthenticatedProgressIndexRoute
   '/students': typeof AuthenticatedStudentsIndexRoute
   '/teachers': typeof AuthenticatedTeachersIndexRoute
+  '/homework/$homeworkId/edit': typeof AuthenticatedHomeworkHomeworkIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -231,8 +380,12 @@ export interface FileRoutesById {
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRouteWithChildren
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/homework': typeof AuthenticatedHomeworkRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/parent-homework': typeof AuthenticatedParentHomeworkRoute
+  '/_authenticated/parent-progress': typeof AuthenticatedParentProgressRoute
   '/_authenticated/parents': typeof AuthenticatedParentsRouteWithChildren
+  '/_authenticated/progress': typeof AuthenticatedProgressRouteWithChildren
   '/_authenticated/school-profile': typeof AuthenticatedSchoolProfileRoute
   '/_authenticated/students': typeof AuthenticatedStudentsRouteWithChildren
   '/_authenticated/teachers': typeof AuthenticatedTeachersRouteWithChildren
@@ -241,13 +394,26 @@ export interface FileRoutesById {
   '/_authenticated/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/_authenticated/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/_authenticated/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/_authenticated/homework/create': typeof AuthenticatedHomeworkCreateRoute
+  '/_authenticated/homework/history': typeof AuthenticatedHomeworkHistoryRoute
+  '/_authenticated/homework/list': typeof AuthenticatedHomeworkListRoute
+  '/_authenticated/homework/reports': typeof AuthenticatedHomeworkReportsRoute
   '/_authenticated/parents/$parentId': typeof AuthenticatedParentsParentIdRoute
+  '/_authenticated/progress/academic': typeof AuthenticatedProgressAcademicRoute
+  '/_authenticated/progress/behavior': typeof AuthenticatedProgressBehaviorRoute
+  '/_authenticated/progress/history': typeof AuthenticatedProgressHistoryRoute
+  '/_authenticated/progress/observations': typeof AuthenticatedProgressObservationsRoute
+  '/_authenticated/progress/participation': typeof AuthenticatedProgressParticipationRoute
+  '/_authenticated/progress/reports': typeof AuthenticatedProgressReportsRoute
   '/_authenticated/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/_authenticated/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/_authenticated/attendance/': typeof AuthenticatedAttendanceIndexRoute
+  '/_authenticated/homework/': typeof AuthenticatedHomeworkIndexRoute
   '/_authenticated/parents/': typeof AuthenticatedParentsIndexRoute
+  '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
   '/_authenticated/students/': typeof AuthenticatedStudentsIndexRoute
   '/_authenticated/teachers/': typeof AuthenticatedTeachersIndexRoute
+  '/_authenticated/homework/$homeworkId/edit': typeof AuthenticatedHomeworkHomeworkIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -259,8 +425,12 @@ export interface FileRouteTypes {
     | '/attendance'
     | '/classes'
     | '/dashboard'
+    | '/homework'
     | '/notifications'
+    | '/parent-homework'
+    | '/parent-progress'
     | '/parents'
+    | '/progress'
     | '/school-profile'
     | '/students'
     | '/teachers'
@@ -269,13 +439,26 @@ export interface FileRouteTypes {
     | '/attendance/mark'
     | '/attendance/reports'
     | '/attendance/settings'
+    | '/homework/create'
+    | '/homework/history'
+    | '/homework/list'
+    | '/homework/reports'
     | '/parents/$parentId'
+    | '/progress/academic'
+    | '/progress/behavior'
+    | '/progress/history'
+    | '/progress/observations'
+    | '/progress/participation'
+    | '/progress/reports'
     | '/students/$studentId'
     | '/teachers/$teacherId'
     | '/attendance/'
+    | '/homework/'
     | '/parents/'
+    | '/progress/'
     | '/students/'
     | '/teachers/'
+    | '/homework/$homeworkId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -285,19 +468,34 @@ export interface FileRouteTypes {
     | '/classes'
     | '/dashboard'
     | '/notifications'
+    | '/parent-homework'
+    | '/parent-progress'
     | '/school-profile'
     | '/users'
     | '/attendance/history'
     | '/attendance/mark'
     | '/attendance/reports'
     | '/attendance/settings'
+    | '/homework/create'
+    | '/homework/history'
+    | '/homework/list'
+    | '/homework/reports'
     | '/parents/$parentId'
+    | '/progress/academic'
+    | '/progress/behavior'
+    | '/progress/history'
+    | '/progress/observations'
+    | '/progress/participation'
+    | '/progress/reports'
     | '/students/$studentId'
     | '/teachers/$teacherId'
     | '/attendance'
+    | '/homework'
     | '/parents'
+    | '/progress'
     | '/students'
     | '/teachers'
+    | '/homework/$homeworkId/edit'
   id:
     | '__root__'
     | '/'
@@ -308,8 +506,12 @@ export interface FileRouteTypes {
     | '/_authenticated/attendance'
     | '/_authenticated/classes'
     | '/_authenticated/dashboard'
+    | '/_authenticated/homework'
     | '/_authenticated/notifications'
+    | '/_authenticated/parent-homework'
+    | '/_authenticated/parent-progress'
     | '/_authenticated/parents'
+    | '/_authenticated/progress'
     | '/_authenticated/school-profile'
     | '/_authenticated/students'
     | '/_authenticated/teachers'
@@ -318,13 +520,26 @@ export interface FileRouteTypes {
     | '/_authenticated/attendance/mark'
     | '/_authenticated/attendance/reports'
     | '/_authenticated/attendance/settings'
+    | '/_authenticated/homework/create'
+    | '/_authenticated/homework/history'
+    | '/_authenticated/homework/list'
+    | '/_authenticated/homework/reports'
     | '/_authenticated/parents/$parentId'
+    | '/_authenticated/progress/academic'
+    | '/_authenticated/progress/behavior'
+    | '/_authenticated/progress/history'
+    | '/_authenticated/progress/observations'
+    | '/_authenticated/progress/participation'
+    | '/_authenticated/progress/reports'
     | '/_authenticated/students/$studentId'
     | '/_authenticated/teachers/$teacherId'
     | '/_authenticated/attendance/'
+    | '/_authenticated/homework/'
     | '/_authenticated/parents/'
+    | '/_authenticated/progress/'
     | '/_authenticated/students/'
     | '/_authenticated/teachers/'
+    | '/_authenticated/homework/$homeworkId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -400,6 +615,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSchoolProfileRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/progress': {
+      id: '/_authenticated/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof AuthenticatedProgressRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/parents': {
       id: '/_authenticated/parents'
       path: '/parents'
@@ -407,11 +629,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParentsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/parent-progress': {
+      id: '/_authenticated/parent-progress'
+      path: '/parent-progress'
+      fullPath: '/parent-progress'
+      preLoaderRoute: typeof AuthenticatedParentProgressRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/parent-homework': {
+      id: '/_authenticated/parent-homework'
+      path: '/parent-homework'
+      fullPath: '/parent-homework'
+      preLoaderRoute: typeof AuthenticatedParentHomeworkRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/notifications': {
       id: '/_authenticated/notifications'
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/homework': {
+      id: '/_authenticated/homework'
+      path: '/homework'
+      fullPath: '/homework'
+      preLoaderRoute: typeof AuthenticatedHomeworkRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -449,12 +692,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentsIndexRouteImport
       parentRoute: typeof AuthenticatedStudentsRoute
     }
+    '/_authenticated/progress/': {
+      id: '/_authenticated/progress/'
+      path: '/'
+      fullPath: '/progress/'
+      preLoaderRoute: typeof AuthenticatedProgressIndexRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
     '/_authenticated/parents/': {
       id: '/_authenticated/parents/'
       path: '/'
       fullPath: '/parents/'
       preLoaderRoute: typeof AuthenticatedParentsIndexRouteImport
       parentRoute: typeof AuthenticatedParentsRoute
+    }
+    '/_authenticated/homework/': {
+      id: '/_authenticated/homework/'
+      path: '/'
+      fullPath: '/homework/'
+      preLoaderRoute: typeof AuthenticatedHomeworkIndexRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
     }
     '/_authenticated/attendance/': {
       id: '/_authenticated/attendance/'
@@ -477,12 +734,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentsStudentIdRouteImport
       parentRoute: typeof AuthenticatedStudentsRoute
     }
+    '/_authenticated/progress/reports': {
+      id: '/_authenticated/progress/reports'
+      path: '/reports'
+      fullPath: '/progress/reports'
+      preLoaderRoute: typeof AuthenticatedProgressReportsRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/participation': {
+      id: '/_authenticated/progress/participation'
+      path: '/participation'
+      fullPath: '/progress/participation'
+      preLoaderRoute: typeof AuthenticatedProgressParticipationRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/observations': {
+      id: '/_authenticated/progress/observations'
+      path: '/observations'
+      fullPath: '/progress/observations'
+      preLoaderRoute: typeof AuthenticatedProgressObservationsRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/history': {
+      id: '/_authenticated/progress/history'
+      path: '/history'
+      fullPath: '/progress/history'
+      preLoaderRoute: typeof AuthenticatedProgressHistoryRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/behavior': {
+      id: '/_authenticated/progress/behavior'
+      path: '/behavior'
+      fullPath: '/progress/behavior'
+      preLoaderRoute: typeof AuthenticatedProgressBehaviorRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/academic': {
+      id: '/_authenticated/progress/academic'
+      path: '/academic'
+      fullPath: '/progress/academic'
+      preLoaderRoute: typeof AuthenticatedProgressAcademicRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
     '/_authenticated/parents/$parentId': {
       id: '/_authenticated/parents/$parentId'
       path: '/$parentId'
       fullPath: '/parents/$parentId'
       preLoaderRoute: typeof AuthenticatedParentsParentIdRouteImport
       parentRoute: typeof AuthenticatedParentsRoute
+    }
+    '/_authenticated/homework/reports': {
+      id: '/_authenticated/homework/reports'
+      path: '/reports'
+      fullPath: '/homework/reports'
+      preLoaderRoute: typeof AuthenticatedHomeworkReportsRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/homework/list': {
+      id: '/_authenticated/homework/list'
+      path: '/list'
+      fullPath: '/homework/list'
+      preLoaderRoute: typeof AuthenticatedHomeworkListRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/homework/history': {
+      id: '/_authenticated/homework/history'
+      path: '/history'
+      fullPath: '/homework/history'
+      preLoaderRoute: typeof AuthenticatedHomeworkHistoryRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/homework/create': {
+      id: '/_authenticated/homework/create'
+      path: '/create'
+      fullPath: '/homework/create'
+      preLoaderRoute: typeof AuthenticatedHomeworkCreateRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
     }
     '/_authenticated/attendance/settings': {
       id: '/_authenticated/attendance/settings'
@@ -512,6 +839,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAttendanceHistoryRouteImport
       parentRoute: typeof AuthenticatedAttendanceRoute
     }
+    '/_authenticated/homework/$homeworkId/edit': {
+      id: '/_authenticated/homework/$homeworkId/edit'
+      path: '/$homeworkId/edit'
+      fullPath: '/homework/$homeworkId/edit'
+      preLoaderRoute: typeof AuthenticatedHomeworkHomeworkIdEditRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
   }
 }
 
@@ -537,6 +871,30 @@ const AuthenticatedAttendanceRouteWithChildren =
     AuthenticatedAttendanceRouteChildren,
   )
 
+interface AuthenticatedHomeworkRouteChildren {
+  AuthenticatedHomeworkCreateRoute: typeof AuthenticatedHomeworkCreateRoute
+  AuthenticatedHomeworkHistoryRoute: typeof AuthenticatedHomeworkHistoryRoute
+  AuthenticatedHomeworkListRoute: typeof AuthenticatedHomeworkListRoute
+  AuthenticatedHomeworkReportsRoute: typeof AuthenticatedHomeworkReportsRoute
+  AuthenticatedHomeworkIndexRoute: typeof AuthenticatedHomeworkIndexRoute
+  AuthenticatedHomeworkHomeworkIdEditRoute: typeof AuthenticatedHomeworkHomeworkIdEditRoute
+}
+
+const AuthenticatedHomeworkRouteChildren: AuthenticatedHomeworkRouteChildren = {
+  AuthenticatedHomeworkCreateRoute: AuthenticatedHomeworkCreateRoute,
+  AuthenticatedHomeworkHistoryRoute: AuthenticatedHomeworkHistoryRoute,
+  AuthenticatedHomeworkListRoute: AuthenticatedHomeworkListRoute,
+  AuthenticatedHomeworkReportsRoute: AuthenticatedHomeworkReportsRoute,
+  AuthenticatedHomeworkIndexRoute: AuthenticatedHomeworkIndexRoute,
+  AuthenticatedHomeworkHomeworkIdEditRoute:
+    AuthenticatedHomeworkHomeworkIdEditRoute,
+}
+
+const AuthenticatedHomeworkRouteWithChildren =
+  AuthenticatedHomeworkRoute._addFileChildren(
+    AuthenticatedHomeworkRouteChildren,
+  )
+
 interface AuthenticatedParentsRouteChildren {
   AuthenticatedParentsParentIdRoute: typeof AuthenticatedParentsParentIdRoute
   AuthenticatedParentsIndexRoute: typeof AuthenticatedParentsIndexRoute
@@ -549,6 +907,33 @@ const AuthenticatedParentsRouteChildren: AuthenticatedParentsRouteChildren = {
 
 const AuthenticatedParentsRouteWithChildren =
   AuthenticatedParentsRoute._addFileChildren(AuthenticatedParentsRouteChildren)
+
+interface AuthenticatedProgressRouteChildren {
+  AuthenticatedProgressAcademicRoute: typeof AuthenticatedProgressAcademicRoute
+  AuthenticatedProgressBehaviorRoute: typeof AuthenticatedProgressBehaviorRoute
+  AuthenticatedProgressHistoryRoute: typeof AuthenticatedProgressHistoryRoute
+  AuthenticatedProgressObservationsRoute: typeof AuthenticatedProgressObservationsRoute
+  AuthenticatedProgressParticipationRoute: typeof AuthenticatedProgressParticipationRoute
+  AuthenticatedProgressReportsRoute: typeof AuthenticatedProgressReportsRoute
+  AuthenticatedProgressIndexRoute: typeof AuthenticatedProgressIndexRoute
+}
+
+const AuthenticatedProgressRouteChildren: AuthenticatedProgressRouteChildren = {
+  AuthenticatedProgressAcademicRoute: AuthenticatedProgressAcademicRoute,
+  AuthenticatedProgressBehaviorRoute: AuthenticatedProgressBehaviorRoute,
+  AuthenticatedProgressHistoryRoute: AuthenticatedProgressHistoryRoute,
+  AuthenticatedProgressObservationsRoute:
+    AuthenticatedProgressObservationsRoute,
+  AuthenticatedProgressParticipationRoute:
+    AuthenticatedProgressParticipationRoute,
+  AuthenticatedProgressReportsRoute: AuthenticatedProgressReportsRoute,
+  AuthenticatedProgressIndexRoute: AuthenticatedProgressIndexRoute,
+}
+
+const AuthenticatedProgressRouteWithChildren =
+  AuthenticatedProgressRoute._addFileChildren(
+    AuthenticatedProgressRouteChildren,
+  )
 
 interface AuthenticatedStudentsRouteChildren {
   AuthenticatedStudentsStudentIdRoute: typeof AuthenticatedStudentsStudentIdRoute
@@ -584,8 +969,12 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRouteWithChildren
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedHomeworkRoute: typeof AuthenticatedHomeworkRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedParentHomeworkRoute: typeof AuthenticatedParentHomeworkRoute
+  AuthenticatedParentProgressRoute: typeof AuthenticatedParentProgressRoute
   AuthenticatedParentsRoute: typeof AuthenticatedParentsRouteWithChildren
+  AuthenticatedProgressRoute: typeof AuthenticatedProgressRouteWithChildren
   AuthenticatedSchoolProfileRoute: typeof AuthenticatedSchoolProfileRoute
   AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRouteWithChildren
   AuthenticatedTeachersRoute: typeof AuthenticatedTeachersRouteWithChildren
@@ -596,8 +985,12 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRouteWithChildren,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedHomeworkRoute: AuthenticatedHomeworkRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedParentHomeworkRoute: AuthenticatedParentHomeworkRoute,
+  AuthenticatedParentProgressRoute: AuthenticatedParentProgressRoute,
   AuthenticatedParentsRoute: AuthenticatedParentsRouteWithChildren,
+  AuthenticatedProgressRoute: AuthenticatedProgressRouteWithChildren,
   AuthenticatedSchoolProfileRoute: AuthenticatedSchoolProfileRoute,
   AuthenticatedStudentsRoute: AuthenticatedStudentsRouteWithChildren,
   AuthenticatedTeachersRoute: AuthenticatedTeachersRouteWithChildren,
