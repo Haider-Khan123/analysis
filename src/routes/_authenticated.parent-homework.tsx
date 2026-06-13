@@ -21,13 +21,12 @@ const STATUS: Record<string, string> = {
 function ParentHomeworkPage() {
   const fetch = useServerFn(getParentHomework);
   const [studentId, setStudentId] = useState<string>("");
-  const [subject, setSubject] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["parent-hw", studentId, subject, from, to],
-    queryFn: () => fetch({ data: { studentId: studentId || null, subject: subject || null, from: from || null, to: to || null } }),
+    queryKey: ["parent-hw", studentId, from, to],
+    queryFn: () => fetch({ data: { studentId: studentId || null, subject: null, from: from || null, to: to || null } }),
   });
 
   return (
