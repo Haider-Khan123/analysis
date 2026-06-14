@@ -154,6 +154,11 @@ function HistoryPage() {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           <Button size="sm" variant="ghost" onClick={() => setViewId(r.id)}><Eye className="h-4 w-4" /></Button>
+                          {r.can_edit && (
+                            <Button size="sm" variant="ghost" title="Edit" asChild>
+                              <Link to={`/announcements/${r.id}/edit`}><Pencil className="h-4 w-4" /></Link>
+                            </Button>
+                          )}
                           {r.can_edit && r.status !== "published" && r.status !== "archived" && (
                             <Button size="sm" variant="ghost" title="Publish now" onClick={() => pubM.mutate(r.id)}>
                               <Send className="h-4 w-4 text-primary" />
