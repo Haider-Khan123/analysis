@@ -196,6 +196,8 @@ function SidebarContent({
 
   const showAttendance = isAdmin || isTeacher || isParent;
   const showAdministration = isAdmin || isTeacher;
+  const showSchoolMgmt = isAdmin;
+  const schoolMgmtItems = schoolMgmtNav.filter((i) => isAdmin || !("adminOnly" in i && i.adminOnly));
   const attItems = attendanceNav.filter((i) => isAdmin || !i.adminOnly);
   const onAttendance = pathname.startsWith("/attendance");
   const [attOpen, setAttOpen] = useState(onAttendance);
@@ -210,6 +212,11 @@ function SidebarContent({
   const onProgress = pathname.startsWith("/progress");
   const [prOpen, setPrOpen] = useState(onProgress);
   useEffect(() => { if (onProgress) setPrOpen(true); }, [onProgress]);
+
+  const showAnnouncements = isAdmin || isTeacher;
+  const onAnnouncements = pathname.startsWith("/announcements");
+  const [anOpen, setAnOpen] = useState(onAnnouncements);
+  useEffect(() => { if (onAnnouncements) setAnOpen(true); }, [onAnnouncements]);
 
   const isLocked = (gate: string | null) => {
     if (!gate || !isOnboarding) return false;
