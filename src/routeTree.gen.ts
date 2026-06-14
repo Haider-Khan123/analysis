@@ -51,6 +51,7 @@ import { Route as AuthenticatedHomeworkReportsRouteImport } from './routes/_auth
 import { Route as AuthenticatedHomeworkListRouteImport } from './routes/_authenticated.homework.list'
 import { Route as AuthenticatedHomeworkHistoryRouteImport } from './routes/_authenticated.homework.history'
 import { Route as AuthenticatedHomeworkCreateRouteImport } from './routes/_authenticated.homework.create'
+import { Route as AuthenticatedChatNewRouteImport } from './routes/_authenticated.chat.new'
 import { Route as AuthenticatedAttendanceSettingsRouteImport } from './routes/_authenticated.attendance.settings'
 import { Route as AuthenticatedAttendanceReportsRouteImport } from './routes/_authenticated.attendance.reports'
 import { Route as AuthenticatedAttendanceMarkRouteImport } from './routes/_authenticated.attendance.mark'
@@ -297,6 +298,11 @@ const AuthenticatedHomeworkCreateRoute =
     path: '/create',
     getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
+const AuthenticatedChatNewRoute = AuthenticatedChatNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedChatRoute,
+} as any)
 const AuthenticatedAttendanceSettingsRoute =
   AuthenticatedAttendanceSettingsRouteImport.update({
     id: '/settings',
@@ -387,6 +393,7 @@ export interface FileRoutesByFullPath {
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/chat/new': typeof AuthenticatedChatNewRoute
   '/homework/create': typeof AuthenticatedHomeworkCreateRoute
   '/homework/history': typeof AuthenticatedHomeworkHistoryRoute
   '/homework/list': typeof AuthenticatedHomeworkListRoute
@@ -432,6 +439,7 @@ export interface FileRoutesByTo {
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/chat/new': typeof AuthenticatedChatNewRoute
   '/homework/create': typeof AuthenticatedHomeworkCreateRoute
   '/homework/history': typeof AuthenticatedHomeworkHistoryRoute
   '/homework/list': typeof AuthenticatedHomeworkListRoute
@@ -487,6 +495,7 @@ export interface FileRoutesById {
   '/_authenticated/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/_authenticated/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/_authenticated/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/_authenticated/chat/new': typeof AuthenticatedChatNewRoute
   '/_authenticated/homework/create': typeof AuthenticatedHomeworkCreateRoute
   '/_authenticated/homework/history': typeof AuthenticatedHomeworkHistoryRoute
   '/_authenticated/homework/list': typeof AuthenticatedHomeworkListRoute
@@ -542,6 +551,7 @@ export interface FileRouteTypes {
     | '/attendance/mark'
     | '/attendance/reports'
     | '/attendance/settings'
+    | '/chat/new'
     | '/homework/create'
     | '/homework/history'
     | '/homework/list'
@@ -587,6 +597,7 @@ export interface FileRouteTypes {
     | '/attendance/mark'
     | '/attendance/reports'
     | '/attendance/settings'
+    | '/chat/new'
     | '/homework/create'
     | '/homework/history'
     | '/homework/list'
@@ -641,6 +652,7 @@ export interface FileRouteTypes {
     | '/_authenticated/attendance/mark'
     | '/_authenticated/attendance/reports'
     | '/_authenticated/attendance/settings'
+    | '/_authenticated/chat/new'
     | '/_authenticated/homework/create'
     | '/_authenticated/homework/history'
     | '/_authenticated/homework/list'
@@ -970,6 +982,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeworkCreateRouteImport
       parentRoute: typeof AuthenticatedHomeworkRoute
     }
+    '/_authenticated/chat/new': {
+      id: '/_authenticated/chat/new'
+      path: '/new'
+      fullPath: '/chat/new'
+      preLoaderRoute: typeof AuthenticatedChatNewRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
+    }
     '/_authenticated/attendance/settings': {
       id: '/_authenticated/attendance/settings'
       path: '/settings'
@@ -1094,10 +1113,12 @@ const AuthenticatedAttendanceRouteWithChildren =
   )
 
 interface AuthenticatedChatRouteChildren {
+  AuthenticatedChatNewRoute: typeof AuthenticatedChatNewRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
 }
 
 const AuthenticatedChatRouteChildren: AuthenticatedChatRouteChildren = {
+  AuthenticatedChatNewRoute: AuthenticatedChatNewRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
 }
 
