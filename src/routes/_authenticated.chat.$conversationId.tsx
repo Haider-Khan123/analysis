@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Paperclip, Send, Check, CheckCheck, X, Download, FileText, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, CheckCheck, X, Download, FileText, Image as ImageIcon } from "lucide-react";
 import { listMessages, sendMessage, markConversationRead } from "@/lib/chat.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
