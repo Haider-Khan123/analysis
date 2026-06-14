@@ -30,8 +30,8 @@ const schoolMgmtNav = [
 ] as const;
 
 const adminNav = [
-  { to: "/teachers", label: "Teachers", icon: UserCog, gate: "classes" as const },
   { to: "/classes", label: "Classes & Sections", icon: School, gate: "institute" as const },
+  { to: "/teachers", label: "Teachers", icon: UserCog, gate: "classes" as const },
   { to: "/students", label: "Students", icon: GraduationCap, gate: "teachers" as const },
   { to: "/parents", label: "Parents", icon: Users, gate: "students" as const },
 ] as const;
