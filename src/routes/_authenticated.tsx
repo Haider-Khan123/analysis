@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard, GraduationCap, Users, UserCog, School, Building2,
-  LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell, BookOpen, TrendingUp,
+  LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell, BookOpen, TrendingUp, Megaphone,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";
@@ -22,12 +22,15 @@ export const Route = createFileRoute("/_authenticated")({
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, gate: null },
+] as const;
+
+const schoolMgmtNav = [
   { to: "/school-profile", label: "School Profile", icon: Building2, gate: null },
-  { to: "/teachers", label: "Teachers", icon: UserCog, gate: "classes" as const },
-  { to: "/users", label: "User Management", icon: ShieldCheck, gate: null, adminOnly: true },
+  { to: "/users", label: "User Management", icon: ShieldCheck, gate: null, adminOnly: true as const },
 ] as const;
 
 const adminNav = [
+  { to: "/teachers", label: "Teachers", icon: UserCog, gate: "classes" as const },
   { to: "/classes", label: "Classes & Sections", icon: School, gate: "institute" as const },
   { to: "/students", label: "Students", icon: GraduationCap, gate: "teachers" as const },
   { to: "/parents", label: "Parents", icon: Users, gate: "students" as const },
@@ -54,6 +57,12 @@ const progressNav: ReadonlyArray<{ to: string; label: string }> = [
   { to: "/progress/academic", label: "Academic Remarks" },
   { to: "/progress/history", label: "Progress History" },
   { to: "/progress/reports", label: "Reports" },
+];
+
+const announcementNav: ReadonlyArray<{ to: string; label: string }> = [
+  { to: "/announcements/create", label: "Create Announcement" },
+  { to: "/announcements/history", label: "Announcement History" },
+  { to: "/announcements/categories", label: "Announcement Categories" },
 ];
 
 const gateMessages: Record<string, string> = {

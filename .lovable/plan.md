@@ -1,109 +1,79 @@
-## Scope
+## Part A — Small UI changes (quick)
 
-Build two modules end-to-end in one pass, mirroring the existing Attendance module's patterns (server fns + RLS + sidebar submenu + parent view + in-app notifications):
+1. **Sidebar (`src/routes/_authenticated.tsx`)** — add two new section headings (admin-only):
+   - **SCHOOL MANAGEMENT** → `School Profile`, `User Management`
+   - **ADMINISTRATION** → `Teachers` (in addition to the existing Classes & Sections / Students / Parents already grouped under ADMINISTRATION)
+   Remove these items from the flat top-level nav.
+2. **Admin dashboard (`_authenticated.dashboard.tsx`)** — when role is `admin`, do not render the 4-card `DynamicCards` 2×2 grid (and hide the date filter for admin since it only drives those cards). Teacher and Parent dashboards keep the cards.
 
-1. **Homework Management**
-2. **Student Progress Tracking**
+## Part B — Announcement Module
 
-## 1. Database (single migration)
+### B1. Database migration
 
-### Homework
-- `homework` table — `school_id`, `class_id`, `section_id`, `subject`, `title`, `description`, `assigned_date`, `due_date`, `created_by` (teacher user_id), `scope` ('class'|'section'), timestamps
-- `homework_attachments` — `homework_id`, `file_name`, `file_path`, `mime_type`, `size`
-- Storage bucket `homework-attachments` (private), with RLS on `storage.objects`
+Enums:
+- `announcement_type`: `school_wide | class_specific`
+- `announcement_priority`: `low | medium | high | urgent`
+- `announcement_status`: `draft | scheduled | published | expired | archived`
+- `announcement_category`: `school_closure | public_holiday | sports_day | parent_teacher_meeting | exam_schedule | homework_reminder | class_test | field_trip | project_submission | other`
 
-### Progress
-- enum `progress_type`: `observation | behavior | participation | academic`
-- enum `behavior_rating`: `excellent | good | average | needs_improvement`
-- enum `participation_level`: `highly_active | active | moderate | passive`
-- `student_progress` — `student_id`, `class_id`, `section_id`, `school_id`, `teacher_id` (user_id), `record_date`, `type`, `title`, `notes`, `subject` (academic only), `behavior_rating`, `participation_level`, `strengths`, `improvements`, timestamps
+Tables (all in `public`, with `GRANT … TO authenticated`, `GRANT ALL … TO service_role`, RLS enabled):
+- `announcements` — `id, school_id, type, title, description, category, priority, publish_at, expires_at, status, class_id (nullable), section_id (nullable), created_by (user_id), created_at, updated_at`
+- `announcement_attachments` — `id, announcement_id, file_name, file_path, mime_type, size, created_at`
+- `announcement_reads` — `id, announcement_id, user_id, read_at` (unique on `(announcement_id, user_id)`)
 
-### Security
-- All public-schema tables: GRANT to authenticated + service_role; enable RLS
-- Reuse `is_teacher_of_section(section_id)` and `is_parent_of_student(student_id)` helpers
-- Teachers: full CRUD scoped to their assigned sections / their own students
-- Parents: SELECT only for linked students
-- Admins: full access in their school
-- Storage policies: teachers upload/delete only for sections they own; parents/teachers read for linked rows
+RLS:
+- Admins (`has_role(uid,'admin')` + same school): full CRUD.
+- Teachers: insert/update/delete own announcements; for class-specific must pass `is_teacher_of_section(section_id)`; select on school-wide (school) + class-specific for sections they teach + their own.
+- Parents: select on school-wide (school) + class-specific where `is_parent_of_student` exists for a student in that class/section.
+- `announcement_reads`: each user can insert/select their own rows.
 
-## 2. Server functions
+Storage: new private bucket `announcement-attachments` with policies mirroring `homework-attachments` (teachers/admins upload for their scope; teachers/parents read attachments for announcements they can see).
 
-`src/lib/homework.functions.ts`
-- `createHomework`, `updateHomework`, `deleteHomework`
-- `listHomework({ filters })` — teacher/admin scoped
-- `getHomework(id)` with attachments
-- `getHomeworkForParent({ studentId?, subject?, from?, to? })`
-- `getTeacherHomeworkWidgets()` — due today, recent, upcoming
-- `getParentHomeworkWidgets()` — pending, upcoming, recent
-- `uploadHomeworkAttachment` (signed URL) + `removeAttachment`
-- On create → notify linked parents ("New Homework Assigned")
-- Cron-style helper invoked on parent fetch: flag overdue/due tomorrow (no cron needed phase 1; surface via widget query)
+### B2. Server functions (`src/lib/announcements.functions.ts`)
 
-`src/lib/progress.functions.ts`
-- `createProgressRecord` (one fn, validates by type)
-- `updateProgressRecord`, `deleteProgressRecord`
-- `listProgress({ filters })`
-- `getProgressForParent({ studentId, from, to })`
-- `getTeacherProgressWidgets()` — recent observations, students needing attention (latest behavior = needs_improvement), recent remarks
-- `getParentProgressWidgets({ studentId })` — recent feedback, latest academic, behavior summary
-- Notify parents on insert; for behavior `needs_improvement` send "Significant Behavior Concern"
+- `createAnnouncement`, `updateAnnouncement`, `deleteAnnouncement`, `publishAnnouncement`, `archiveAnnouncement`
+- `listAnnouncements({ status?, type?, from?, to?, q? })` — admin/teacher scoped
+- `getAnnouncement(id)` with attachments + read stats
+- `getAnnouncementsForParent({ studentId?, from?, to?, q? })`
+- `getAnnouncementsForTeacher({ from?, to?, q? })`
+- `markAnnouncementRead({ announcementId })`
+- `uploadAnnouncementAttachment` (signed URL) + `removeAnnouncementAttachment`
+- `getAnnouncementDashboardWidgets()` — admin (totals by status), teacher (recent + upcoming), parent (latest + unread + urgent)
+- On publish → resolve audience and insert rows into `notifications` (new type strings: `announcement_school_wide`, `announcement_class`) using existing helper.
+- Lazy "expire" pass on list reads: flips `status` to `expired` when `expires_at < now()`.
 
-## 3. Routes
+### B3. Routes
 
 ```
-_authenticated.homework.tsx                  (layout)
-_authenticated.homework.index.tsx            → redirect to list
-_authenticated.homework.create.tsx           Create (teacher)
-_authenticated.homework.list.tsx             List + edit/delete
-_authenticated.homework.$homeworkId.edit.tsx Edit
-_authenticated.homework.history.tsx          History + filters
-_authenticated.homework.reports.tsx          Reports (counts by class/subject + CSV)
-_authenticated.parent-homework.tsx           Parent: child filter + list + attachments
-
-_authenticated.progress.tsx                  (layout)
-_authenticated.progress.index.tsx            → redirect to observations
-_authenticated.progress.observations.tsx     Daily observations CRUD
-_authenticated.progress.behavior.tsx         Behavior tracking
-_authenticated.progress.participation.tsx    Participation tracking
-_authenticated.progress.academic.tsx         Academic remarks
-_authenticated.progress.history.tsx          Combined history + filters
-_authenticated.progress.reports.tsx          Reports (per-student summary + CSV)
-_authenticated.parent-progress.tsx           Parent: overview + timeline
+_authenticated.announcements.tsx                (layout - admin/teacher)
+_authenticated.announcements.index.tsx          → redirect to history
+_authenticated.announcements.create.tsx         Create
+_authenticated.announcements.history.tsx        List + filters + edit/delete/publish/archive
+_authenticated.announcements.$id.edit.tsx       Edit
+_authenticated.announcements.categories.tsx     Category reference list
+_authenticated.parent-announcements.tsx         Parent view
 ```
 
-## 4. Sidebar (`_authenticated.tsx`)
+(Teacher uses the same `/announcements/*` routes; server fns scope by role.)
 
-Add two collapsible groups using the same `useState` toggle pattern as Attendance:
+### B4. Sidebar additions
 
-- **Homework Management** (admin + teacher): Create / List / History / Reports
-- **Student Progress Tracking** (admin + teacher): Daily Observations / Behavior / Participation / Academic Remarks / Progress History / Progress Reports
+New collapsible heading **ANNOUNCEMENT**:
+- Admin + Teacher: `Create Announcement`, `Announcement History`, `Announcement Categories`
+- Parent: single link **`Announcements`** → `/parent-announcements` (placed under existing parent grouping)
 
-For parents: add two single links:
-- "Homework" → `/parent-homework`
-- "Student Progress" → `/parent-progress`
+### B5. Dashboard widgets
 
-## 5. Dashboard widgets
+- **Admin**: 4 stat tiles — Total / Published / Scheduled / Expired (replaces nothing, added as its own section since the 2×2 cards are removed for admin).
+- **Teacher**: appended row — Recent Announcements + Upcoming Scheduled.
+- **Parent**: appended row — Latest + Unread + Urgent.
 
-`_authenticated.dashboard.tsx`:
-- **Teacher branch**: append two widget rows (Homework due today / recent / upcoming; Recent observations / Students needing attention / Recent remarks)
-- **Parent branch**: append two widget rows (Pending homework / Upcoming / Recent; Recent feedback / Latest academic / Behavior summary)
+### B6. Notifications
 
-## 6. Notifications
+Reuse existing `notifications` table + `insertNotification` helper. New `type` values: `announcement_school_wide`, `announcement_class`. Bell badge already realtime.
 
-Reuse `notifications` table + `insertNotification` helper from `notifications.functions.ts`. Add new `type` strings: `homework_new`, `homework_due_tomorrow`, `homework_overdue`, `progress_new`, `progress_academic`, `progress_behavior_concern`. Already realtime-enabled, bell badge already wired.
+### Out of scope (phase 1)
 
-`homework_due_tomorrow` / `homework_overdue`: phase 1 evaluated lazily when parent opens dashboard/homework view (idempotent insert keyed on `(user_id, type, homework_id)` via a uniqueness check), so no cron is required.
+Email/SMS channels, push, manual recipient overrides, rich-text editor, bulk import, scheduled-publish cron (publish-immediately works; `scheduled` rows transition to `published` lazily when the publish_at time has passed and the row is fetched/listed — no cron needed phase 1).
 
-## 7. Storage
-
-Create bucket `homework-attachments` (private). Upload via signed-URL pattern from existing patterns; render download links via signed URLs in server fns. Validate MIME (PDF/DOCX/images) and size (≤ 10MB) server-side.
-
-## Out of scope (phase 1)
-
-- Email/SMS channels
-- Student submission/upload flows (only teacher assigns)
-- Rich-text descriptions (plain textarea)
-- Bulk import
-- Cron-driven daily digest (lazy eval covers due-tomorrow/overdue)
-
-Confirm and I'll execute: migration first → storage bucket → code in parallel batches.
+Confirm and I'll execute: migration + storage bucket → server fns → routes → sidebar/dashboard wiring in parallel batches.
