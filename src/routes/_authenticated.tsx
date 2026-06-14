@@ -414,6 +414,47 @@ function SidebarContent({
             </>
           )}
 
+          {showAnnouncements && (
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Announcement</p>
+              <button
+                type="button"
+                onClick={() => setAnOpen((v) => !v)}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium",
+                  onAnnouncements ? "bg-primary/10 text-primary" : "text-sidebar-foreground hover:bg-sidebar-accent",
+                )}
+                aria-expanded={anOpen}
+              >
+                <Megaphone className="h-4 w-4" />
+                <span className="flex-1">Announcements</span>
+                <span className={cn("text-xs transition-transform", anOpen ? "rotate-90" : "")}>›</span>
+              </button>
+              {anOpen && (
+                <div className="ml-7 mt-1 space-y-0.5 border-l border-border pl-3">
+                  {announcementNav.map((i) => (
+                    <Link key={i.to} to={i.to}
+                      className={cn("block rounded-md px-2 py-1 text-xs",
+                        pathname === i.to ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground")}>
+                      {i.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {isParent && (
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Announcement</p>
+              <Link to="/parent-announcements"
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                  pathname.startsWith("/parent-announcements") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <Megaphone className="h-4 w-4" /> Announcements
+              </Link>
+            </div>
+          )}
+
           <div className="pt-3">
             <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notifications</p>
             <Link to="/notifications"
