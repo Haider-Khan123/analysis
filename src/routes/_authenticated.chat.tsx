@@ -1,8 +1,8 @@
-import { createFileRoute, Outlet, Link, useLocation } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { listConversations } from "@/lib/chat.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -27,6 +27,7 @@ function formatTime(iso: string | null) {
 
 function ChatLayout() {
   const fetchConvs = useServerFn(listConversations);
+  const navigate = useNavigate();
   const { user } = useAuth();
   const location = useLocation();
   const [q, setQ] = useState("");
@@ -65,9 +66,14 @@ function ChatLayout() {
       )}>
         <div className="flex items-center justify-between border-b border-border p-3">
           <h2 className="text-base font-semibold">Messages</h2>
-          <Link to="/chat/new">
-            <Button size="sm" variant="default"><Plus className="h-4 w-4" />New</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/chat/new">
+              <Button size="sm" variant="default"><Plus className="h-4 w-4" />New</Button>
+            </Link>
+            <Button size="icon" variant="ghost" onClick={() => navigate({ to: "/dashboard" })} aria-label="Close chat">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
         <div className="p-3">
           <div className="relative">
