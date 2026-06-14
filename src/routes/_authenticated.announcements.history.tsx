@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Eye, Trash2, Send, Archive, Pencil } from "lucide-react";
+import { Eye, Trash2, Send, Pencil } from "lucide-react";
 import {
-  listAnnouncements, deleteAnnouncement, getAnnouncementDetail, publishAnnouncement, archiveAnnouncement,
+  listAnnouncements, deleteAnnouncement, getAnnouncementDetail, publishAnnouncement,
 } from "@/lib/announcements.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
