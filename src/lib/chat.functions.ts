@@ -458,5 +458,13 @@ export const markConversationRead = createServerFn({ method: "POST" })
     if (toInsert.length) {
       await supabaseAdmin.from("message_reads").insert(toInsert);
     }
+    // Mark related chat notifications as read
+    await supabaseAdmin
+      .from("notifications")
+      .update({ is_read: true })
+      .eq("user_id", context.userId)
+      .eq("type", "chat_message")
+      .contains("metadata", { conversation_id: conv.id });
     return { ok: true, marked: toInsert.length };
   });
+
