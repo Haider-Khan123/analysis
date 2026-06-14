@@ -35,6 +35,7 @@ import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated.progress.index'
 import { Route as AuthenticatedParentsIndexRouteImport } from './routes/_authenticated.parents.index'
 import { Route as AuthenticatedHomeworkIndexRouteImport } from './routes/_authenticated.homework.index'
+import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated.chat.index'
 import { Route as AuthenticatedAttendanceIndexRouteImport } from './routes/_authenticated.attendance.index'
 import { Route as AuthenticatedAnnouncementsIndexRouteImport } from './routes/_authenticated.announcements.index'
 import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated.teachers.$teacherId'
@@ -201,6 +202,11 @@ const AuthenticatedHomeworkIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
+const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedChatRoute,
+} as any)
 const AuthenticatedAttendanceIndexRoute =
   AuthenticatedAttendanceIndexRouteImport.update({
     id: '/',
@@ -359,7 +365,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/announcements': typeof AuthenticatedAnnouncementsRouteWithChildren
   '/attendance': typeof AuthenticatedAttendanceRouteWithChildren
-  '/chat': typeof AuthenticatedChatRoute
+  '/chat': typeof AuthenticatedChatRouteWithChildren
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/homework': typeof AuthenticatedHomeworkRouteWithChildren
@@ -396,6 +402,7 @@ export interface FileRoutesByFullPath {
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/attendance/': typeof AuthenticatedAttendanceIndexRoute
+  '/chat/': typeof AuthenticatedChatIndexRoute
   '/homework/': typeof AuthenticatedHomeworkIndexRoute
   '/parents/': typeof AuthenticatedParentsIndexRoute
   '/progress/': typeof AuthenticatedProgressIndexRoute
@@ -409,7 +416,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/chat': typeof AuthenticatedChatRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -441,6 +447,7 @@ export interface FileRoutesByTo {
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/announcements': typeof AuthenticatedAnnouncementsIndexRoute
   '/attendance': typeof AuthenticatedAttendanceIndexRoute
+  '/chat': typeof AuthenticatedChatIndexRoute
   '/homework': typeof AuthenticatedHomeworkIndexRoute
   '/parents': typeof AuthenticatedParentsIndexRoute
   '/progress': typeof AuthenticatedProgressIndexRoute
@@ -458,7 +465,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_authenticated/announcements': typeof AuthenticatedAnnouncementsRouteWithChildren
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRouteWithChildren
-  '/_authenticated/chat': typeof AuthenticatedChatRoute
+  '/_authenticated/chat': typeof AuthenticatedChatRouteWithChildren
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/homework': typeof AuthenticatedHomeworkRouteWithChildren
@@ -495,6 +502,7 @@ export interface FileRoutesById {
   '/_authenticated/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/_authenticated/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/_authenticated/attendance/': typeof AuthenticatedAttendanceIndexRoute
+  '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/homework/': typeof AuthenticatedHomeworkIndexRoute
   '/_authenticated/parents/': typeof AuthenticatedParentsIndexRoute
   '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
@@ -549,6 +557,7 @@ export interface FileRouteTypes {
     | '/teachers/$teacherId'
     | '/announcements/'
     | '/attendance/'
+    | '/chat/'
     | '/homework/'
     | '/parents/'
     | '/progress/'
@@ -562,7 +571,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
-    | '/chat'
     | '/classes'
     | '/dashboard'
     | '/notifications'
@@ -594,6 +602,7 @@ export interface FileRouteTypes {
     | '/teachers/$teacherId'
     | '/announcements'
     | '/attendance'
+    | '/chat'
     | '/homework'
     | '/parents'
     | '/progress'
@@ -647,6 +656,7 @@ export interface FileRouteTypes {
     | '/_authenticated/teachers/$teacherId'
     | '/_authenticated/announcements/'
     | '/_authenticated/attendance/'
+    | '/_authenticated/chat/'
     | '/_authenticated/homework/'
     | '/_authenticated/parents/'
     | '/_authenticated/progress/'
@@ -847,6 +857,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/homework/'
       preLoaderRoute: typeof AuthenticatedHomeworkIndexRouteImport
       parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/chat/': {
+      id: '/_authenticated/chat/'
+      path: '/'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
     }
     '/_authenticated/attendance/': {
       id: '/_authenticated/attendance/'
@@ -1076,6 +1093,17 @@ const AuthenticatedAttendanceRouteWithChildren =
     AuthenticatedAttendanceRouteChildren,
   )
 
+interface AuthenticatedChatRouteChildren {
+  AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
+}
+
+const AuthenticatedChatRouteChildren: AuthenticatedChatRouteChildren = {
+  AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
+}
+
+const AuthenticatedChatRouteWithChildren =
+  AuthenticatedChatRoute._addFileChildren(AuthenticatedChatRouteChildren)
+
 interface AuthenticatedHomeworkRouteChildren {
   AuthenticatedHomeworkCreateRoute: typeof AuthenticatedHomeworkCreateRoute
   AuthenticatedHomeworkHistoryRoute: typeof AuthenticatedHomeworkHistoryRoute
@@ -1173,7 +1201,7 @@ const AuthenticatedTeachersRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAnnouncementsRoute: typeof AuthenticatedAnnouncementsRouteWithChildren
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRouteWithChildren
-  AuthenticatedChatRoute: typeof AuthenticatedChatRoute
+  AuthenticatedChatRoute: typeof AuthenticatedChatRouteWithChildren
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedHomeworkRoute: typeof AuthenticatedHomeworkRouteWithChildren
@@ -1192,7 +1220,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAnnouncementsRoute: AuthenticatedAnnouncementsRouteWithChildren,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRouteWithChildren,
-  AuthenticatedChatRoute: AuthenticatedChatRoute,
+  AuthenticatedChatRoute: AuthenticatedChatRouteWithChildren,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedHomeworkRoute: AuthenticatedHomeworkRouteWithChildren,
