@@ -39,7 +39,6 @@ function HistoryPage() {
   const del = useServerFn(deleteAnnouncement);
   const detail = useServerFn(getAnnouncementDetail);
   const publishFn = useServerFn(publishAnnouncement);
-  const archiveFn = useServerFn(archiveAnnouncement);
   const qc = useQueryClient();
 
   const [status, setStatus] = useState<string>("all");
@@ -73,10 +72,6 @@ function HistoryPage() {
   const pubM = useMutation({
     mutationFn: (id: string) => publishFn({ data: { id } }),
     onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Published"); invalidate(); } },
-  });
-  const archM = useMutation({
-    mutationFn: (id: string) => archiveFn({ data: { id } }),
-    onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Archived"); invalidate(); } },
   });
 
   return (
@@ -162,11 +157,6 @@ function HistoryPage() {
                           {r.can_edit && r.status !== "published" && r.status !== "archived" && (
                             <Button size="sm" variant="ghost" title="Publish now" onClick={() => pubM.mutate(r.id)}>
                               <Send className="h-4 w-4 text-primary" />
-                            </Button>
-                          )}
-                          {r.can_edit && r.status === "published" && (
-                            <Button size="sm" variant="ghost" title="Archive" onClick={() => archM.mutate(r.id)}>
-                              <Archive className="h-4 w-4" />
                             </Button>
                           )}
                           {r.can_edit && (
