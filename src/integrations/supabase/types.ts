@@ -14,6 +14,152 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcement_attachments: {
+        Row: {
+          announcement_id: string
+          created_at: string
+          file_name: string
+          file_path: string
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          announcement_id: string
+          created_at?: string
+          file_name: string
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          announcement_id?: string
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_attachments_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcement_reads: {
+        Row: {
+          announcement_id: string
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_reads_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          category: Database["public"]["Enums"]["announcement_category"]
+          class_id: string | null
+          created_at: string
+          created_by: string
+          description: string
+          expires_at: string | null
+          id: string
+          priority: Database["public"]["Enums"]["announcement_priority"]
+          publish_at: string | null
+          school_id: string
+          section_id: string | null
+          status: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          type: Database["public"]["Enums"]["announcement_type"]
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["announcement_category"]
+          class_id?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          expires_at?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          publish_at?: string | null
+          school_id: string
+          section_id?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          type: Database["public"]["Enums"]["announcement_type"]
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["announcement_category"]
+          class_id?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          expires_at?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          publish_at?: string | null
+          school_id?: string
+          section_id?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["announcement_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance_records: {
         Row: {
           attendance_date: string
@@ -999,6 +1145,25 @@ export type Database = {
       is_teacher_of_section: { Args: { _section_id: string }; Returns: boolean }
     }
     Enums: {
+      announcement_category:
+        | "school_closure"
+        | "public_holiday"
+        | "sports_day"
+        | "parent_teacher_meeting"
+        | "exam_schedule"
+        | "homework_reminder"
+        | "class_test"
+        | "field_trip"
+        | "project_submission"
+        | "other"
+      announcement_priority: "low" | "medium" | "high" | "urgent"
+      announcement_status:
+        | "draft"
+        | "scheduled"
+        | "published"
+        | "expired"
+        | "archived"
+      announcement_type: "school_wide" | "class_specific"
       app_role: "admin" | "teacher" | "parent"
       attendance_status: "present" | "absent" | "late" | "leave"
       behavior_rating: "excellent" | "good" | "average" | "needs_improvement"
@@ -1132,6 +1297,27 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      announcement_category: [
+        "school_closure",
+        "public_holiday",
+        "sports_day",
+        "parent_teacher_meeting",
+        "exam_schedule",
+        "homework_reminder",
+        "class_test",
+        "field_trip",
+        "project_submission",
+        "other",
+      ],
+      announcement_priority: ["low", "medium", "high", "urgent"],
+      announcement_status: [
+        "draft",
+        "scheduled",
+        "published",
+        "expired",
+        "archived",
+      ],
+      announcement_type: ["school_wide", "class_specific"],
       app_role: ["admin", "teacher", "parent"],
       attendance_status: ["present", "absent", "late", "leave"],
       behavior_rating: ["excellent", "good", "average", "needs_improvement"],
