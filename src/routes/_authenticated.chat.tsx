@@ -66,9 +66,14 @@ function ChatLayout() {
       )}>
         <div className="flex items-center justify-between border-b border-border p-3">
           <h2 className="text-base font-semibold">Messages</h2>
-          <Link to="/chat/new">
-            <Button size="sm" variant="default"><Plus className="h-4 w-4" />New</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/chat/new">
+              <Button size="sm" variant="default"><Plus className="h-4 w-4" />New</Button>
+            </Link>
+            <Button size="icon" variant="ghost" onClick={() => navigate({ to: "/dashboard" })} aria-label="Close chat">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
         <div className="p-3">
           <div className="relative">
