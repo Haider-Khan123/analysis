@@ -155,10 +155,13 @@ function ChatThread() {
         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
           {(otherName ?? "?").slice(0, 1).toUpperCase()}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{otherName ?? "Conversation"}</p>
           {conv?.student && <p className="truncate text-xs text-muted-foreground">Re: {conv.student.full_name}</p>}
         </div>
+        <Button variant="ghost" size="icon" onClick={() => navigate({ to: "/chat" })} aria-label="Close chat">
+          <X className="h-5 w-5" />
+        </Button>
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto bg-muted/20 p-4">
