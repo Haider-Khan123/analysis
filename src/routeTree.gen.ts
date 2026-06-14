@@ -27,6 +27,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedHomeworkRouteImport } from './routes/_authenticated.homework'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated.classes'
+import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated.chat'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated.attendance'
 import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authenticated.announcements'
 import { Route as AuthenticatedTeachersIndexRouteImport } from './routes/_authenticated.teachers.index'
@@ -34,6 +35,7 @@ import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated.progress.index'
 import { Route as AuthenticatedParentsIndexRouteImport } from './routes/_authenticated.parents.index'
 import { Route as AuthenticatedHomeworkIndexRouteImport } from './routes/_authenticated.homework.index'
+import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated.chat.index'
 import { Route as AuthenticatedAttendanceIndexRouteImport } from './routes/_authenticated.attendance.index'
 import { Route as AuthenticatedAnnouncementsIndexRouteImport } from './routes/_authenticated.announcements.index'
 import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated.teachers.$teacherId'
@@ -49,6 +51,8 @@ import { Route as AuthenticatedHomeworkReportsRouteImport } from './routes/_auth
 import { Route as AuthenticatedHomeworkListRouteImport } from './routes/_authenticated.homework.list'
 import { Route as AuthenticatedHomeworkHistoryRouteImport } from './routes/_authenticated.homework.history'
 import { Route as AuthenticatedHomeworkCreateRouteImport } from './routes/_authenticated.homework.create'
+import { Route as AuthenticatedChatNewRouteImport } from './routes/_authenticated.chat.new'
+import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated.chat.$conversationId'
 import { Route as AuthenticatedAttendanceSettingsRouteImport } from './routes/_authenticated.attendance.settings'
 import { Route as AuthenticatedAttendanceReportsRouteImport } from './routes/_authenticated.attendance.reports'
 import { Route as AuthenticatedAttendanceMarkRouteImport } from './routes/_authenticated.attendance.mark'
@@ -154,6 +158,11 @@ const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
   path: '/classes',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
@@ -195,6 +204,11 @@ const AuthenticatedHomeworkIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
+const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedChatRoute,
+} as any)
 const AuthenticatedAttendanceIndexRoute =
   AuthenticatedAttendanceIndexRouteImport.update({
     id: '/',
@@ -285,6 +299,17 @@ const AuthenticatedHomeworkCreateRoute =
     path: '/create',
     getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
+const AuthenticatedChatNewRoute = AuthenticatedChatNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedChatRoute,
+} as any)
+const AuthenticatedChatConversationIdRoute =
+  AuthenticatedChatConversationIdRouteImport.update({
+    id: '/$conversationId',
+    path: '/$conversationId',
+    getParentRoute: () => AuthenticatedChatRoute,
+  } as any)
 const AuthenticatedAttendanceSettingsRoute =
   AuthenticatedAttendanceSettingsRouteImport.update({
     id: '/settings',
@@ -353,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/announcements': typeof AuthenticatedAnnouncementsRouteWithChildren
   '/attendance': typeof AuthenticatedAttendanceRouteWithChildren
+  '/chat': typeof AuthenticatedChatRouteWithChildren
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/homework': typeof AuthenticatedHomeworkRouteWithChildren
@@ -374,6 +400,8 @@ export interface FileRoutesByFullPath {
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/chat/new': typeof AuthenticatedChatNewRoute
   '/homework/create': typeof AuthenticatedHomeworkCreateRoute
   '/homework/history': typeof AuthenticatedHomeworkHistoryRoute
   '/homework/list': typeof AuthenticatedHomeworkListRoute
@@ -389,6 +417,7 @@ export interface FileRoutesByFullPath {
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/attendance/': typeof AuthenticatedAttendanceIndexRoute
+  '/chat/': typeof AuthenticatedChatIndexRoute
   '/homework/': typeof AuthenticatedHomeworkIndexRoute
   '/parents/': typeof AuthenticatedParentsIndexRoute
   '/progress/': typeof AuthenticatedProgressIndexRoute
@@ -418,6 +447,8 @@ export interface FileRoutesByTo {
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/chat/new': typeof AuthenticatedChatNewRoute
   '/homework/create': typeof AuthenticatedHomeworkCreateRoute
   '/homework/history': typeof AuthenticatedHomeworkHistoryRoute
   '/homework/list': typeof AuthenticatedHomeworkListRoute
@@ -433,6 +464,7 @@ export interface FileRoutesByTo {
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/announcements': typeof AuthenticatedAnnouncementsIndexRoute
   '/attendance': typeof AuthenticatedAttendanceIndexRoute
+  '/chat': typeof AuthenticatedChatIndexRoute
   '/homework': typeof AuthenticatedHomeworkIndexRoute
   '/parents': typeof AuthenticatedParentsIndexRoute
   '/progress': typeof AuthenticatedProgressIndexRoute
@@ -450,6 +482,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_authenticated/announcements': typeof AuthenticatedAnnouncementsRouteWithChildren
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRouteWithChildren
+  '/_authenticated/chat': typeof AuthenticatedChatRouteWithChildren
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/homework': typeof AuthenticatedHomeworkRouteWithChildren
@@ -471,6 +504,8 @@ export interface FileRoutesById {
   '/_authenticated/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/_authenticated/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
   '/_authenticated/attendance/settings': typeof AuthenticatedAttendanceSettingsRoute
+  '/_authenticated/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/_authenticated/chat/new': typeof AuthenticatedChatNewRoute
   '/_authenticated/homework/create': typeof AuthenticatedHomeworkCreateRoute
   '/_authenticated/homework/history': typeof AuthenticatedHomeworkHistoryRoute
   '/_authenticated/homework/list': typeof AuthenticatedHomeworkListRoute
@@ -486,6 +521,7 @@ export interface FileRoutesById {
   '/_authenticated/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/_authenticated/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/_authenticated/attendance/': typeof AuthenticatedAttendanceIndexRoute
+  '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/homework/': typeof AuthenticatedHomeworkIndexRoute
   '/_authenticated/parents/': typeof AuthenticatedParentsIndexRoute
   '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
@@ -503,6 +539,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/announcements'
     | '/attendance'
+    | '/chat'
     | '/classes'
     | '/dashboard'
     | '/homework'
@@ -524,6 +561,8 @@ export interface FileRouteTypes {
     | '/attendance/mark'
     | '/attendance/reports'
     | '/attendance/settings'
+    | '/chat/$conversationId'
+    | '/chat/new'
     | '/homework/create'
     | '/homework/history'
     | '/homework/list'
@@ -539,6 +578,7 @@ export interface FileRouteTypes {
     | '/teachers/$teacherId'
     | '/announcements/'
     | '/attendance/'
+    | '/chat/'
     | '/homework/'
     | '/parents/'
     | '/progress/'
@@ -568,6 +608,8 @@ export interface FileRouteTypes {
     | '/attendance/mark'
     | '/attendance/reports'
     | '/attendance/settings'
+    | '/chat/$conversationId'
+    | '/chat/new'
     | '/homework/create'
     | '/homework/history'
     | '/homework/list'
@@ -583,6 +625,7 @@ export interface FileRouteTypes {
     | '/teachers/$teacherId'
     | '/announcements'
     | '/attendance'
+    | '/chat'
     | '/homework'
     | '/parents'
     | '/progress'
@@ -599,6 +642,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_authenticated/announcements'
     | '/_authenticated/attendance'
+    | '/_authenticated/chat'
     | '/_authenticated/classes'
     | '/_authenticated/dashboard'
     | '/_authenticated/homework'
@@ -620,6 +664,8 @@ export interface FileRouteTypes {
     | '/_authenticated/attendance/mark'
     | '/_authenticated/attendance/reports'
     | '/_authenticated/attendance/settings'
+    | '/_authenticated/chat/$conversationId'
+    | '/_authenticated/chat/new'
     | '/_authenticated/homework/create'
     | '/_authenticated/homework/history'
     | '/_authenticated/homework/list'
@@ -635,6 +681,7 @@ export interface FileRouteTypes {
     | '/_authenticated/teachers/$teacherId'
     | '/_authenticated/announcements/'
     | '/_authenticated/attendance/'
+    | '/_authenticated/chat/'
     | '/_authenticated/homework/'
     | '/_authenticated/parents/'
     | '/_authenticated/progress/'
@@ -780,6 +827,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClassesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/chat': {
+      id: '/_authenticated/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof AuthenticatedChatRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/attendance': {
       id: '/_authenticated/attendance'
       path: '/attendance'
@@ -828,6 +882,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/homework/'
       preLoaderRoute: typeof AuthenticatedHomeworkIndexRouteImport
       parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/chat/': {
+      id: '/_authenticated/chat/'
+      path: '/'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
     }
     '/_authenticated/attendance/': {
       id: '/_authenticated/attendance/'
@@ -933,6 +994,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/homework/create'
       preLoaderRoute: typeof AuthenticatedHomeworkCreateRouteImport
       parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/chat/new': {
+      id: '/_authenticated/chat/new'
+      path: '/new'
+      fullPath: '/chat/new'
+      preLoaderRoute: typeof AuthenticatedChatNewRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
+    }
+    '/_authenticated/chat/$conversationId': {
+      id: '/_authenticated/chat/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/chat/$conversationId'
+      preLoaderRoute: typeof AuthenticatedChatConversationIdRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
     }
     '/_authenticated/attendance/settings': {
       id: '/_authenticated/attendance/settings'
@@ -1057,6 +1132,21 @@ const AuthenticatedAttendanceRouteWithChildren =
     AuthenticatedAttendanceRouteChildren,
   )
 
+interface AuthenticatedChatRouteChildren {
+  AuthenticatedChatConversationIdRoute: typeof AuthenticatedChatConversationIdRoute
+  AuthenticatedChatNewRoute: typeof AuthenticatedChatNewRoute
+  AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
+}
+
+const AuthenticatedChatRouteChildren: AuthenticatedChatRouteChildren = {
+  AuthenticatedChatConversationIdRoute: AuthenticatedChatConversationIdRoute,
+  AuthenticatedChatNewRoute: AuthenticatedChatNewRoute,
+  AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
+}
+
+const AuthenticatedChatRouteWithChildren =
+  AuthenticatedChatRoute._addFileChildren(AuthenticatedChatRouteChildren)
+
 interface AuthenticatedHomeworkRouteChildren {
   AuthenticatedHomeworkCreateRoute: typeof AuthenticatedHomeworkCreateRoute
   AuthenticatedHomeworkHistoryRoute: typeof AuthenticatedHomeworkHistoryRoute
@@ -1154,6 +1244,7 @@ const AuthenticatedTeachersRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAnnouncementsRoute: typeof AuthenticatedAnnouncementsRouteWithChildren
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRouteWithChildren
+  AuthenticatedChatRoute: typeof AuthenticatedChatRouteWithChildren
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedHomeworkRoute: typeof AuthenticatedHomeworkRouteWithChildren
@@ -1172,6 +1263,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAnnouncementsRoute: AuthenticatedAnnouncementsRouteWithChildren,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRouteWithChildren,
+  AuthenticatedChatRoute: AuthenticatedChatRouteWithChildren,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedHomeworkRoute: AuthenticatedHomeworkRouteWithChildren,

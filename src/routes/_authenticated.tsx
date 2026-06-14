@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard, GraduationCap, Users, UserCog, School, Building2,
   LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell, BookOpen, TrendingUp, Megaphone,
+  MessageSquare,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";
@@ -476,6 +477,17 @@ function SidebarContent({
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {(isTeacher || isParent) && (
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Communication</p>
+              <Link to="/chat"
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                  pathname.startsWith("/chat") ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <MessageSquare className="h-4 w-4" /> Chat
+              </Link>
             </div>
           )}
 

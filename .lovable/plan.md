@@ -1,79 +1,71 @@
-## Part A — Small UI changes (quick)
+## Communication Module
 
-1. **Sidebar (`src/routes/_authenticated.tsx`)** — add two new section headings (admin-only):
-   - **SCHOOL MANAGEMENT** → `School Profile`, `User Management`
-   - **ADMINISTRATION** → `Teachers` (in addition to the existing Classes & Sections / Students / Parents already grouped under ADMINISTRATION)
-   Remove these items from the flat top-level nav.
-2. **Admin dashboard (`_authenticated.dashboard.tsx`)** — when role is `admin`, do not render the 4-card `DynamicCards` 2×2 grid (and hide the date filter for admin since it only drives those cards). Teacher and Parent dashboards keep the cards.
+Internal 1:1 messaging between Teachers and Parents, with read receipts, attachments, realtime updates, and PWA-friendly responsive UI.
 
-## Part B — Announcement Module
+### 1. Database (single migration)
 
-### B1. Database migration
+Tables (all `public`, with GRANTs + RLS):
 
-Enums:
-- `announcement_type`: `school_wide | class_specific`
-- `announcement_priority`: `low | medium | high | urgent`
-- `announcement_status`: `draft | scheduled | published | expired | archived`
-- `announcement_category`: `school_closure | public_holiday | sports_day | parent_teacher_meeting | exam_schedule | homework_reminder | class_test | field_trip | project_submission | other`
-
-Tables (all in `public`, with `GRANT … TO authenticated`, `GRANT ALL … TO service_role`, RLS enabled):
-- `announcements` — `id, school_id, type, title, description, category, priority, publish_at, expires_at, status, class_id (nullable), section_id (nullable), created_by (user_id), created_at, updated_at`
-- `announcement_attachments` — `id, announcement_id, file_name, file_path, mime_type, size, created_at`
-- `announcement_reads` — `id, announcement_id, user_id, read_at` (unique on `(announcement_id, user_id)`)
+- `conversations`
+  - `id`, `school_id`, `teacher_id` (→ teachers.id), `parent_id` (→ parents.id), `student_id` (→ students.id, optional context), `last_message_at`, `last_message_preview`, `created_at`, `updated_at`
+  - UNIQUE `(teacher_id, parent_id, student_id)`
+- `messages`
+  - `id`, `conversation_id`, `sender_user_id` (auth user), `sender_role` (`teacher|parent`), `body` (text, nullable when attachment-only), `delivered_at`, `created_at`
+- `message_reads`
+  - `id`, `message_id`, `user_id`, `read_at`, UNIQUE `(message_id, user_id)`
+- `message_attachments`
+  - `id`, `message_id`, `file_name`, `file_path`, `mime_type`, `size`, `created_at`
 
 RLS:
-- Admins (`has_role(uid,'admin')` + same school): full CRUD.
-- Teachers: insert/update/delete own announcements; for class-specific must pass `is_teacher_of_section(section_id)`; select on school-wide (school) + class-specific for sections they teach + their own.
-- Parents: select on school-wide (school) + class-specific where `is_parent_of_student` exists for a student in that class/section.
-- `announcement_reads`: each user can insert/select their own rows.
+- Conversations: visible to the teacher (via `teachers.user_id = auth.uid()`) and parent (via `parents.user_id = auth.uid()`) on that row; admins of same school full read.
+- Messages / reads / attachments: gated by `EXISTS conversation visible to caller`.
+- Insert messages: sender must be a participant of the conversation.
+- `message_reads`: each user inserts/selects only their own row.
 
-Storage: new private bucket `announcement-attachments` with policies mirroring `homework-attachments` (teachers/admins upload for their scope; teachers/parents read attachments for announcements they can see).
+Realtime: `ALTER PUBLICATION supabase_realtime ADD TABLE messages, message_reads, conversations;`
 
-### B2. Server functions (`src/lib/announcements.functions.ts`)
+Helper SECURITY DEFINER fn: `is_conversation_participant(_conv uuid)`.
 
-- `createAnnouncement`, `updateAnnouncement`, `deleteAnnouncement`, `publishAnnouncement`, `archiveAnnouncement`
-- `listAnnouncements({ status?, type?, from?, to?, q? })` — admin/teacher scoped
-- `getAnnouncement(id)` with attachments + read stats
-- `getAnnouncementsForParent({ studentId?, from?, to?, q? })`
-- `getAnnouncementsForTeacher({ from?, to?, q? })`
-- `markAnnouncementRead({ announcementId })`
-- `uploadAnnouncementAttachment` (signed URL) + `removeAnnouncementAttachment`
-- `getAnnouncementDashboardWidgets()` — admin (totals by status), teacher (recent + upcoming), parent (latest + unread + urgent)
-- On publish → resolve audience and insert rows into `notifications` (new type strings: `announcement_school_wide`, `announcement_class`) using existing helper.
-- Lazy "expire" pass on list reads: flips `status` to `expired` when `expires_at < now()`.
+### 2. Storage
 
-### B3. Routes
+New private bucket `chat-attachments`. Allowed mime: pdf/doc/docx/jpg/png. Max 10 MB per file enforced server-side.
+RLS on `storage.objects`: a user can read/write objects whose path begins with a conversation id they participate in.
 
-```
-_authenticated.announcements.tsx                (layout - admin/teacher)
-_authenticated.announcements.index.tsx          → redirect to history
-_authenticated.announcements.create.tsx         Create
-_authenticated.announcements.history.tsx        List + filters + edit/delete/publish/archive
-_authenticated.announcements.$id.edit.tsx       Edit
-_authenticated.announcements.categories.tsx     Category reference list
-_authenticated.parent-announcements.tsx         Parent view
-```
+### 3. Server functions (`src/lib/chat.functions.ts`)
 
-(Teacher uses the same `/announcements/*` routes; server fns scope by role.)
+- `listConversations({ q? })` — for current user (teacher or parent), ordered by `last_message_at desc`, with unread count + other participant info.
+- `getOrCreateConversation({ otherUserId, studentId? })` — teacher initiates with parent (must teach parent's child); parent initiates with teacher (must teach parent's child).
+- `listMessages({ conversationId, before?, limit })` — paginated.
+- `sendMessage({ conversationId, body?, attachments?: [{path, name, mime, size}] })` — validates membership; inserts message + attachments; updates `conversations.last_message_*`.
+- `markConversationRead({ conversationId })` — inserts `message_reads` for unread messages of the other participant.
+- `getMessageReadStatus({ messageId })` — for sender's read receipts.
+- `createAttachmentUploadUrl({ conversationId, fileName, mime, size })` — returns signed upload URL after validation.
+- `listEligibleRecipients()` — teacher: list parents of their students; parent: list teachers of their children.
 
-### B4. Sidebar additions
+### 4. Routes
 
-New collapsible heading **ANNOUNCEMENT**:
-- Admin + Teacher: `Create Announcement`, `Announcement History`, `Announcement Categories`
-- Parent: single link **`Announcements`** → `/parent-announcements` (placed under existing parent grouping)
+- `_authenticated.chat.tsx` — layout (sidebar conversation list + outlet)
+- `_authenticated.chat.index.tsx` — empty state / "select a conversation"
+- `_authenticated.chat.$conversationId.tsx` — message thread + composer
+- `_authenticated.chat.new.tsx` — pick recipient (and child) to start conversation
 
-### B5. Dashboard widgets
+Both teacher and parent use the same `/chat/*` routes; server fns scope by role.
 
-- **Admin**: 4 stat tiles — Total / Published / Scheduled / Expired (replaces nothing, added as its own section since the 2×2 cards are removed for admin).
-- **Teacher**: appended row — Recent Announcements + Upcoming Scheduled.
-- **Parent**: appended row — Latest + Unread + Urgent.
+### 5. UI
 
-### B6. Notifications
+- Two-pane layout on desktop (list left, thread right); single-pane stack on mobile (list → thread navigation).
+- Conversation list: avatar, name, role chip, last message preview, timestamp, unread badge, search input, sorted by latest activity.
+- Thread: scrollable history, day separators, message bubbles with timestamp, sent/delivered/read ticks (✓ / ✓✓ / blue ✓✓ + read time on hover), image previews inline, file chips with download.
+- Composer: textarea + attach button (multi-file) + send. Client-side validation (type/size). Upload via signed URL then send message referencing paths.
+- Realtime: subscribe to `messages` filtered by conversation; subscribe to `message_reads` to update read state; conversation-list subscribes to `conversations` updates for the user.
+- Auto-mark-read on thread open and when new messages arrive while focused.
 
-Reuse existing `notifications` table + `insertNotification` helper. New `type` values: `announcement_school_wide`, `announcement_class`. Bell badge already realtime.
+### 6. Sidebar
 
-### Out of scope (phase 1)
+In `_authenticated.tsx`, add a new collapsible heading **COMMUNICATION** containing a single item **Chat** → `/chat`. Show for `teacher` and `parent` roles.
 
-Email/SMS channels, push, manual recipient overrides, rich-text editor, bulk import, scheduled-publish cron (publish-immediately works; `scheduled` rows transition to `published` lazily when the publish_at time has passed and the row is fetched/listed — no cron needed phase 1).
+### 7. Out of scope (phase 1)
 
-Confirm and I'll execute: migration + storage bucket → server fns → routes → sidebar/dashboard wiring in parallel batches.
+Group chats, typing indicators, message edit/delete, push notifications, true antivirus scanning (we expose a hook point but rely on mime/size validation + private bucket for now).
+
+Approve and I'll execute: migration → storage bucket → server fns → routes → sidebar wiring.
