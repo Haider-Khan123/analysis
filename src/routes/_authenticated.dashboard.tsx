@@ -36,11 +36,11 @@ function Dashboard() {
         </h1>
       </div>
 
-      {rolesReady && (
+      {rolesReady && !isAdmin && (
         <DateFilter from={from} to={to} onFrom={setFrom} onTo={setTo} />
       )}
 
-      {rolesReady && session?.access_token && (
+      {rolesReady && !isAdmin && session?.access_token && (
         <DynamicCards from={from} to={to} userId={user?.id ?? ""} />
       )}
 
