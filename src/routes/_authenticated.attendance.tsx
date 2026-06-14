@@ -9,12 +9,14 @@ export const Route = createFileRoute("/_authenticated/attendance")({
 function AttendanceLayout() {
   const { roles } = useAuth();
   const isAdmin = roles.includes("admin");
+  const isTeacher = roles.includes("teacher") && !isAdmin;
+  const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
   const { pathname } = useLocation();
 
   const tabs = [
-    { to: "/attendance/mark", label: "Mark Attendance" },
+    ...(isParent ? [] : [{ to: "/attendance/mark", label: "Mark Attendance" }]),
     { to: "/attendance/history", label: "History" },
-    { to: "/attendance/reports", label: "Reports" },
+    ...(isParent ? [] : [{ to: "/attendance/reports", label: "Reports" }]),
     ...(isAdmin ? [{ to: "/attendance/settings", label: "Settings" }] : []),
   ];
 
