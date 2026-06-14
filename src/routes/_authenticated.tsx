@@ -256,6 +256,23 @@ function SidebarContent({
             );
           })}
 
+          {showSchoolMgmt && (
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">School Management</p>
+              {schoolMgmtItems.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.to;
+                return (
+                  <Link key={item.to} to={item.to}
+                    className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      active ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                    <Icon className="h-4 w-4" />{item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
           {showAdministration && (
             <div className="pt-3">
               <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Administration</p>
