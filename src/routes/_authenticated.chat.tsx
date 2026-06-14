@@ -27,6 +27,7 @@ function formatTime(iso: string | null) {
 
 function ChatLayout() {
   const fetchConvs = useServerFn(listConversations);
+  const navigate = useNavigate();
   const { user } = useAuth();
   const location = useLocation();
   const [q, setQ] = useState("");
