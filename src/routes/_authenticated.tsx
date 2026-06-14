@@ -219,7 +219,7 @@ function SidebarContent({
   useEffect(() => { if (onProgress) setPrOpen(true); }, [onProgress]);
 
   const showAnnouncements = isAdmin || isTeacher;
-  const onAnnouncements = pathname.startsWith("/announcements");
+  const onAnnouncements = pathname.startsWith("/announcements") || pathname.startsWith("/parent-announcements");
   const [anOpen, setAnOpen] = useState(onAnnouncements);
   useEffect(() => { if (onAnnouncements) setAnOpen(true); }, [onAnnouncements]);
 
