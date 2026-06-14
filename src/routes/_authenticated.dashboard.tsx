@@ -164,7 +164,7 @@ function TeacherDashboard({ enabled }: { enabled: boolean }) {
   });
 
   return (
-    <div className="mx-auto grid max-w-2xl grid-cols-1 gap-5 sm:grid-cols-2">
+    <div className="mx-auto grid max-w-2xl grid-cols-2 gap-4">
       <StatCard label="Classes" value={data?.counts.classes ?? 0} icon={School} loading={isLoading} />
       <StatCard label="Sections" value={data?.counts.sections ?? 0} icon={Layers} loading={isLoading} />
       <StatCard label="Students" value={data?.counts.students ?? 0} icon={GraduationCap} loading={isLoading} />
