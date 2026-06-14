@@ -57,6 +57,7 @@ import { Route as AuthenticatedAnnouncementsHistoryRouteImport } from './routes/
 import { Route as AuthenticatedAnnouncementsCreateRouteImport } from './routes/_authenticated.announcements.create'
 import { Route as AuthenticatedAnnouncementsCategoriesRouteImport } from './routes/_authenticated.announcements.categories'
 import { Route as AuthenticatedHomeworkHomeworkIdEditRouteImport } from './routes/_authenticated.homework.$homeworkId.edit'
+import { Route as AuthenticatedAnnouncementsIdEditRouteImport } from './routes/_authenticated.announcements.$id.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -331,6 +332,12 @@ const AuthenticatedHomeworkHomeworkIdEditRoute =
     path: '/$homeworkId/edit',
     getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
+const AuthenticatedAnnouncementsIdEditRoute =
+  AuthenticatedAnnouncementsIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => AuthenticatedAnnouncementsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -379,6 +386,7 @@ export interface FileRoutesByFullPath {
   '/progress/': typeof AuthenticatedProgressIndexRoute
   '/students/': typeof AuthenticatedStudentsIndexRoute
   '/teachers/': typeof AuthenticatedTeachersIndexRoute
+  '/announcements/$id/edit': typeof AuthenticatedAnnouncementsIdEditRoute
   '/homework/$homeworkId/edit': typeof AuthenticatedHomeworkHomeworkIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -421,6 +429,7 @@ export interface FileRoutesByTo {
   '/progress': typeof AuthenticatedProgressIndexRoute
   '/students': typeof AuthenticatedStudentsIndexRoute
   '/teachers': typeof AuthenticatedTeachersIndexRoute
+  '/announcements/$id/edit': typeof AuthenticatedAnnouncementsIdEditRoute
   '/homework/$homeworkId/edit': typeof AuthenticatedHomeworkHomeworkIdEditRoute
 }
 export interface FileRoutesById {
@@ -472,6 +481,7 @@ export interface FileRoutesById {
   '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
   '/_authenticated/students/': typeof AuthenticatedStudentsIndexRoute
   '/_authenticated/teachers/': typeof AuthenticatedTeachersIndexRoute
+  '/_authenticated/announcements/$id/edit': typeof AuthenticatedAnnouncementsIdEditRoute
   '/_authenticated/homework/$homeworkId/edit': typeof AuthenticatedHomeworkHomeworkIdEditRoute
 }
 export interface FileRouteTypes {
@@ -523,6 +533,7 @@ export interface FileRouteTypes {
     | '/progress/'
     | '/students/'
     | '/teachers/'
+    | '/announcements/$id/edit'
     | '/homework/$homeworkId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -565,6 +576,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/students'
     | '/teachers'
+    | '/announcements/$id/edit'
     | '/homework/$homeworkId/edit'
   id:
     | '__root__'
@@ -615,6 +627,7 @@ export interface FileRouteTypes {
     | '/_authenticated/progress/'
     | '/_authenticated/students/'
     | '/_authenticated/teachers/'
+    | '/_authenticated/announcements/$id/edit'
     | '/_authenticated/homework/$homeworkId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -964,6 +977,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeworkHomeworkIdEditRouteImport
       parentRoute: typeof AuthenticatedHomeworkRoute
     }
+    '/_authenticated/announcements/$id/edit': {
+      id: '/_authenticated/announcements/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/announcements/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsIdEditRouteImport
+      parentRoute: typeof AuthenticatedAnnouncementsRoute
+    }
   }
 }
 
@@ -972,6 +992,7 @@ interface AuthenticatedAnnouncementsRouteChildren {
   AuthenticatedAnnouncementsCreateRoute: typeof AuthenticatedAnnouncementsCreateRoute
   AuthenticatedAnnouncementsHistoryRoute: typeof AuthenticatedAnnouncementsHistoryRoute
   AuthenticatedAnnouncementsIndexRoute: typeof AuthenticatedAnnouncementsIndexRoute
+  AuthenticatedAnnouncementsIdEditRoute: typeof AuthenticatedAnnouncementsIdEditRoute
 }
 
 const AuthenticatedAnnouncementsRouteChildren: AuthenticatedAnnouncementsRouteChildren =
@@ -983,6 +1004,8 @@ const AuthenticatedAnnouncementsRouteChildren: AuthenticatedAnnouncementsRouteCh
     AuthenticatedAnnouncementsHistoryRoute:
       AuthenticatedAnnouncementsHistoryRoute,
     AuthenticatedAnnouncementsIndexRoute: AuthenticatedAnnouncementsIndexRoute,
+    AuthenticatedAnnouncementsIdEditRoute:
+      AuthenticatedAnnouncementsIdEditRoute,
   }
 
 const AuthenticatedAnnouncementsRouteWithChildren =
