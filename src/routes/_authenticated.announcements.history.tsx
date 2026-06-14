@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Eye, Trash2, Send, Archive, Pencil } from "lucide-react";
+import { Eye, Trash2, Send, Pencil } from "lucide-react";
 import {
-  listAnnouncements, deleteAnnouncement, getAnnouncementDetail, publishAnnouncement, archiveAnnouncement,
+  listAnnouncements, deleteAnnouncement, getAnnouncementDetail, publishAnnouncement,
 } from "@/lib/announcements.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,6 @@ function HistoryPage() {
   const del = useServerFn(deleteAnnouncement);
   const detail = useServerFn(getAnnouncementDetail);
   const publishFn = useServerFn(publishAnnouncement);
-  const archiveFn = useServerFn(archiveAnnouncement);
   const qc = useQueryClient();
 
   const [status, setStatus] = useState<string>("all");
@@ -73,10 +72,6 @@ function HistoryPage() {
   const pubM = useMutation({
     mutationFn: (id: string) => publishFn({ data: { id } }),
     onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Published"); invalidate(); } },
-  });
-  const archM = useMutation({
-    mutationFn: (id: string) => archiveFn({ data: { id } }),
-    onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Archived"); invalidate(); } },
   });
 
   return (
@@ -162,11 +157,6 @@ function HistoryPage() {
                           {r.can_edit && r.status !== "published" && r.status !== "archived" && (
                             <Button size="sm" variant="ghost" title="Publish now" onClick={() => pubM.mutate(r.id)}>
                               <Send className="h-4 w-4 text-primary" />
-                            </Button>
-                          )}
-                          {r.can_edit && r.status === "published" && (
-                            <Button size="sm" variant="ghost" title="Archive" onClick={() => archM.mutate(r.id)}>
-                              <Archive className="h-4 w-4" />
                             </Button>
                           )}
                           {r.can_edit && (
