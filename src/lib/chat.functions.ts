@@ -408,8 +408,30 @@ export const sendMessage = createServerFn({ method: "POST" })
       .update({ last_message_at: msg.created_at, last_message_preview: preview })
       .eq("id", conv.id);
 
+    // Notify the other participant
+    try {
+      const otherTable = senderRole === "teacher" ? "parents" : "teachers";
+      const otherId = senderRole === "teacher" ? conv.parent_id : conv.teacher_id;
+      const { data: other } = await supabaseAdmin
+        .from(otherTable).select("user_id").eq("id", otherId).maybeSingle();
+      if (other?.user_id) {
+        await supabaseAdmin.from("notifications").insert({
+          user_id: other.user_id,
+          school_id: conv.school_id,
+          type: "chat_message",
+          title: `New message from ${actor.fullName ?? (senderRole === "teacher" ? "Teacher" : "Parent")}`,
+          body: preview,
+          student_id: conv.student_id,
+          metadata: { conversation_id: conv.id, message_id: msg.id, sender_role: senderRole },
+        });
+      }
+    } catch (e) {
+      console.error("notify chat failed", e);
+    }
+
     return { id: msg.id };
   });
+
 
 // ---------- Mark conversation read ----------
 export const markConversationRead = createServerFn({ method: "POST" })
