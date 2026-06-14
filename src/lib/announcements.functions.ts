@@ -354,7 +354,7 @@ export const listAnnouncements = createServerFn({ method: "POST" })
       .select("id, type, title, description, category, priority, status, publish_at, expires_at, class_id, section_id, created_by, created_at")
       .eq("school_id", actor.schoolId)
       .order("created_at", { ascending: false });
-    if (data.status) q = q.eq("status", data.status);
+    if (data.status) q = q.eq("status", data.status as never);
     if (data.type) q = q.eq("type", data.type);
     if (data.from) q = q.gte("created_at", `${data.from}T00:00:00Z`);
     if (data.to) q = q.lte("created_at", `${data.to}T23:59:59Z`);
