@@ -53,6 +53,7 @@ import { Route as AuthenticatedAttendanceSettingsRouteImport } from './routes/_a
 import { Route as AuthenticatedAttendanceReportsRouteImport } from './routes/_authenticated.attendance.reports'
 import { Route as AuthenticatedAttendanceMarkRouteImport } from './routes/_authenticated.attendance.mark'
 import { Route as AuthenticatedAttendanceHistoryRouteImport } from './routes/_authenticated.attendance.history'
+import { Route as AuthenticatedAnnouncementsViewRouteImport } from './routes/_authenticated.announcements.view'
 import { Route as AuthenticatedAnnouncementsHistoryRouteImport } from './routes/_authenticated.announcements.history'
 import { Route as AuthenticatedAnnouncementsCreateRouteImport } from './routes/_authenticated.announcements.create'
 import { Route as AuthenticatedAnnouncementsCategoriesRouteImport } from './routes/_authenticated.announcements.categories'
@@ -308,6 +309,12 @@ const AuthenticatedAttendanceHistoryRoute =
     path: '/history',
     getParentRoute: () => AuthenticatedAttendanceRoute,
   } as any)
+const AuthenticatedAnnouncementsViewRoute =
+  AuthenticatedAnnouncementsViewRouteImport.update({
+    id: '/view',
+    path: '/view',
+    getParentRoute: () => AuthenticatedAnnouncementsRoute,
+  } as any)
 const AuthenticatedAnnouncementsHistoryRoute =
   AuthenticatedAnnouncementsHistoryRouteImport.update({
     id: '/history',
@@ -362,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/announcements/categories': typeof AuthenticatedAnnouncementsCategoriesRoute
   '/announcements/create': typeof AuthenticatedAnnouncementsCreateRoute
   '/announcements/history': typeof AuthenticatedAnnouncementsHistoryRoute
+  '/announcements/view': typeof AuthenticatedAnnouncementsViewRoute
   '/attendance/history': typeof AuthenticatedAttendanceHistoryRoute
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
@@ -405,6 +413,7 @@ export interface FileRoutesByTo {
   '/announcements/categories': typeof AuthenticatedAnnouncementsCategoriesRoute
   '/announcements/create': typeof AuthenticatedAnnouncementsCreateRoute
   '/announcements/history': typeof AuthenticatedAnnouncementsHistoryRoute
+  '/announcements/view': typeof AuthenticatedAnnouncementsViewRoute
   '/attendance/history': typeof AuthenticatedAttendanceHistoryRoute
   '/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
@@ -457,6 +466,7 @@ export interface FileRoutesById {
   '/_authenticated/announcements/categories': typeof AuthenticatedAnnouncementsCategoriesRoute
   '/_authenticated/announcements/create': typeof AuthenticatedAnnouncementsCreateRoute
   '/_authenticated/announcements/history': typeof AuthenticatedAnnouncementsHistoryRoute
+  '/_authenticated/announcements/view': typeof AuthenticatedAnnouncementsViewRoute
   '/_authenticated/attendance/history': typeof AuthenticatedAttendanceHistoryRoute
   '/_authenticated/attendance/mark': typeof AuthenticatedAttendanceMarkRoute
   '/_authenticated/attendance/reports': typeof AuthenticatedAttendanceReportsRoute
@@ -509,6 +519,7 @@ export interface FileRouteTypes {
     | '/announcements/categories'
     | '/announcements/create'
     | '/announcements/history'
+    | '/announcements/view'
     | '/attendance/history'
     | '/attendance/mark'
     | '/attendance/reports'
@@ -552,6 +563,7 @@ export interface FileRouteTypes {
     | '/announcements/categories'
     | '/announcements/create'
     | '/announcements/history'
+    | '/announcements/view'
     | '/attendance/history'
     | '/attendance/mark'
     | '/attendance/reports'
@@ -603,6 +615,7 @@ export interface FileRouteTypes {
     | '/_authenticated/announcements/categories'
     | '/_authenticated/announcements/create'
     | '/_authenticated/announcements/history'
+    | '/_authenticated/announcements/view'
     | '/_authenticated/attendance/history'
     | '/_authenticated/attendance/mark'
     | '/_authenticated/attendance/reports'
@@ -949,6 +962,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAttendanceHistoryRouteImport
       parentRoute: typeof AuthenticatedAttendanceRoute
     }
+    '/_authenticated/announcements/view': {
+      id: '/_authenticated/announcements/view'
+      path: '/view'
+      fullPath: '/announcements/view'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsViewRouteImport
+      parentRoute: typeof AuthenticatedAnnouncementsRoute
+    }
     '/_authenticated/announcements/history': {
       id: '/_authenticated/announcements/history'
       path: '/history'
@@ -991,6 +1011,7 @@ interface AuthenticatedAnnouncementsRouteChildren {
   AuthenticatedAnnouncementsCategoriesRoute: typeof AuthenticatedAnnouncementsCategoriesRoute
   AuthenticatedAnnouncementsCreateRoute: typeof AuthenticatedAnnouncementsCreateRoute
   AuthenticatedAnnouncementsHistoryRoute: typeof AuthenticatedAnnouncementsHistoryRoute
+  AuthenticatedAnnouncementsViewRoute: typeof AuthenticatedAnnouncementsViewRoute
   AuthenticatedAnnouncementsIndexRoute: typeof AuthenticatedAnnouncementsIndexRoute
   AuthenticatedAnnouncementsIdEditRoute: typeof AuthenticatedAnnouncementsIdEditRoute
 }
@@ -1003,6 +1024,7 @@ const AuthenticatedAnnouncementsRouteChildren: AuthenticatedAnnouncementsRouteCh
       AuthenticatedAnnouncementsCreateRoute,
     AuthenticatedAnnouncementsHistoryRoute:
       AuthenticatedAnnouncementsHistoryRoute,
+    AuthenticatedAnnouncementsViewRoute: AuthenticatedAnnouncementsViewRoute,
     AuthenticatedAnnouncementsIndexRoute: AuthenticatedAnnouncementsIndexRoute,
     AuthenticatedAnnouncementsIdEditRoute:
       AuthenticatedAnnouncementsIdEditRoute,

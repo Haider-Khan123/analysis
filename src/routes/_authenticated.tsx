@@ -60,9 +60,14 @@ const progressNav: ReadonlyArray<{ to: string; label: string }> = [
 ];
 
 const announcementNav: ReadonlyArray<{ to: string; label: string }> = [
+  { to: "/announcements/view", label: "View Announcements" },
   { to: "/announcements/create", label: "Create Announcement" },
   { to: "/announcements/history", label: "Announcement History" },
   { to: "/announcements/categories", label: "Announcement Categories" },
+];
+
+const parentAnnouncementNav: ReadonlyArray<{ to: string; label: string }> = [
+  { to: "/parent-announcements", label: "View Announcements" },
 ];
 
 const gateMessages: Record<string, string> = {
