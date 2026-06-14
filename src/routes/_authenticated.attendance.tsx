@@ -1,29 +1,22 @@
-import { createFileRoute, Outlet, Link, useLocation, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/attendance")({
   component: AttendanceLayout,
-  beforeLoad: ({ context }) => {
-    const roles = (context as any)?.roles ?? [];
-    const isAdmin = roles.includes("admin");
-    const isTeacher = roles.includes("teacher") && !isAdmin;
-    const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
-    if (isParent) {
-      throw redirect({ to: "/attendance/history" });
-    }
-  },
 });
 
 function AttendanceLayout() {
   const { roles } = useAuth();
   const isAdmin = roles.includes("admin");
+  const isTeacher = roles.includes("teacher") && !isAdmin;
+  const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
   const { pathname } = useLocation();
 
   const tabs = [
-    { to: "/attendance/mark", label: "Mark Attendance" },
+    ...(isParent ? [] : [{ to: "/attendance/mark", label: "Mark Attendance" }]),
     { to: "/attendance/history", label: "History" },
-    { to: "/attendance/reports", label: "Reports" },
+    ...(isParent ? [] : [{ to: "/attendance/reports", label: "Reports" }]),
     ...(isAdmin ? [{ to: "/attendance/settings", label: "Settings" }] : []),
   ];
 
