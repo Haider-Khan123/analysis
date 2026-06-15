@@ -15,19 +15,12 @@ import {
   Clock,
   HeartHandshake,
   Sparkles,
-  Star,
   UserPlus,
   Bell,
   Eye,
   Settings2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -77,18 +70,6 @@ function Landing() {
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               How it works
-            </a>
-            <a
-              href="#testimonials"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Testimonials
-            </a>
-            <a
-              href="#faq"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              FAQ
             </a>
           </nav>
 
@@ -157,16 +138,16 @@ function Landing() {
                 {/* Trust stats */}
                 <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-4">
                   {[
-                    { v: "10k+", l: "Students managed" },
+                    { v: "24/7", l: "Customer Support" },
                     { v: "99.9%", l: "Uptime SLA" },
-                    { v: "4.9★", l: "Average rating" },
+                    { v: "Money-back", l: "Guarantee" },
                   ].map((s) => (
                     <div
                       key={s.l}
-                      className="rounded-2xl border border-border/60 bg-card/80 p-4 text-center shadow-[var(--shadow-card)] backdrop-blur"
+                      className="flex items-center justify-center gap-1.5 rounded-2xl border border-border/60 bg-card/80 p-4 shadow-[var(--shadow-card)] backdrop-blur"
                     >
-                      <div className="text-xl font-bold text-foreground sm:text-2xl">{s.v}</div>
-                      <div className="mt-1 text-xs text-muted-foreground">{s.l}</div>
+                      <span className="text-xl font-bold text-foreground sm:text-2xl">{s.v}</span>
+                      <span className="text-xs text-muted-foreground">{s.l}</span>
                     </div>
                   ))}
                 </div>
@@ -346,56 +327,6 @@ function Landing() {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section id="testimonials" className="mx-auto max-w-7xl px-6 py-24">
-          <SectionHeader
-            eyebrow="Testimonials"
-            title="Loved by school leaders, teachers, and parents"
-          />
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {[
-              {
-                name: "Dr. Aisha Khan",
-                role: "Principal, Greenfield Academy",
-                quote:
-                  "Analysis cut our administrative reporting time in half. The whole school feels more aligned.",
-              },
-              {
-                name: "Mark Thompson",
-                role: "Class Teacher, Grade 5",
-                quote:
-                  "Marking attendance and sending homework now takes minutes. Parents finally see what I share.",
-              },
-              {
-                name: "Priya Verma",
-                role: "Parent of two",
-                quote:
-                  "I get clear daily updates instead of scrolling through WhatsApp groups. It's a huge relief.",
-              },
-            ].map((t) => (
-              <div
-                key={t.name}
-                className="rounded-2xl border border-border/70 bg-card p-7 shadow-[var(--shadow-card)] transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)]"
-              >
-                <div className="flex gap-0.5 text-warning">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-current" />
-                  ))}
-                </div>
-                <p className="mt-4 text-base leading-relaxed text-foreground">"{t.quote}"</p>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-sm font-bold text-primary-foreground">
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold">{t.name}</div>
-                    <div className="text-xs text-muted-foreground">{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* SUCCESS METRICS */}
         <section className="relative overflow-hidden py-24">
