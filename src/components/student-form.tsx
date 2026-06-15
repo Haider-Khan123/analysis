@@ -131,8 +131,7 @@ export function StudentForm({
             <Button type="button" size="sm" variant="ghost" onClick={() => set("photo_data_url", null)}>Remove</Button>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Row label="Attendance ID *"><Input value={value.attendance_id} onChange={(e) => set("attendance_id", e.target.value)} /></Row>
+        <div className="grid grid-cols-1 gap-3">
           <Row label="Admission Number *"><Input value={value.admission_number} onChange={(e) => set("admission_number", e.target.value)} /></Row>
         </div>
         <div className="grid grid-cols-2 gap-3">
