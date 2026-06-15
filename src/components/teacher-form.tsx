@@ -118,7 +118,7 @@ export function TeacherForm({
           </Field>
           <Field label="Date Of Birth"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Field>
         </div>
-        <Field label="CNIC / National ID *"><Input value={value.cnic} onChange={(e) => set("cnic", e.target.value)} placeholder="e.g. 35202-1234567-1" /></Field>
+        <Field label="CNIC / National ID *"><Input value={value.cnic} maxLength={15} onChange={(e) => set("cnic", e.target.value)} placeholder="*****-*******-*" /></Field>
       </TabsContent>
 
       <TabsContent value="contact" className="space-y-3">
