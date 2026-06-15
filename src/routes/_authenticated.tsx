@@ -250,7 +250,24 @@ function SidebarContent({
       </div>
       <TooltipProvider delayDuration={150}>
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          {visible.map((item) => {
+          {isSuperAdmin && (
+            <div>
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Super Admin</p>
+              <Link
+                to="/super-admin/admin-management"
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  pathname.startsWith("/super-admin")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent",
+                )}
+              >
+                <Shield className="h-4 w-4" /> Admin Management
+              </Link>
+            </div>
+          )}
+          {!isSuperAdmin && visible.map((item) => {
+
             const Icon = item.icon;
             const active = pathname === item.to;
             const locked = isLocked(item.gate);
