@@ -82,7 +82,7 @@ function ParentsListPage() {
       if (err) throw new Error(err);
       const res = await create({
         data: {
-          parent_id: form.parent_id,
+          parent_id: form.parent_id?.trim() || `P-${Date.now()}`,
           first_name: form.first_name,
           last_name: form.last_name,
           phone: form.phone,
