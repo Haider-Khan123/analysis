@@ -352,28 +352,6 @@ function Landing() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section id="faq" className="mx-auto max-w-3xl px-6 py-24">
-          <SectionHeader eyebrow="FAQ" title="Questions, answered" />
-          <div className="mt-10 rounded-2xl border border-border/70 bg-card p-2 shadow-[var(--shadow-card)] md:p-4">
-            <Accordion type="single" collapsible className="w-full">
-              {FAQS.map((f, i) => (
-                <AccordionItem
-                  key={f.q}
-                  value={`item-${i}`}
-                  className="border-b border-border/60 last:border-b-0"
-                >
-                  <AccordionTrigger className="px-4 text-base font-semibold hover:no-underline">
-                    {f.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 text-muted-foreground">
-                    {f.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </section>
 
         {/* CTA */}
         <section className="mx-auto max-w-7xl px-6 pb-24">
