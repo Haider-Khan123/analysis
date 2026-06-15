@@ -809,9 +809,12 @@ export type Database = {
           created_by: string
           email: string | null
           id: string
+          is_suspended: boolean
           logo_url: string | null
           name: string
           phone: string | null
+          suspended_at: string | null
+          suspended_by: string | null
           updated_at: string
         }
         Insert: {
@@ -821,9 +824,12 @@ export type Database = {
           created_by: string
           email?: string | null
           id?: string
+          is_suspended?: boolean
           logo_url?: string | null
           name: string
           phone?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
           updated_at?: string
         }
         Update: {
@@ -833,9 +839,12 @@ export type Database = {
           created_by?: string
           email?: string | null
           id?: string
+          is_suspended?: boolean
           logo_url?: string | null
           name?: string
           phone?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
           updated_at?: string
         }
         Relationships: []
