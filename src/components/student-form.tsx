@@ -192,11 +192,9 @@ export function StudentForm({
           <div key={i} className="space-y-3 rounded-md border border-border p-3">
             <div className="flex items-center justify-between">
               <div className="text-sm font-medium">{i === 0 ? "Primary Guardian" : `Guardian ${i + 1}`}</div>
-              {value.guardians.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeGuardian(i)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              )}
+              <Button type="button" variant="ghost" size="icon" onClick={() => removeGuardian(i)}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Row label="Full Name *"><Input value={g.full_name} onChange={(e) => updateGuardian(i, { full_name: e.target.value })} /></Row>
