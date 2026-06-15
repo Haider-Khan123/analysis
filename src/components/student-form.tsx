@@ -99,11 +99,10 @@ export function StudentForm({
     const next = value.guardians.map((g, idx) => idx === i ? { ...g, ...patch } : g);
     onChange({ ...value, guardians: next });
   };
-  const addGuardian = () => onChange({ ...value, guardians: [...value.guardians, { ...emptyGuardian }] });
+  const addGuardian = () => onChange({ ...value, guardians: [...value.guardians, { ...emptyGuardian, is_primary: value.guardians.length === 0 }] });
   const removeGuardian = (i: number) => {
-    if (value.guardians.length === 1) { toast.error("At least one guardian is required."); return; }
     const next = value.guardians.filter((_, idx) => idx !== i);
-    if (!next.some((g) => g.is_primary)) next[0].is_primary = true;
+    if (next.length && !next.some((g) => g.is_primary)) next[0].is_primary = true;
     onChange({ ...value, guardians: next });
   };
 
