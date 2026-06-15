@@ -1,6 +1,7 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link e, redirect } from "@tanstack/react-router";
 import {
   ArrowRight,
+  ArrowUp,
   BookOpen,
   CheckCircle2,
   GraduationCap,
