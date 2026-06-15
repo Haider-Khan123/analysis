@@ -531,7 +531,9 @@ function SidebarContent({
               <Bell className="h-4 w-4" /> Notifications
             </Link>
           </div>
+          )}
         </nav>
+
       </TooltipProvider>
     </div>
   );
