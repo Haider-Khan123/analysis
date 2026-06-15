@@ -53,7 +53,6 @@ const phoneRegex = /^[+0-9 \-()]{7,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateParent(v: ParentFormValues, opts: { requireLogin: boolean } = { requireLogin: true }): string | null {
-  if (!v.parent_id.trim()) return "Parent ID is required.";
   if (!v.first_name.trim()) return "First name is required.";
   if (!v.last_name.trim()) return "Last name is required.";
   if (!phoneRegex.test(v.phone)) return "Valid primary mobile number is required.";
