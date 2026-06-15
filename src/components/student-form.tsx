@@ -187,7 +187,7 @@ export function StudentForm({
       </TabsContent>
 
       <TabsContent value="guardians" className="space-y-4">
-        <p className="text-xs text-muted-foreground">First guardian is the Primary Guardian. At least one guardian is mandatory.</p>
+        <p className="text-xs text-muted-foreground">Guardians are optional. If added, the first one is the Primary Guardian.</p>
         {value.guardians.map((g, i) => (
           <div key={i} className="space-y-3 rounded-md border border-border p-3">
             <div className="flex items-center justify-between">
