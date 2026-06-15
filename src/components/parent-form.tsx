@@ -53,7 +53,6 @@ const phoneRegex = /^[+0-9 \-()]{7,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateParent(v: ParentFormValues, opts: { requireLogin: boolean } = { requireLogin: true }): string | null {
-  if (!v.parent_id.trim()) return "Parent ID is required.";
   if (!v.first_name.trim()) return "First name is required.";
   if (!v.last_name.trim()) return "Last name is required.";
   if (!phoneRegex.test(v.phone)) return "Valid primary mobile number is required.";
@@ -154,10 +153,9 @@ export function ParentForm({
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <FieldText label="Parent ID *" value={value.parent_id} onChange={(v) => set("parent_id", v)} />
-          <FieldText label="CNIC / National ID" value={value.cnic} onChange={(v) => set("cnic", v)} />
           <FieldText label="First Name *" value={value.first_name} onChange={(v) => set("first_name", v)} />
           <FieldText label="Last Name *" value={value.last_name} onChange={(v) => set("last_name", v)} />
+          <FieldText label="CNIC / National ID" value={value.cnic} onChange={(v) => set("cnic", v)} maxLength={15} placeholder="*****-*******-*" />
           <FieldText label="Occupation" value={value.occupation} onChange={(v) => set("occupation", v)} />
         </div>
       </TabsContent>
@@ -282,13 +280,13 @@ export function ParentForm({
   );
 }
 
-function FieldText({ label, value, onChange, type = "text" }: {
-  label: string; value: string; onChange: (v: string) => void; type?: string;
+function FieldText({ label, value, onChange, type = "text", maxLength, placeholder }: {
+  label: string; value: string; onChange: (v: string) => void; type?: string; maxLength?: number; placeholder?: string;
 }) {
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+      <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} maxLength={maxLength} placeholder={placeholder} />
     </div>
   );
 }

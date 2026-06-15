@@ -42,14 +42,13 @@ export const emptyStudent: StudentFormValues = {
   attendance_id: "", admission_number: "", first_name: "", last_name: "",
   gender: "", date_of_birth: "", photo_data_url: null,
   admission_date: "", class_id: "", section_id: "", status: "active",
-  guardians: [{ ...emptyGuardian, is_primary: true }],
+  guardians: [],
 };
 
 const phoneRegex = /^[+0-9 \-()]{7,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateStudent(v: StudentFormValues): string | null {
-  if (!v.attendance_id.trim()) return "Attendance ID is required.";
   if (!v.admission_number.trim()) return "Admission number is required.";
   if (!v.first_name.trim()) return "First name is required.";
   if (!v.last_name.trim()) return "Last name is required.";
@@ -58,8 +57,10 @@ export function validateStudent(v: StudentFormValues): string | null {
   if (!v.admission_date) return "Admission date is required.";
   if (!v.class_id) return "Class is required.";
   if (!v.section_id) return "Section is required.";
-  if (!v.guardians.length) return "At least one guardian is required.";
+  // Guardians are optional. If any guardian fields are filled, validate that guardian.
   for (const [i, g] of v.guardians.entries()) {
+    const hasAny = g.full_name.trim() || g.relationship || g.phone.trim() || g.email.trim() || g.address.trim();
+    if (!hasAny) continue;
     const tag = `Guardian ${i + 1}`;
     if (!g.full_name.trim()) return `${tag}: full name is required.`;
     if (!g.relationship) return `${tag}: relationship is required.`;
@@ -98,11 +99,10 @@ export function StudentForm({
     const next = value.guardians.map((g, idx) => idx === i ? { ...g, ...patch } : g);
     onChange({ ...value, guardians: next });
   };
-  const addGuardian = () => onChange({ ...value, guardians: [...value.guardians, { ...emptyGuardian }] });
+  const addGuardian = () => onChange({ ...value, guardians: [...value.guardians, { ...emptyGuardian, is_primary: value.guardians.length === 0 }] });
   const removeGuardian = (i: number) => {
-    if (value.guardians.length === 1) { toast.error("At least one guardian is required."); return; }
     const next = value.guardians.filter((_, idx) => idx !== i);
-    if (!next.some((g) => g.is_primary)) next[0].is_primary = true;
+    if (next.length && !next.some((g) => g.is_primary)) next[0].is_primary = true;
     onChange({ ...value, guardians: next });
   };
 
@@ -131,8 +131,7 @@ export function StudentForm({
             <Button type="button" size="sm" variant="ghost" onClick={() => set("photo_data_url", null)}>Remove</Button>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Row label="Attendance ID *"><Input value={value.attendance_id} onChange={(e) => set("attendance_id", e.target.value)} /></Row>
+        <div className="grid grid-cols-1 gap-3">
           <Row label="Admission Number *"><Input value={value.admission_number} onChange={(e) => set("admission_number", e.target.value)} /></Row>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -188,16 +187,14 @@ export function StudentForm({
       </TabsContent>
 
       <TabsContent value="guardians" className="space-y-4">
-        <p className="text-xs text-muted-foreground">First guardian is the Primary Guardian. At least one guardian is mandatory.</p>
+        <p className="text-xs text-muted-foreground">Guardians are optional. If added, the first one is the Primary Guardian.</p>
         {value.guardians.map((g, i) => (
           <div key={i} className="space-y-3 rounded-md border border-border p-3">
             <div className="flex items-center justify-between">
               <div className="text-sm font-medium">{i === 0 ? "Primary Guardian" : `Guardian ${i + 1}`}</div>
-              {value.guardians.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeGuardian(i)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              )}
+              <Button type="button" variant="ghost" size="icon" onClick={() => removeGuardian(i)}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Row label="Full Name *"><Input value={g.full_name} onChange={(e) => updateGuardian(i, { full_name: e.target.value })} /></Row>

@@ -161,7 +161,7 @@ function ParentProfilePage() {
               <DialogHeader><DialogTitle>Edit Parent</DialogTitle></DialogHeader>
               {editForm && <ParentForm value={editForm} onChange={setEditForm} mode="edit" />}
               <DialogFooter>
-                <Button onClick={() => editForm && update.mutate(editForm)} disabled={update.isPending}>
+                <Button onClick={() => editForm && update.mutate(editForm)} disabled={update.isPending || !editForm || validateParent(editForm, { requireLogin: false }) !== null}>
                   <Save className="mr-1 h-4 w-4" />{update.isPending ? "Saving…" : "Save Changes"}
                 </Button>
               </DialogFooter>

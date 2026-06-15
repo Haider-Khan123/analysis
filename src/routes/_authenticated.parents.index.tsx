@@ -82,7 +82,7 @@ function ParentsListPage() {
       if (err) throw new Error(err);
       const res = await create({
         data: {
-          parent_id: form.parent_id,
+          parent_id: form.parent_id?.trim() || `P-${Date.now()}`,
           first_name: form.first_name,
           last_name: form.last_name,
           phone: form.phone,
@@ -162,7 +162,7 @@ function ParentsListPage() {
               </DialogHeader>
               <ParentForm value={form} onChange={setForm} students={studentsList} />
               <DialogFooter>
-                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
+                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId || validateParent(form) !== null}>
                   {add.isPending ? "Saving…" : "Save Parent"}
                 </Button>
               </DialogFooter>

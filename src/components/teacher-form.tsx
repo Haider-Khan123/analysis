@@ -43,7 +43,7 @@ export const emptyTeacher: TeacherFormValues = {
 export function validateTeacher(v: TeacherFormValues, opts: { requireLogin: boolean }): string | null {
   if (!v.first_name.trim()) return "First name is required.";
   if (!v.last_name.trim()) return "Last name is required.";
-  if (!/^[0-9-]{6,20}$/.test(v.cnic.trim())) return "CNIC is required (digits and dashes).";
+  if (!/^[0-9-]{6,15}$/.test(v.cnic.trim())) return "CNIC is required (digits and dashes).";
   if (!/^[+0-9 \-()]{7,20}$/.test(v.phone.trim())) return "Valid mobile number is required.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) return "Valid email is required.";
   if (!v.joining_date) return "Joining date is required.";
@@ -118,7 +118,7 @@ export function TeacherForm({
           </Field>
           <Field label="Date Of Birth"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Field>
         </div>
-        <Field label="CNIC / National ID *"><Input value={value.cnic} onChange={(e) => set("cnic", e.target.value)} placeholder="e.g. 35202-1234567-1" /></Field>
+        <Field label="CNIC / National ID *"><Input value={value.cnic} maxLength={15} onChange={(e) => set("cnic", e.target.value)} placeholder="*****-*******-*" /></Field>
       </TabsContent>
 
       <TabsContent value="contact" className="space-y-3">

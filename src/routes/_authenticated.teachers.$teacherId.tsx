@@ -115,7 +115,7 @@ function TeacherProfilePage() {
               <DialogHeader><DialogTitle>Edit Teacher</DialogTitle></DialogHeader>
               {editForm && <TeacherForm value={editForm} onChange={setEditForm} mode="edit" />}
               <DialogFooter>
-                <Button onClick={() => editForm && update.mutate(editForm)} disabled={update.isPending}>
+                <Button onClick={() => editForm && update.mutate(editForm)} disabled={update.isPending || !editForm || validateTeacher(editForm, { requireLogin: false }) !== null}>
                   <Save className="mr-1 h-4 w-4" />{update.isPending ? "Saving…" : "Save Changes"}
                 </Button>
               </DialogFooter>
