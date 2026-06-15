@@ -137,17 +137,16 @@ function Landing() {
                 </div>
 
                 {/* Trust stats */}
-                <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-4">
+                <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4">
                   {[
                     { v: "24/7", l: "Customer Support" },
                     { v: "99.9%", l: "Uptime SLA" },
-                    { v: "Money-back", l: "Guarantee", small: true },
                   ].map((s) => (
                     <div
                       key={s.l}
                       className="flex items-center justify-center gap-1.5 rounded-2xl border border-border/60 bg-card/80 p-4 shadow-[var(--shadow-card)] backdrop-blur"
                     >
-                      <span className={`font-bold text-foreground ${s.small ? "text-base sm:text-lg" : "text-xl sm:text-2xl"}`}>{s.v}</span>
+                      <span className="font-bold text-foreground text-xl sm:text-2xl">{s.v}</span>
                       <span className="text-xs text-muted-foreground">{s.l}</span>
                     </div>
                   ))}
