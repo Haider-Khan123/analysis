@@ -2,11 +2,14 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { bootstrapSuperAdmin } from "@/lib/super-admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -20,15 +23,26 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, roles } = useAuth();
+  const seed = useServerFn(bootstrapSuperAdmin);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  // Fire-and-forget idempotent super-admin seed
   useEffect(() => {
-    if (!loading && isAuthenticated) navigate({ to: "/dashboard", replace: true });
-  }, [isAuthenticated, loading, navigate]);
+    seed().catch(() => undefined);
+  }, [seed]);
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      const dest = (roles as string[]).includes("super_admin")
+        ? "/super-admin/admin-management"
+        : "/dashboard";
+      navigate({ to: dest, replace: true });
+    }
+  }, [isAuthenticated, loading, roles, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +54,9 @@ function LoginPage() {
       return;
     }
     toast.success("Welcome back");
-    navigate({ to: "/dashboard", replace: true });
+    // Navigation handled by the auth effect above once roles load.
   };
+
 
   return (
     <AuthShell title="Welcome Back!" subtitle="Sign in to your Analysis dashboard.">

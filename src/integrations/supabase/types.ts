@@ -809,9 +809,12 @@ export type Database = {
           created_by: string
           email: string | null
           id: string
+          is_suspended: boolean
           logo_url: string | null
           name: string
           phone: string | null
+          suspended_at: string | null
+          suspended_by: string | null
           updated_at: string
         }
         Insert: {
@@ -821,9 +824,12 @@ export type Database = {
           created_by: string
           email?: string | null
           id?: string
+          is_suspended?: boolean
           logo_url?: string | null
           name: string
           phone?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
           updated_at?: string
         }
         Update: {
@@ -833,9 +839,12 @@ export type Database = {
           created_by?: string
           email?: string | null
           id?: string
+          is_suspended?: boolean
           logo_url?: string | null
           name?: string
           phone?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -1335,7 +1344,7 @@ export type Database = {
         | "expired"
         | "archived"
       announcement_type: "school_wide" | "class_specific"
-      app_role: "admin" | "teacher" | "parent"
+      app_role: "admin" | "teacher" | "parent" | "super_admin"
       attendance_status: "present" | "absent" | "late" | "leave"
       behavior_rating: "excellent" | "good" | "average" | "needs_improvement"
       homework_scope: "class" | "section"
@@ -1489,7 +1498,7 @@ export const Constants = {
         "archived",
       ],
       announcement_type: ["school_wide", "class_specific"],
-      app_role: ["admin", "teacher", "parent"],
+      app_role: ["admin", "teacher", "parent", "super_admin"],
       attendance_status: ["present", "absent", "late", "leave"],
       behavior_rating: ["excellent", "good", "average", "needs_improvement"],
       homework_scope: ["class", "section"],

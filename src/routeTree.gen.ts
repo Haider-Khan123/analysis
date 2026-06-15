@@ -39,6 +39,7 @@ import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAttendanceIndexRouteImport } from './routes/_authenticated.attendance.index'
 import { Route as AuthenticatedAnnouncementsIndexRouteImport } from './routes/_authenticated.announcements.index'
 import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated.teachers.$teacherId'
+import { Route as AuthenticatedSuperAdminAdminManagementRouteImport } from './routes/_authenticated.super-admin.admin-management'
 import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated.students.$studentId'
 import { Route as AuthenticatedProgressReportsRouteImport } from './routes/_authenticated.progress.reports'
 import { Route as AuthenticatedProgressParticipationRouteImport } from './routes/_authenticated.progress.participation'
@@ -227,6 +228,12 @@ const AuthenticatedTeachersTeacherIdRoute =
     path: '/$teacherId',
     getParentRoute: () => AuthenticatedTeachersRoute,
   } as any)
+const AuthenticatedSuperAdminAdminManagementRoute =
+  AuthenticatedSuperAdminAdminManagementRouteImport.update({
+    id: '/super-admin/admin-management',
+    path: '/super-admin/admin-management',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentsStudentIdRoute =
   AuthenticatedStudentsStudentIdRouteImport.update({
     id: '/$studentId',
@@ -414,6 +421,7 @@ export interface FileRoutesByFullPath {
   '/progress/participation': typeof AuthenticatedProgressParticipationRoute
   '/progress/reports': typeof AuthenticatedProgressReportsRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
+  '/super-admin/admin-management': typeof AuthenticatedSuperAdminAdminManagementRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/attendance/': typeof AuthenticatedAttendanceIndexRoute
@@ -461,6 +469,7 @@ export interface FileRoutesByTo {
   '/progress/participation': typeof AuthenticatedProgressParticipationRoute
   '/progress/reports': typeof AuthenticatedProgressReportsRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
+  '/super-admin/admin-management': typeof AuthenticatedSuperAdminAdminManagementRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/announcements': typeof AuthenticatedAnnouncementsIndexRoute
   '/attendance': typeof AuthenticatedAttendanceIndexRoute
@@ -518,6 +527,7 @@ export interface FileRoutesById {
   '/_authenticated/progress/participation': typeof AuthenticatedProgressParticipationRoute
   '/_authenticated/progress/reports': typeof AuthenticatedProgressReportsRoute
   '/_authenticated/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
+  '/_authenticated/super-admin/admin-management': typeof AuthenticatedSuperAdminAdminManagementRoute
   '/_authenticated/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/_authenticated/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/_authenticated/attendance/': typeof AuthenticatedAttendanceIndexRoute
@@ -575,6 +585,7 @@ export interface FileRouteTypes {
     | '/progress/participation'
     | '/progress/reports'
     | '/students/$studentId'
+    | '/super-admin/admin-management'
     | '/teachers/$teacherId'
     | '/announcements/'
     | '/attendance/'
@@ -622,6 +633,7 @@ export interface FileRouteTypes {
     | '/progress/participation'
     | '/progress/reports'
     | '/students/$studentId'
+    | '/super-admin/admin-management'
     | '/teachers/$teacherId'
     | '/announcements'
     | '/attendance'
@@ -678,6 +690,7 @@ export interface FileRouteTypes {
     | '/_authenticated/progress/participation'
     | '/_authenticated/progress/reports'
     | '/_authenticated/students/$studentId'
+    | '/_authenticated/super-admin/admin-management'
     | '/_authenticated/teachers/$teacherId'
     | '/_authenticated/announcements/'
     | '/_authenticated/attendance/'
@@ -910,6 +923,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/teachers/$teacherId'
       preLoaderRoute: typeof AuthenticatedTeachersTeacherIdRouteImport
       parentRoute: typeof AuthenticatedTeachersRoute
+    }
+    '/_authenticated/super-admin/admin-management': {
+      id: '/_authenticated/super-admin/admin-management'
+      path: '/super-admin/admin-management'
+      fullPath: '/super-admin/admin-management'
+      preLoaderRoute: typeof AuthenticatedSuperAdminAdminManagementRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/students/$studentId': {
       id: '/_authenticated/students/$studentId'
@@ -1258,6 +1278,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRouteWithChildren
   AuthenticatedTeachersRoute: typeof AuthenticatedTeachersRouteWithChildren
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
+  AuthenticatedSuperAdminAdminManagementRoute: typeof AuthenticatedSuperAdminAdminManagementRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -1277,6 +1298,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedStudentsRoute: AuthenticatedStudentsRouteWithChildren,
   AuthenticatedTeachersRoute: AuthenticatedTeachersRouteWithChildren,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
+  AuthenticatedSuperAdminAdminManagementRoute:
+    AuthenticatedSuperAdminAdminManagementRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

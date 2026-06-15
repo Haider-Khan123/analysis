@@ -5,8 +5,9 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard, GraduationCap, Users, UserCog, School, Building2,
   LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell, BookOpen, TrendingUp, Megaphone,
-  MessageSquare,
+  MessageSquare, Shield,
 } from "lucide-react";
+
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";
 import { listMyNotifications } from "@/lib/notifications.functions";
@@ -83,17 +84,20 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const isAdmin = roles.includes("admin");
-  const isTeacher = roles.includes("teacher") && !isAdmin;
-  const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
+  const isSuperAdmin = (roles as string[]).includes("super_admin");
+  const isAdmin = roles.includes("admin") && !isSuperAdmin;
+  const isTeacher = roles.includes("teacher") && !isAdmin && !isSuperAdmin;
+  const isParent = roles.includes("parent") && !isAdmin && !isTeacher && !isSuperAdmin;
   const fetchStats = useServerFn(getDashboardStats);
   const fetchNotifs = useServerFn(listMyNotifications);
+
 
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => fetchStats(),
-    enabled: isAuthenticated && !!session?.access_token && !isTeacher && !isParent,
+    enabled: isAuthenticated && !!session?.access_token && !isTeacher && !isParent && !isSuperAdmin,
   });
+
 
   const { data: notifData } = useQuery({
     queryKey: ["my-notifications"],
@@ -122,6 +126,13 @@ function AuthenticatedLayout() {
     if (!loading && !isAuthenticated) navigate({ to: "/login", replace: true });
   }, [isAuthenticated, loading, navigate]);
 
+  useEffect(() => {
+    if (!loading && isAuthenticated && isSuperAdmin && location.pathname === "/dashboard") {
+      navigate({ to: "/super-admin/admin-management", replace: true });
+    }
+  }, [loading, isAuthenticated, isSuperAdmin, location.pathname, navigate]);
+
+
   if (loading || !isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -130,13 +141,13 @@ function AuthenticatedLayout() {
     );
   }
 
-  const role = roles[0] ?? "admin";
+  const role = isSuperAdmin ? "super_admin" : (roles[0] ?? "admin");
   const counts = stats?.counts ?? { institute: 0, classes: 0, teachers: 0, students: 0, parents: 0 };
 
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 flex-col border-r border-border bg-sidebar md:flex">
-        <SidebarContent role={role} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
+        <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
       </aside>
 
       <div className="flex flex-1 flex-col">
@@ -150,9 +161,10 @@ function AuthenticatedLayout() {
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
                 <SheetHeader className="sr-only"><SheetTitle>Navigation</SheetTitle></SheetHeader>
-                <SidebarContent role={role} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
+                <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
               </SheetContent>
             </Sheet>
+
             <div>
               <p className="text-xs text-muted-foreground">Signed in as</p>
               <p className="text-sm font-medium">{profile?.full_name ?? profile?.email}</p>
@@ -186,13 +198,14 @@ function AuthenticatedLayout() {
 }
 
 function SidebarContent({
-  role, isAdmin, isTeacher, isParent, pathname, counts,
+  role, isSuperAdmin, isAdmin, isTeacher, isParent, pathname, counts,
 }: {
-  role: string; isAdmin: boolean; isTeacher: boolean; isParent: boolean;
+  role: string; isSuperAdmin: boolean; isAdmin: boolean; isTeacher: boolean; isParent: boolean;
   pathname: string;
   counts: { institute: number; classes: number; teachers: number; students: number; parents: number };
 }) {
   const isOnboarding = role === "admin" || !role;
+
   const visible = nav.filter((item) => {
     if (isParent) return ["/dashboard"].includes(item.to);
     if (isTeacher) return ["/dashboard"].includes(item.to);
@@ -237,7 +250,24 @@ function SidebarContent({
       </div>
       <TooltipProvider delayDuration={150}>
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          {visible.map((item) => {
+          {isSuperAdmin && (
+            <div>
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Super Admin</p>
+              <Link
+                to="/super-admin/admin-management"
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  pathname.startsWith("/super-admin")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent",
+                )}
+              >
+                <Shield className="h-4 w-4" /> Admin Management
+              </Link>
+            </div>
+          )}
+          {!isSuperAdmin && visible.map((item) => {
+
             const Icon = item.icon;
             const active = pathname === item.to;
             const locked = isLocked(item.gate);
@@ -491,15 +521,19 @@ function SidebarContent({
             </div>
           )}
 
+          {!isSuperAdmin && (
           <div className="pt-3">
             <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notifications</p>
+
             <Link to="/notifications"
               className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
                 pathname === "/notifications" ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
               <Bell className="h-4 w-4" /> Notifications
             </Link>
           </div>
+          )}
         </nav>
+
       </TooltipProvider>
     </div>
   );
