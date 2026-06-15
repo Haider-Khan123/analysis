@@ -117,7 +117,7 @@ function Landing() {
                   with confidence.
                 </h1>
                 <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl">
-                  Analysis brings admins, teachers, and parents together — replacing fragmented
+                  Analysis brings admins, teachers, and parents together, replacing fragmented
                   WhatsApp groups, paper diaries, and spreadsheets with a secure, enterprise-grade
                   experience.
                 </p>
@@ -140,13 +140,13 @@ function Landing() {
                   {[
                     { v: "24/7", l: "Customer Support" },
                     { v: "99.9%", l: "Uptime SLA" },
-                    { v: "Money-back", l: "Guarantee" },
+                    { v: "Money-back", l: "Guarantee", small: true },
                   ].map((s) => (
                     <div
                       key={s.l}
                       className="flex items-center justify-center gap-1.5 rounded-2xl border border-border/60 bg-card/80 p-4 shadow-[var(--shadow-card)] backdrop-blur"
                     >
-                      <span className="text-xl font-bold text-foreground sm:text-2xl">{s.v}</span>
+                      <span className={`font-bold text-foreground ${s.small ? "text-base sm:text-lg" : "text-xl sm:text-2xl"}`}>{s.v}</span>
                       <span className="text-xs text-muted-foreground">{s.l}</span>
                     </div>
                   ))}
@@ -166,7 +166,7 @@ function Landing() {
         <section className="mx-auto max-w-7xl px-6 py-20">
           <SectionHeader
             eyebrow="Why Analysis"
-            title="Built for schools that care about every detail"
+            title="For schools that care about every detail"
             subtitle="A foundation engineered for security, scale, and the everyday people who run schools."
           />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -217,7 +217,7 @@ function Landing() {
           <div className="mx-auto max-w-7xl px-6">
             <SectionHeader
               eyebrow="Platform"
-              title="Everything your school needs, beautifully connected"
+              title="Everything that your school needs"
               subtitle="Six core modules designed to work together — no plugins, no integrations to maintain."
             />
 
@@ -235,7 +235,7 @@ function Landing() {
           <div className="mx-auto max-w-7xl px-6">
             <SectionHeader
               eyebrow="Product tour"
-              title="A workspace your team will actually want to open"
+              title="Workspace that the team would want to open"
               subtitle="Floating widgets, fast navigation, and clear hierarchy keep daily operations effortless."
             />
             <div className="relative mt-14">
@@ -252,7 +252,7 @@ function Landing() {
         <section className="mx-auto max-w-7xl px-6 py-24">
           <SectionHeader
             eyebrow="Outcomes"
-            title="Real benefits your school will feel from week one"
+            title="Real benefits that your school will get"
           />
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {[
@@ -422,21 +422,17 @@ function Landing() {
               </ul>
             </div>
           </div>
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-slate-400 md:flex-row">
+          <div className="mt-12 flex flex-col items-center justify-center gap-4 border-t border-white/10 pt-8 text-sm text-slate-400">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+              aria-label="Back to top"
+            >
+              <ArrowUp className="h-5 w-5" />
+            </button>
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
-              <span>© {new Date().getFullYear()} Analysis. All rights reserved.</span>
-            </div>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-white">
-                Privacy
-              </a>
-              <a href="#" className="hover:text-white">
-                Terms
-              </a>
-              <a href="#" className="hover:text-white">
-                Security
-              </a>
+              <span>© 2026 Analysis. All rights reserved.</span>
             </div>
           </div>
         </div>
