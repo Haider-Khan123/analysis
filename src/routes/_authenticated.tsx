@@ -5,8 +5,9 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard, GraduationCap, Users, UserCog, School, Building2,
   LogOut, Menu, Lock, ShieldCheck, ClipboardCheck, Bell, BookOpen, TrendingUp, Megaphone,
-  MessageSquare,
+  MessageSquare, Shield,
 } from "lucide-react";
+
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardStats } from "@/lib/school.functions";
 import { listMyNotifications } from "@/lib/notifications.functions";
