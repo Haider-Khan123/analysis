@@ -141,13 +141,13 @@ function AuthenticatedLayout() {
     );
   }
 
-  const role = roles[0] ?? "admin";
+  const role = isSuperAdmin ? "super_admin" : (roles[0] ?? "admin");
   const counts = stats?.counts ?? { institute: 0, classes: 0, teachers: 0, students: 0, parents: 0 };
 
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 flex-col border-r border-border bg-sidebar md:flex">
-        <SidebarContent role={role} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
+        <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
       </aside>
 
       <div className="flex flex-1 flex-col">
@@ -161,9 +161,10 @@ function AuthenticatedLayout() {
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
                 <SheetHeader className="sr-only"><SheetTitle>Navigation</SheetTitle></SheetHeader>
-                <SidebarContent role={role} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
+                <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
               </SheetContent>
             </Sheet>
+
             <div>
               <p className="text-xs text-muted-foreground">Signed in as</p>
               <p className="text-sm font-medium">{profile?.full_name ?? profile?.email}</p>
