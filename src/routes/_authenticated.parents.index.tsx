@@ -162,7 +162,7 @@ function ParentsListPage() {
               </DialogHeader>
               <ParentForm value={form} onChange={setForm} students={studentsList} />
               <DialogFooter>
-                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
+                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId || validateParent(form) !== null}>
                   {add.isPending ? "Saving…" : "Save Parent"}
                 </Button>
               </DialogFooter>
