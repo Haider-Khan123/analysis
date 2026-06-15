@@ -84,11 +84,13 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const isAdmin = roles.includes("admin");
-  const isTeacher = roles.includes("teacher") && !isAdmin;
-  const isParent = roles.includes("parent") && !isAdmin && !isTeacher;
+  const isSuperAdmin = (roles as string[]).includes("super_admin");
+  const isAdmin = roles.includes("admin") && !isSuperAdmin;
+  const isTeacher = roles.includes("teacher") && !isAdmin && !isSuperAdmin;
+  const isParent = roles.includes("parent") && !isAdmin && !isTeacher && !isSuperAdmin;
   const fetchStats = useServerFn(getDashboardStats);
   const fetchNotifs = useServerFn(listMyNotifications);
+
 
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
