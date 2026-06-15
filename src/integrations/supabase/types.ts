@@ -1335,7 +1335,7 @@ export type Database = {
         | "expired"
         | "archived"
       announcement_type: "school_wide" | "class_specific"
-      app_role: "admin" | "teacher" | "parent"
+      app_role: "admin" | "teacher" | "parent" | "super_admin"
       attendance_status: "present" | "absent" | "late" | "leave"
       behavior_rating: "excellent" | "good" | "average" | "needs_improvement"
       homework_scope: "class" | "section"
@@ -1489,7 +1489,7 @@ export const Constants = {
         "archived",
       ],
       announcement_type: ["school_wide", "class_specific"],
-      app_role: ["admin", "teacher", "parent"],
+      app_role: ["admin", "teacher", "parent", "super_admin"],
       attendance_status: ["present", "absent", "late", "leave"],
       behavior_rating: ["excellent", "good", "average", "needs_improvement"],
       homework_scope: ["class", "section"],
