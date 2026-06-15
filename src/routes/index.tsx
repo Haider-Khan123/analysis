@@ -1,4 +1,4 @@
-import { createFileRoute, Link e, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import {
   ArrowRight,
   ArrowUp,
