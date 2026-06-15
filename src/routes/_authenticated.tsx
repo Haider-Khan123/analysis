@@ -95,8 +95,9 @@ function AuthenticatedLayout() {
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => fetchStats(),
-    enabled: isAuthenticated && !!session?.access_token && !isTeacher && !isParent,
+    enabled: isAuthenticated && !!session?.access_token && !isTeacher && !isParent && !isSuperAdmin,
   });
+
 
   const { data: notifData } = useQuery({
     queryKey: ["my-notifications"],
