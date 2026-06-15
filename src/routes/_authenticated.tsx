@@ -198,13 +198,14 @@ function AuthenticatedLayout() {
 }
 
 function SidebarContent({
-  role, isAdmin, isTeacher, isParent, pathname, counts,
+  role, isSuperAdmin, isAdmin, isTeacher, isParent, pathname, counts,
 }: {
-  role: string; isAdmin: boolean; isTeacher: boolean; isParent: boolean;
+  role: string; isSuperAdmin: boolean; isAdmin: boolean; isTeacher: boolean; isParent: boolean;
   pathname: string;
   counts: { institute: number; classes: number; teachers: number; students: number; parents: number };
 }) {
   const isOnboarding = role === "admin" || !role;
+
   const visible = nav.filter((item) => {
     if (isParent) return ["/dashboard"].includes(item.to);
     if (isTeacher) return ["/dashboard"].includes(item.to);
