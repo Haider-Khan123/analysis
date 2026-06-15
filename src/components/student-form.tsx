@@ -42,14 +42,13 @@ export const emptyStudent: StudentFormValues = {
   attendance_id: "", admission_number: "", first_name: "", last_name: "",
   gender: "", date_of_birth: "", photo_data_url: null,
   admission_date: "", class_id: "", section_id: "", status: "active",
-  guardians: [{ ...emptyGuardian, is_primary: true }],
+  guardians: [],
 };
 
 const phoneRegex = /^[+0-9 \-()]{7,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateStudent(v: StudentFormValues): string | null {
-  if (!v.attendance_id.trim()) return "Attendance ID is required.";
   if (!v.admission_number.trim()) return "Admission number is required.";
   if (!v.first_name.trim()) return "First name is required.";
   if (!v.last_name.trim()) return "Last name is required.";
@@ -58,8 +57,10 @@ export function validateStudent(v: StudentFormValues): string | null {
   if (!v.admission_date) return "Admission date is required.";
   if (!v.class_id) return "Class is required.";
   if (!v.section_id) return "Section is required.";
-  if (!v.guardians.length) return "At least one guardian is required.";
+  // Guardians are optional. If any guardian fields are filled, validate that guardian.
   for (const [i, g] of v.guardians.entries()) {
+    const hasAny = g.full_name.trim() || g.relationship || g.phone.trim() || g.email.trim() || g.address.trim();
+    if (!hasAny) continue;
     const tag = `Guardian ${i + 1}`;
     if (!g.full_name.trim()) return `${tag}: full name is required.`;
     if (!g.relationship) return `${tag}: relationship is required.`;
