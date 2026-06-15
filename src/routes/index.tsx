@@ -410,32 +410,20 @@ function Landing() {
       {/* FOOTER */}
       <footer style={{ backgroundColor: "#1E293B" }} className="text-slate-300">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="grid gap-10 md:grid-cols-4">
-            <div>
+          <div className="grid gap-10 md:grid-cols-3">
+            <div className="flex flex-col items-center justify-center text-center">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-glow font-bold text-primary-foreground">
                   A
                 </div>
                 <span className="text-lg font-semibold text-white">Analysis</span>
               </div>
-              <p className="mt-4 text-sm text-slate-400">
-                The modern school management platform for K-12.
-              </p>
             </div>
             <FooterCol
               title="Product"
               items={[
                 { label: "Features", href: "#features" },
                 { label: "How it works", href: "#how-it-works" },
-                { label: "Testimonials", href: "#testimonials" },
-              ]}
-            />
-            <FooterCol
-              title="Company"
-              items={[
-                { label: "About", href: "#" },
-                { label: "Contact", href: "#" },
-                { label: "Careers", href: "#" },
               ]}
             />
             <div>
