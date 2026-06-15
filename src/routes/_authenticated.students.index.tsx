@@ -157,7 +157,7 @@ function StudentsListPage() {
                 sections={sectionsList}
               />
               <DialogFooter>
-                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
+                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId || validateStudent(form) !== null}>
                   {add.isPending ? "Saving…" : "Save Student"}
                 </Button>
               </DialogFooter>
