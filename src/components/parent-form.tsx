@@ -153,10 +153,9 @@ export function ParentForm({
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <FieldText label="Parent ID *" value={value.parent_id} onChange={(v) => set("parent_id", v)} />
-          <FieldText label="CNIC / National ID" value={value.cnic} onChange={(v) => set("cnic", v)} />
           <FieldText label="First Name *" value={value.first_name} onChange={(v) => set("first_name", v)} />
           <FieldText label="Last Name *" value={value.last_name} onChange={(v) => set("last_name", v)} />
+          <FieldText label="CNIC / National ID" value={value.cnic} onChange={(v) => set("cnic", v)} maxLength={15} placeholder="*****-*******-*" />
           <FieldText label="Occupation" value={value.occupation} onChange={(v) => set("occupation", v)} />
         </div>
       </TabsContent>
