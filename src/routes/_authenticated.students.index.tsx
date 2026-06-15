@@ -83,7 +83,7 @@ function StudentsListPage() {
       if (err) throw new Error(err);
       const res = await create({
         data: {
-          attendance_id: form.attendance_id,
+          attendance_id: form.attendance_id?.trim() || form.admission_number.trim() || `ST-${Date.now()}`,
           admission_number: form.admission_number,
           first_name: form.first_name,
           last_name: form.last_name,
