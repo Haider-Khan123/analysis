@@ -126,6 +126,13 @@ function AuthenticatedLayout() {
     if (!loading && !isAuthenticated) navigate({ to: "/login", replace: true });
   }, [isAuthenticated, loading, navigate]);
 
+  useEffect(() => {
+    if (!loading && isAuthenticated && isSuperAdmin && location.pathname === "/dashboard") {
+      navigate({ to: "/super-admin/admin-management", replace: true });
+    }
+  }, [loading, isAuthenticated, isSuperAdmin, location.pathname, navigate]);
+
+
   if (loading || !isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
