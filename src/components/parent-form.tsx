@@ -280,13 +280,13 @@ export function ParentForm({
   );
 }
 
-function FieldText({ label, value, onChange, type = "text" }: {
-  label: string; value: string; onChange: (v: string) => void; type?: string;
+function FieldText({ label, value, onChange, type = "text", maxLength, placeholder }: {
+  label: string; value: string; onChange: (v: string) => void; type?: string; maxLength?: number; placeholder?: string;
 }) {
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+      <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} maxLength={maxLength} placeholder={placeholder} />
     </div>
   );
 }
