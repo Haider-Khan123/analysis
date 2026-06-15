@@ -130,7 +130,7 @@ function TeachersPage() {
               </DialogHeader>
               <TeacherForm value={form} onChange={setForm} mode="create" />
               <DialogFooter>
-                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId}>
+                <Button onClick={() => add.mutate()} disabled={add.isPending || !schoolId || validateTeacher(form, { requireLogin: true }) !== null}>
                   {add.isPending ? "Saving…" : "Save Teacher"}
                 </Button>
               </DialogFooter>
