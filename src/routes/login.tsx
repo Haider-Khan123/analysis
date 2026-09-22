@@ -69,9 +69,11 @@ function LoginPage() {
       supabase.from("user_roles").select("role").eq("user_id", userId),
     ]);
     const myRoles = ((roleRows ?? []) as { role: string }[]).map((r) => r.role);
+    const schoolId = (prof as { school_id: string | null } | null)?.school_id ?? null;
+    const needsInstitute = (myRoles.includes("admin") || myRoles.length === 0) && !schoolId;
     const dest = myRoles.includes("super_admin")
       ? "/super-admin/admin-management"
-      : myRoles.includes("admin") && !(prof as { school_id: string | null } | null)?.school_id
+      : needsInstitute
         ? "/school-profile"
         : "/dashboard";
     setBusy(false);
