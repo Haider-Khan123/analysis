@@ -23,7 +23,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, loading, roles } = useAuth();
+  const { isAuthenticated, loading, roles, profile } = useAuth();
   const seed = useServerFn(bootstrapSuperAdmin);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,10 +39,12 @@ function LoginPage() {
     if (!loading && isAuthenticated) {
       const dest = (roles as string[]).includes("super_admin")
         ? "/super-admin/admin-management"
-        : "/dashboard";
+        : roles.includes("admin") && !profile?.school_id
+          ? "/school-profile"
+          : "/dashboard";
       navigate({ to: dest, replace: true });
     }
-  }, [isAuthenticated, loading, roles, navigate]);
+  }, [isAuthenticated, loading, roles, profile?.school_id, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +101,7 @@ function LoginPage() {
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
-          <p className="text-xs text-muted-foreground">Contact Admin for any issue.</p>
+          <p className="text-xs text-muted-foreground">Contact Institute's Admin for any issue.</p>
         </div>
         <Button type="submit" className="w-full" disabled={busy}>
           {busy ? "Signing in…" : "Sign in"}

@@ -163,7 +163,7 @@ function Landing() {
         </section>
 
         {/* TRUST & CREDIBILITY */}
-        <section className="mx-auto max-w-7xl px-6 py-20">
+        <section className="mx-auto max-w-7xl px-6 pb-16 pt-8 md:pb-20 md:pt-10">
           <SectionHeader
             eyebrow="Why Analysis"
             title="For schools that care about every detail"
@@ -213,7 +213,7 @@ function Landing() {
         </section>
 
         {/* CORE FEATURES */}
-        <section id="features" className="bg-secondary/40 py-24">
+        <section id="features" className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-7xl px-6">
             <SectionHeader
               eyebrow="Platform"
@@ -230,7 +230,7 @@ function Landing() {
         </section>
 
         {/* DASHBOARD SHOWCASE */}
-        <section className="relative overflow-hidden py-24">
+        <section className="relative overflow-hidden py-20">
           <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-primary/5 to-background" />
           <div className="mx-auto max-w-7xl px-6">
             <SectionHeader
@@ -249,7 +249,7 @@ function Landing() {
         </section>
 
         {/* BENEFITS */}
-        <section className="mx-auto max-w-7xl px-6 py-24">
+        <section className="mx-auto max-w-7xl px-6 py-20">
           <SectionHeader
             eyebrow="Outcomes"
             title="Real benefits that your school will get"
@@ -295,7 +295,7 @@ function Landing() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section id="how-it-works" className="bg-secondary/40 py-24">
+        <section id="how-it-works" className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-7xl px-6">
             <SectionHeader
               eyebrow="How it works"
@@ -329,7 +329,7 @@ function Landing() {
 
 
         {/* SUCCESS METRICS */}
-        <section className="relative overflow-hidden py-24">
+        <section className="relative overflow-hidden py-20">
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-background to-success/5" />
           <div className="mx-auto max-w-7xl px-6">
             <SectionHeader eyebrow="Measured impact" title="Results that move the needle" />
@@ -354,7 +354,7 @@ function Landing() {
 
 
         {/* CTA */}
-        <section className="mx-auto max-w-7xl px-6 pb-24">
+        <section className="mx-auto max-w-7xl px-6 pb-20">
           <div className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-gradient-to-br from-primary to-primary-glow p-10 text-center text-primary-foreground shadow-[var(--shadow-elegant)] md:p-16">
             <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
             <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
@@ -454,10 +454,10 @@ function SectionHeader({
 }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
-      <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+      <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold uppercase tracking-wider text-primary">
         {eyebrow}
       </span>
-      <h2 className="mt-5 text-3xl font-bold tracking-tight md:text-4xl">{title}</h2>
+      <h2 className="mt-4 text-4xl font-bold tracking-tight md:text-5xl">{title}</h2>
       {subtitle ? <p className="mt-4 text-base text-muted-foreground md:text-lg">{subtitle}</p> : null}
     </div>
   );

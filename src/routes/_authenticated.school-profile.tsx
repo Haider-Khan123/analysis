@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Pencil, Trash2, Building2 } from "lucide-react";
+import { Pencil, Trash2, Building2, X } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import {
   createSchoolForAdmin,
@@ -59,6 +59,7 @@ function SchoolProfilePage() {
   const [branch, setBranch] = useState("");
   const [phone, setPhone] = useState("");
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (school) {
@@ -85,6 +86,11 @@ function SchoolProfilePage() {
     const reader = new FileReader();
     reader.onload = () => setLogoDataUrl(reader.result as string);
     reader.readAsDataURL(file);
+  };
+
+  const removeSelectedLogo = () => {
+    setLogoDataUrl(null);
+    if (logoInputRef.current) logoInputRef.current.value = "";
   };
 
   const refreshAll = async () => {
@@ -195,13 +201,25 @@ function SchoolProfilePage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="logo">Institute Logo <Req /></Label>
-            <Input id="logo" type="file" accept="image/*" required onChange={handleLogoChange} />
+            <Input ref={logoInputRef} id="logo" type="file" accept="image/*" required={!logoDataUrl} onChange={handleLogoChange} />
             {logoDataUrl && (
-              <img src={logoDataUrl} alt="Logo preview" className="mt-2 h-16 w-16 rounded-md border border-border object-contain" />
+              <div className="relative mt-2 w-fit">
+                <img src={logoDataUrl} alt="Logo preview" className="h-16 w-16 rounded-md border border-border object-contain" />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute -right-2 -top-2 h-6 w-6 rounded-full"
+                  onClick={removeSelectedLogo}
+                  aria-label="Remove selected logo"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             )}
             <p className="text-xs text-muted-foreground">Max 500KB.</p>
           </div>
-          <Button type="submit" className="w-full" disabled={creating}>
+          <Button type="submit" className="w-full" disabled={creating || !name.trim() || !branch.trim() || !phone.trim() || !logoDataUrl}>
             {creating ? "Creating…" : "Create Institute"}
           </Button>
         </form>
@@ -320,13 +338,25 @@ function SchoolProfilePage() {
         <div className="space-y-2">
           <Label htmlFor="logo">Institute Logo</Label>
           {logoDataUrl && (
-            <img
-              src={logoDataUrl}
-              alt="Institute logo"
-              className="h-20 w-20 rounded-md border border-border object-contain"
-            />
+            <div className="relative w-fit">
+              <img
+                src={logoDataUrl}
+                alt="Institute logo"
+                className="h-20 w-20 rounded-md border border-border object-contain"
+              />
+              <Button
+                type="button"
+                variant="destructive"
+                size="icon"
+                className="absolute -right-2 -top-2 h-6 w-6 rounded-full"
+                onClick={removeSelectedLogo}
+                aria-label="Remove institute logo"
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            </div>
           )}
-          <Input id="logo" type="file" accept="image/*" onChange={handleLogoChange} />
+          <Input ref={logoInputRef} id="logo" type="file" accept="image/*" onChange={handleLogoChange} />
           <p className="text-xs text-muted-foreground">Max 500KB.</p>
         </div>
 
@@ -345,7 +375,7 @@ function SchoolProfilePage() {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={saving || !name.trim() || !branch.trim() || !phone.trim()}>
             {saving ? "Saving…" : "Save Changes"}
           </Button>
         </div>
