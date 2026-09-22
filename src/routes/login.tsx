@@ -103,7 +103,7 @@ function LoginPage() {
           </div>
           <p className="text-xs text-muted-foreground">Contact Institute's Admin for any issue.</p>
         </div>
-        <Button type="submit" className="w-full" disabled={busy}>
+        <Button type="submit" className="w-full" disabled={busy || !email.trim() || !password}>
           {busy ? "Signing in…" : "Sign in"}
         </Button>
       </form>
