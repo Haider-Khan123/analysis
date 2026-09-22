@@ -132,6 +132,13 @@ function AuthenticatedLayout() {
     }
   }, [loading, isAuthenticated, isSuperAdmin, location.pathname, navigate]);
 
+  useEffect(() => {
+    const requiresInstitute = location.pathname === "/dashboard" || location.pathname === "/notifications";
+    if (!loading && isAuthenticated && isAdmin && !profile?.school_id && requiresInstitute) {
+      navigate({ to: "/school-profile", replace: true });
+    }
+  }, [loading, isAuthenticated, isAdmin, profile?.school_id, location.pathname, navigate]);
+
 
   if (loading || !isAuthenticated) {
     return (
@@ -147,7 +154,7 @@ function AuthenticatedLayout() {
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 flex-col border-r border-border bg-sidebar md:flex">
-        <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
+        <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} hasInstitute={!!profile?.school_id} pathname={location.pathname} counts={counts} />
       </aside>
 
       <div className="flex flex-1 flex-col">
@@ -161,7 +168,7 @@ function AuthenticatedLayout() {
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
                 <SheetHeader className="sr-only"><SheetTitle>Navigation</SheetTitle></SheetHeader>
-                <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} pathname={location.pathname} counts={counts} />
+                <SidebarContent role={role} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isTeacher={isTeacher} isParent={isParent} hasInstitute={!!profile?.school_id} pathname={location.pathname} counts={counts} />
               </SheetContent>
             </Sheet>
 
@@ -171,16 +178,29 @@ function AuthenticatedLayout() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/notifications" className="relative">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              {unread > 0 && (
-                <Badge variant="destructive" className="absolute -right-1 -top-1 h-5 min-w-5 justify-center px-1 text-[10px]">
-                  {unread > 99 ? "99+" : unread}
-                </Badge>
-              )}
-            </Link>
+            {isAdmin && !profile?.school_id ? (
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" disabled aria-label="Notifications unavailable until institute setup is complete">
+                      <Bell className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Complete Create Your Institute first.</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <Link to="/notifications" className="relative">
+                <Button variant="ghost" size="icon">
+                  <Bell className="h-5 w-5" />
+                </Button>
+                {unread > 0 && (
+                  <Badge variant="destructive" className="absolute -right-1 -top-1 h-5 min-w-5 justify-center px-1 text-[10px]">
+                    {unread > 99 ? "99+" : unread}
+                  </Badge>
+                )}
+              </Link>
+            )}
             <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium capitalize text-primary">{role}</span>
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4" />
@@ -198,9 +218,10 @@ function AuthenticatedLayout() {
 }
 
 function SidebarContent({
-  role, isSuperAdmin, isAdmin, isTeacher, isParent, pathname, counts,
+  role, isSuperAdmin, isAdmin, isTeacher, isParent, hasInstitute, pathname, counts,
 }: {
   role: string; isSuperAdmin: boolean; isAdmin: boolean; isTeacher: boolean; isParent: boolean;
+  hasInstitute: boolean;
   pathname: string;
   counts: { institute: number; classes: number; teachers: number; students: number; parents: number };
 }) {
@@ -266,11 +287,26 @@ function SidebarContent({
               </Link>
             </div>
           )}
+          {isAdmin && !hasInstitute && (
+            <Link
+              to="/school-profile"
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                pathname === "/school-profile"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent",
+              )}
+            >
+              <Building2 className="h-4 w-4" /> Create Your Institute
+            </Link>
+          )}
           {!isSuperAdmin && visible.map((item) => {
 
             const Icon = item.icon;
             const active = pathname === item.to;
-            const locked = isLocked(item.gate);
+            const locked = isAdmin && item.to === "/dashboard" && !hasInstitute
+              ? true
+              : isLocked(item.gate);
             if (locked) {
               return (
                 <Tooltip key={item.to}>
@@ -279,7 +315,9 @@ function SidebarContent({
                       <Icon className="h-4 w-4" /><span className="flex-1">{item.label}</span><Lock className="h-3.5 w-3.5" />
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent side="right">{gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}</TooltipContent>
+                  <TooltipContent side="right">
+                    {item.to === "/dashboard" ? "Complete Create Your Institute first." : gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}
+                  </TooltipContent>
                 </Tooltip>
               );
             }
@@ -524,12 +562,22 @@ function SidebarContent({
           {!isSuperAdmin && (
           <div className="pt-3">
             <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notifications</p>
-
-            <Link to="/notifications"
-              className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                pathname === "/notifications" ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
-              <Bell className="h-4 w-4" /> Notifications
-            </Link>
+            {isAdmin && !hasInstitute ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div aria-disabled className="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground/60">
+                    <Bell className="h-4 w-4" /><span className="flex-1">Notifications</span><Lock className="h-3.5 w-3.5" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right">Complete Create Your Institute first.</TooltipContent>
+              </Tooltip>
+            ) : (
+              <Link to="/notifications"
+                className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                  pathname === "/notifications" ? "bg-primary text-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <Bell className="h-4 w-4" /> Notifications
+              </Link>
+            )}
           </div>
           )}
         </nav>
