@@ -102,8 +102,9 @@ function Landing() {
           <div className="absolute -top-24 right-0 -z-10 h-[420px] w-[420px] rounded-full bg-primary/10 blur-3xl" />
           <div className="absolute -bottom-32 -left-20 -z-10 h-[360px] w-[360px] rounded-full bg-success/10 blur-3xl" />
 
-          <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-6 pt-20 pb-6 md:pt-28 md:pb-8">
             <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+
               {/* Left */}
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-semibold text-primary">
@@ -163,12 +164,13 @@ function Landing() {
         </section>
 
         {/* TRUST & CREDIBILITY */}
-        <section className="mx-auto max-w-7xl px-6 pb-16 pt-8 md:pb-20 md:pt-10">
+        <section className="mx-auto max-w-7xl px-6 pb-16 pt-0 md:pb-20 md:pt-0">
           <SectionHeader
             eyebrow="Why Analysis"
             title="For schools that care about every detail"
             subtitle="A foundation engineered for security, scale, and the everyday people who run schools."
           />
+
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
