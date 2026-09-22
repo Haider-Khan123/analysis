@@ -57,25 +57,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    let lastUserId: string | null = null;
+
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setLoading(true);
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
-        setTimeout(() => {
-          loadProfileAndRoles(s.user.id).then(({ profile: p, roles: r }) => {
-            setProfile(p);
-            setRoles(r);
-          }).finally(() => setLoading(false));
-        }, 0);
+        // Only re-fetch profile/roles when the signed-in user actually changes;
+        // token refreshes must not re-trigger the full-screen loading state.
+        if (lastUserId === s.user.id) return;
+        lastUserId = s.user.id;
+        void loadProfileAndRoles(s.user.id).then(({ profile: p, roles: r }) => {
+          setProfile(p);
+          setRoles(r);
+          setLoading(false);
+        });
       } else {
+        lastUserId = null;
         setProfile(null);
         setRoles([]);
         setLoading(false);
       }
     });
 
-    refresh().finally(() => setLoading(false));
+    void supabase.auth.getSession().then(async ({ data }) => {
+      const u = data.session?.user ?? null;
+      setSession(data.session);
+      setUser(u);
+      if (u) {
+        lastUserId = u.id;
+        const { profile: p, roles: r } = await loadProfileAndRoles(u.id);
+        setProfile(p);
+        setRoles(r);
+      }
+      setLoading(false);
+    });
+
     return () => sub.subscription.unsubscribe();
   }, []);
 

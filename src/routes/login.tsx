@@ -30,11 +30,6 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  // Fire-and-forget idempotent super-admin seed
-  useEffect(() => {
-    seed().catch(() => undefined);
-  }, [seed]);
-
   useEffect(() => {
     if (!loading && isAuthenticated) {
       const dest = (roles as string[]).includes("super_admin")
@@ -49,14 +44,39 @@ function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
+    let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
-      toast.error(error.message);
+      // The super-admin account is seeded lazily; retry once after bootstrapping.
+      try {
+        await seed();
+        ({ data, error } = await supabase.auth.signInWithPassword({ email, password }));
+      } catch {
+        // keep the original error
+      }
+    }
+
+    if (error || !data?.user) {
+      setBusy(false);
+      toast.error(error?.message ?? "Unable to sign in");
       return;
     }
+
+    // Resolve the destination right here so we don't wait on a second render pass.
+    const userId = data.user.id;
+    const [{ data: prof }, { data: roleRows }] = await Promise.all([
+      supabase.from("profiles").select("school_id").eq("id", userId).maybeSingle(),
+      supabase.from("user_roles").select("role").eq("user_id", userId),
+    ]);
+    const myRoles = ((roleRows ?? []) as { role: string }[]).map((r) => r.role);
+    const dest = myRoles.includes("super_admin")
+      ? "/super-admin/admin-management"
+      : myRoles.includes("admin") && !(prof as { school_id: string | null } | null)?.school_id
+        ? "/school-profile"
+        : "/dashboard";
+    setBusy(false);
     toast.success("Welcome back");
-    // Navigation handled by the auth effect above once roles load.
+    void navigate({ to: dest, replace: true });
   };
 
 
