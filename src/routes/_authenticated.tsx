@@ -85,7 +85,9 @@ function AuthenticatedLayout() {
   const location = useLocation();
   const queryClient = useQueryClient();
   const isSuperAdmin = (roles as string[]).includes("super_admin");
-  const isAdmin = roles.includes("admin") && !isSuperAdmin;
+  // A freshly signed-up account has no role row yet (the admin role is granted
+  // once the institute is created) — treat it as an admin still onboarding.
+  const isAdmin = (roles.includes("admin") || (roles.length === 0 && !profile?.school_id)) && !isSuperAdmin;
   const isTeacher = roles.includes("teacher") && !isAdmin && !isSuperAdmin;
   const isParent = roles.includes("parent") && !isAdmin && !isTeacher && !isSuperAdmin;
   const fetchStats = useServerFn(getDashboardStats);
