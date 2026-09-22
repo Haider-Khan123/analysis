@@ -558,7 +558,7 @@ function SidebarContent({
                     <Bell className="h-4 w-4" /><span className="flex-1">Notifications</span><Lock className="h-3.5 w-3.5" />
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="right">Complete Create Your Institute first.</TooltipContent>
+                <TooltipContent side="right">Complete your School Profile first.</TooltipContent>
               </Tooltip>
             ) : (
               <Link to="/notifications"
