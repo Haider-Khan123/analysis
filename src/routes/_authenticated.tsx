@@ -188,7 +188,7 @@ function AuthenticatedLayout() {
                       <Bell className="h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Complete Create Your Institute first.</TooltipContent>
+                  <TooltipContent>Complete your School Profile first.</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             ) : (
@@ -289,19 +289,6 @@ function SidebarContent({
               </Link>
             </div>
           )}
-          {isAdmin && !hasInstitute && (
-            <Link
-              to="/school-profile"
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                pathname === "/school-profile"
-                  ? "bg-primary text-primary-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent",
-              )}
-            >
-              <Building2 className="h-4 w-4" /> Create Your Institute
-            </Link>
-          )}
           {!isSuperAdmin && visible.map((item) => {
 
             const Icon = item.icon;
@@ -318,7 +305,7 @@ function SidebarContent({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="right">
-                    {item.to === "/dashboard" ? "Complete Create Your Institute first." : gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}
+                    {item.to === "/dashboard" ? "Complete your School Profile first." : gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}
                   </TooltipContent>
                 </Tooltip>
               );
@@ -571,7 +558,7 @@ function SidebarContent({
                     <Bell className="h-4 w-4" /><span className="flex-1">Notifications</span><Lock className="h-3.5 w-3.5" />
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="right">Complete Create Your Institute first.</TooltipContent>
+                <TooltipContent side="right">Complete your School Profile first.</TooltipContent>
               </Tooltip>
             ) : (
               <Link to="/notifications"
