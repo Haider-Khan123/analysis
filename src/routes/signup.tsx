@@ -148,7 +148,11 @@ function SignupPage() {
             <p className="text-xs font-medium text-destructive">Password Mismatch</p>
           )}
         </div>
-        <Button type="submit" className="w-full" disabled={busy}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={busy || !fullName.trim() || !email.trim() || password.length < 8 || confirmPassword !== password}
+        >
           {busy ? "Creating…" : "Create Account"}
         </Button>
       </form>
