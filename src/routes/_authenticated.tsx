@@ -188,7 +188,7 @@ function AuthenticatedLayout() {
                       <Bell className="h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Complete Create Your Institute first.</TooltipContent>
+                  <TooltipContent>Complete your School Profile first.</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             ) : (
@@ -305,7 +305,7 @@ function SidebarContent({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="right">
-                    {item.to === "/dashboard" ? "Complete Create Your Institute first." : gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}
+                    {item.to === "/dashboard" ? "Complete your School Profile first." : gateMessages[item.gate ?? ""] ?? "Complete the previous step first."}
                   </TooltipContent>
                 </Tooltip>
               );
