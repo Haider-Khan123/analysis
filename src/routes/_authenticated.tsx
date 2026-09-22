@@ -289,19 +289,6 @@ function SidebarContent({
               </Link>
             </div>
           )}
-          {isAdmin && !hasInstitute && (
-            <Link
-              to="/school-profile"
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                pathname === "/school-profile"
-                  ? "bg-primary text-primary-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent",
-              )}
-            >
-              <Building2 className="h-4 w-4" /> Create Your Institute
-            </Link>
-          )}
           {!isSuperAdmin && visible.map((item) => {
 
             const Icon = item.icon;
