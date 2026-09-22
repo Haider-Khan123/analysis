@@ -58,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+      setLoading(true);
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
@@ -65,11 +66,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           loadProfileAndRoles(s.user.id).then(({ profile: p, roles: r }) => {
             setProfile(p);
             setRoles(r);
-          });
+          }).finally(() => setLoading(false));
         }, 0);
       } else {
         setProfile(null);
         setRoles([]);
+        setLoading(false);
       }
     });
 

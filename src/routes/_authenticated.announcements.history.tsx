@@ -151,7 +151,7 @@ function HistoryPage() {
                           <Button size="sm" variant="ghost" onClick={() => setViewId(r.id)}><Eye className="h-4 w-4" /></Button>
                           {r.can_edit && (
                             <Button size="sm" variant="ghost" title="Edit" asChild>
-                              <Link to={`/announcements/${r.id}/edit`}><Pencil className="h-4 w-4" /></Link>
+                              <Link to="/announcements/$id/edit" params={{ id: r.id }}><Pencil className="h-4 w-4" /></Link>
                             </Button>
                           )}
                           {r.can_edit && r.status !== "published" && r.status !== "archived" && (
