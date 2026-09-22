@@ -34,7 +34,7 @@ function LoginPage() {
     if (!loading && isAuthenticated) {
       const dest = (roles as string[]).includes("super_admin")
         ? "/super-admin/admin-management"
-        : roles.includes("admin") && !profile?.school_id
+        : (roles.includes("admin") || roles.length === 0) && !profile?.school_id
           ? "/school-profile"
           : "/dashboard";
       navigate({ to: dest, replace: true });
