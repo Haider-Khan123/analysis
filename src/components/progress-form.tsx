@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
 
@@ -56,7 +57,7 @@ export function ProgressForm({ type, title, invalidateKey }: { type: ProgressTyp
       },
     }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Saved");
       qc.invalidateQueries({ queryKey: [invalidateKey] });
       setObsTitle(""); setNotes(""); setSubject(""); setBehavior(""); setParticipation(""); setStrengths(""); setImprovements("");

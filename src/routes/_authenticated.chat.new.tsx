@@ -6,6 +6,7 @@ import { ArrowLeft, MessageSquare } from "lucide-react";
 import { listEligibleRecipients, getOrCreateConversation } from "@/lib/chat.functions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 export const Route = createFileRoute("/_authenticated/chat/new")({
   component: NewChat,
@@ -95,7 +96,7 @@ function NewChat() {
           </ul>
         )}
         {startMut.isError && (
-          <p className="mt-3 text-xs text-destructive">{(startMut.error as Error).message}</p>
+          <p className="mt-3 text-xs text-destructive">{getUserErrorMessage(startMut.error)}</p>
         )}
       </div>
     </div>

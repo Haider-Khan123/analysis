@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import {
+import { getUserErrorMessage } from "@/lib/user-error";
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -74,7 +75,7 @@ function AdminManagementPage() {
       toast.success(vars.suspended ? "Admin blocked" : "Admin re-activated");
       qc.invalidateQueries({ queryKey: ["super-admin", "admins"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   if (loading || !isSuperAdmin) return null;

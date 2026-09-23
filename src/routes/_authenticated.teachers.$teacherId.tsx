@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+import { getUserErrorMessage } from "@/lib/user-error";
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import {
@@ -91,11 +92,11 @@ function TeacherProfilePage() {
       qc.invalidateQueries({ queryKey: ["teacher-detail", teacherId] });
       qc.invalidateQueries({ queryKey: ["teachers"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   if (detailQ.isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
-  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ?? "Not found"}</p>;
+  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ? getUserErrorMessage(detailQ.data.error, "Record not found.") : "Record not found."}</p>;
 
   const d = detailQ.data;
   const t = d.teacher as Record<string, unknown>;
@@ -260,7 +261,7 @@ function AssignmentsPanel({
         classTeacherOf: isClassTeacher ? [{ classId: ctClass, sectionId: ctSection }] : [],
       });
     } catch (e) {
-      toast.error((e as Error).message);
+      toast.error(getUserErrorMessage(e));
     } finally { setSaving(false); }
   };
 

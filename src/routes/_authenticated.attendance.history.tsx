@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
 import {
+import { getUserErrorMessage } from "@/lib/user-error";
   getMarkableScope,
   getAttendanceHistory,
   updateAttendanceRecord,
@@ -92,12 +93,12 @@ function HistoryPage() {
       },
     }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Attendance updated");
       qc.invalidateQueries({ queryKey: ["att-history"] });
       setEditing(null);
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+    onError: (e: unknown) => toast.error(getUserErrorMessage(e)),
   });
 
   return (

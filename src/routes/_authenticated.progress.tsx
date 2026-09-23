@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 export const Route = createFileRoute("/_authenticated/progress")({
   component: ProgressLayout,
@@ -77,7 +78,7 @@ function ProgressInner() {
       },
     }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Record has been submitted.");
       ctx.resetAll();
       ["progress-observation", "progress-behavior", "progress-participation", "progress-academic", "progress-history"].forEach((k) =>

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 export const Route = createFileRoute("/_authenticated/attendance/mark")({
   component: MarkAttendancePage,
@@ -88,7 +89,7 @@ function MarkAttendancePage() {
       },
     }),
     onSuccess: (res, isDraft) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       qc.invalidateQueries({ queryKey: ["att-roster"] });
       qc.invalidateQueries({ queryKey: ["att-history"] });
       if (isDraft) {
@@ -98,7 +99,7 @@ function MarkAttendancePage() {
         navigate({ to: "/attendance/history" });
       }
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+    onError: (e: unknown) => toast.error(getUserErrorMessage(e)),
   });
 
   return (
@@ -156,7 +157,7 @@ function MarkAttendancePage() {
             {isLoading ? (
               <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
             ) : !roster?.ok ? (
-              <p className="py-8 text-center text-sm text-destructive">{roster && "error" in roster ? roster.error : "Failed to load"}</p>
+              <p className="py-8 text-center text-sm text-destructive">{roster && "error" in roster ? getUserErrorMessage(roster.error, "Unable to load attendance.") : "Unable to load attendance."}</p>
             ) : roster.students.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">No enrolled students in this section.</p>
             ) : (

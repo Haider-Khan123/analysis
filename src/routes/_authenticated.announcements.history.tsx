@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Eye, Trash2, Send, Pencil } from "lucide-react";
 import {
+import { getUserErrorMessage } from "@/lib/user-error";
   listAnnouncements, deleteAnnouncement, getAnnouncementDetail, publishAnnouncement,
 } from "@/lib/announcements.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,11 +68,11 @@ function HistoryPage() {
 
   const delM = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
-    onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Deleted"); invalidate(); } },
+    onSuccess: (res) => { if (!res.ok) toast.error(getUserErrorMessage(res.error)); else { toast.success("Deleted"); invalidate(); } },
   });
   const pubM = useMutation({
     mutationFn: (id: string) => publishFn({ data: { id } }),
-    onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Published"); invalidate(); } },
+    onSuccess: (res) => { if (!res.ok) toast.error(getUserErrorMessage(res.error)); else { toast.success("Published"); invalidate(); } },
   });
 
   return (

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 export const Route = createFileRoute("/_authenticated/homework/$homeworkId/edit")({
   component: EditHomeworkPage,
@@ -43,7 +44,7 @@ function EditHomeworkPage() {
   const mutation = useMutation({
     mutationFn: () => update({ data: { id: homeworkId, subject, title, description: description || null, assignedDate, dueDate } }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Updated"); navigate({ to: "/homework/list" });
     },
   });

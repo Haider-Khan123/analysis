@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 export const Route = createFileRoute("/_authenticated/announcements/$id/edit")({
   component: EditAnnouncementPage,
@@ -88,11 +89,11 @@ function EditAnnouncementPage() {
         },
       }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Announcement updated");
       navigate({ to: "/announcements/history" });
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+    onError: (e: unknown) => toast.error(getUserErrorMessage(e)),
   });
 
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;

@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+import { getUserErrorMessage } from "@/lib/user-error";
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
@@ -45,7 +46,7 @@ function UserManagement() {
       if (error) throw error;
       toast.success(`Password reset email sent to ${email}`);
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to send reset email");
+      toast.error(getUserErrorMessage(err, "Failed to send reset email."));
     } finally {
       setResettingEmail(null);
     }
@@ -141,7 +142,7 @@ function UserManagement() {
           {isLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading users…</p>
           ) : data?.error ? (
-            <p className="py-8 text-center text-sm text-destructive">{data.error}</p>
+            <p className="py-8 text-center text-sm text-destructive">{getUserErrorMessage(data.error)}</p>
           ) : (
             <div className="overflow-x-auto">
               <Table>

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { titleCase } from "@/lib/utils";
 import {
+import { getUserErrorMessage } from "@/lib/user-error";
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -78,7 +79,7 @@ function TeachersPage() {
       qc.invalidateQueries({ queryKey: ["teachers"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const del = useMutation({
@@ -91,7 +92,7 @@ function TeachersPage() {
       qc.invalidateQueries({ queryKey: ["teachers"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const sendInvite = useMutation({
@@ -103,7 +104,7 @@ function TeachersPage() {
       toast.success("Invite sent");
       qc.invalidateQueries({ queryKey: ["teachers"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const term = search.trim().toLowerCase();
