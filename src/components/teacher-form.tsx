@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from "@/lib/validators";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,7 +46,7 @@ export function validateTeacher(v: TeacherFormValues, opts: { requireLogin: bool
   if (!v.last_name.trim()) return "Last name is required.";
   if (!/^[0-9-]{6,15}$/.test(v.cnic.trim())) return "CNIC is required (digits and dashes).";
   if (!/^[+0-9 \-()]{7,20}$/.test(v.phone.trim())) return "Valid mobile number is required.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) return "Valid email is required.";
+  if (!EMAIL_REGEX.test(v.email.trim())) return "Valid email is required.";
   if (!v.joining_date) return "Joining date is required.";
   if (!v.designation.trim()) return "Designation is required.";
   if (!v.department.trim()) return "Department is required.";

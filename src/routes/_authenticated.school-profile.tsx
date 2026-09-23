@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Pencil, Trash2, Building2, X } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { branchError, phoneError, sanitizeBranch, sanitizePhone, BRANCH_MAX } from "@/lib/validators";
 import {
   createSchoolForAdmin,
   getMySchool,
@@ -185,18 +186,18 @@ function SchoolProfilePage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
-            <Input id="branch" required maxLength={120} placeholder="Enter branch name/ code" value={branch} onChange={(e) => setBranch(e.target.value)} />
+            <Input id="branch" required maxLength={BRANCH_MAX} placeholder="e.g., MAIN01" aria-invalid={!!branchError(branch)} value={branch} onChange={(e) => setBranch(sanitizeBranch(e.target.value))} />
+            <p className={branchError(branch) ? "text-xs text-destructive" : "text-xs text-muted-foreground"}>{branchError(branch) ?? "Up to 20 letters and numbers."}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">Institution Phone <Req /></Label>
             <Input
               id="phone"
               type="tel"
-              inputMode="numeric"
-              pattern="[0-9]+"
-              maxLength={40}
+              inputMode="tel"
+                            maxLength={25}
               required
-              placeholder="Enter phone number"
+              placeholder="e.g., +92 300 1234567"
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
             />
@@ -221,7 +222,7 @@ function SchoolProfilePage() {
             )}
             <p className="text-xs text-muted-foreground">Max 500KB.</p>
           </div>
-          <Button type="submit" className="w-full" disabled={creating || !name.trim() || !branch.trim() || !phone.trim() || !logoDataUrl}>
+          <Button type="submit" className="w-full" disabled={creating || !name.trim() || !branch.trim() || !phone.trim() || !!branchError(branch) || !!phoneError(phone) || !logoDataUrl}>
             {creating ? "Creating…" : "Create Institute"}
           </Button>
         </form>
@@ -323,20 +324,21 @@ function SchoolProfilePage() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
-          <Input id="branch" required maxLength={120} value={branch} onChange={(e) => setBranch(e.target.value)} />
+          <Input id="branch" required maxLength={BRANCH_MAX} placeholder="e.g., MAIN01" aria-invalid={!!branchError(branch)} value={branch} onChange={(e) => setBranch(sanitizeBranch(e.target.value))} />
+            <p className={branchError(branch) ? "text-xs text-destructive" : "text-xs text-muted-foreground"}>{branchError(branch) ?? "Up to 20 letters and numbers."}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="phone">Institution Phone <Req /></Label>
           <Input
             id="phone"
             type="tel"
-            inputMode="numeric"
-            pattern="[0-9]+"
-            maxLength={40}
+            inputMode="tel"
+                        maxLength={25}
             required
             value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+            onChange={(e) => setPhone(sanitizePhone(e.target.value))}
           />
+          <p className={phoneError(phone) ? "text-xs text-destructive" : "text-xs text-muted-foreground"}>{phoneError(phone) ?? "Include country code. Max 15 digits."}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="logo">Institute Logo</Label>
@@ -378,7 +380,7 @@ function SchoolProfilePage() {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={saving || !name.trim() || !branch.trim() || !phone.trim()}>
+          <Button type="submit" disabled={saving || !name.trim() || !branch.trim() || !phone.trim() || !!branchError(branch) || !!phoneError(phone)}>
             {saving ? "Saving…" : "Save Changes"}
           </Button>
         </div>

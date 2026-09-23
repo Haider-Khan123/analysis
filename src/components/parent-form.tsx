@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from "@/lib/validators";
 import { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,7 +51,7 @@ export const emptyParent: ParentFormValues = {
 };
 
 const phoneRegex = /^[+0-9 \-()]{7,20}$/;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = EMAIL_REGEX;
 
 export function validateParent(v: ParentFormValues, opts: { requireLogin: boolean } = { requireLogin: true }): string | null {
   if (!v.first_name.trim()) return "First name is required.";
