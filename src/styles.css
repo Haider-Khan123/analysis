@@ -138,3 +138,16 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+.select-visible-scrollbar [data-radix-select-viewport] {
+  scrollbar-width: thin !important;
+  overflow-y: scroll !important;
+}
+.select-visible-scrollbar [data-radix-select-viewport]::-webkit-scrollbar {
+  display: block !important;
+  width: 8px;
+}
+.select-visible-scrollbar [data-radix-select-viewport]::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}

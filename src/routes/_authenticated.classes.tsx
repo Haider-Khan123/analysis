@@ -217,7 +217,7 @@ function ClassesPage() {
                     <Label>Class</Label>
                     <Select value={className} onValueChange={setClassName}>
                       <SelectTrigger><SelectValue placeholder="Select a class (1–12)" /></SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="select-visible-scrollbar">
                         {CLASS_OPTIONS.map((n) => (
                           <SelectItem key={n} value={n}>{n}</SelectItem>
                         ))}
@@ -232,7 +232,7 @@ function ClassesPage() {
             </Dialog>
             <Dialog open={openSec} onOpenChange={(o) => { setOpenSec(o); if (!o) { setSecName(""); setSecClass(""); } }}>
               <DialogTrigger asChild>
-                <Button size="sm" variant="secondary"><Plus className="mr-1 h-4 w-4" />Add section</Button>
+                <Button size="sm" variant="secondary" disabled={!uniqueClasses.length}><Plus className="mr-1 h-4 w-4" />Add section</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader><DialogTitle>New Section</DialogTitle></DialogHeader>

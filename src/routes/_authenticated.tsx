@@ -135,7 +135,7 @@ function AuthenticatedLayout() {
   }, [loading, isAuthenticated, isSuperAdmin, location.pathname, navigate]);
 
   useEffect(() => {
-    const requiresInstitute = location.pathname === "/dashboard" || location.pathname === "/notifications";
+    const requiresInstitute = location.pathname === "/notifications";
     if (!loading && isAuthenticated && isAdmin && !profile?.school_id && requiresInstitute) {
       navigate({ to: "/school-profile", replace: true });
     }
@@ -293,9 +293,7 @@ function SidebarContent({
 
             const Icon = item.icon;
             const active = pathname === item.to;
-            const locked = isAdmin && item.to === "/dashboard" && !hasInstitute
-              ? true
-              : isLocked(item.gate);
+            const locked = isLocked(item.gate);
             if (locked) {
               return (
                 <Tooltip key={item.to}>
