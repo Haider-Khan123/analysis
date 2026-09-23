@@ -94,7 +94,17 @@ function UserManagement() {
             Centralized directory of every user across the platform — synced in real time.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setQ("");
+            setSource("all");
+            setResettingEmail(null);
+            void refetch();
+          }}
+          disabled={isFetching}
+        >
           <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           <span className="ml-2">Refresh</span>
         </Button>
