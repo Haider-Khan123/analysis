@@ -35,9 +35,7 @@ function LoginPage() {
     if (!loading && isAuthenticated) {
       const dest = (roles as string[]).includes("super_admin")
         ? "/super-admin/admin-management"
-        : (roles.includes("admin") || roles.length === 0) && !profile?.school_id
-          ? "/school-profile"
-          : "/dashboard";
+        : "/dashboard";
       navigate({ to: dest, replace: true });
     }
   }, [isAuthenticated, loading, roles, profile?.school_id, navigate]);
@@ -70,13 +68,9 @@ function LoginPage() {
       supabase.from("user_roles").select("role").eq("user_id", userId),
     ]);
     const myRoles = ((roleRows ?? []) as { role: string }[]).map((r) => r.role);
-    const schoolId = (prof as { school_id: string | null } | null)?.school_id ?? null;
-    const needsInstitute = (myRoles.includes("admin") || myRoles.length === 0) && !schoolId;
     const dest = myRoles.includes("super_admin")
       ? "/super-admin/admin-management"
-      : needsInstitute
-        ? "/school-profile"
-        : "/dashboard";
+      : "/dashboard";
     setBusy(false);
     toast.success("Welcome back");
     void navigate({ to: dest, replace: true });
