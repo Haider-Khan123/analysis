@@ -58,7 +58,7 @@ export function validateParent(v: ParentFormValues, opts: { requireLogin: boolea
   if (!v.last_name.trim()) return "Last name is required.";
   if (!phoneRegex.test(v.phone)) return "Valid primary mobile number is required.";
   if (v.alternate_phone && !phoneRegex.test(v.alternate_phone)) return "Alternate mobile number is invalid.";
-  if (!emailRegex.test(v.email.trim())) return "Valid email address is required.";
+  if (!emailRegex.test(v.email.trim())) return "Please enter a valid email address (e.g., name@example.com).";
   if (opts.requireLogin && v.loginMode === "password") {
     if (!v.password || v.password.length < 8) return "Password must be at least 8 characters.";
     if (v.password !== v.confirm_password) return "Passwords do not match.";

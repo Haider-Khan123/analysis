@@ -66,7 +66,7 @@ export function validateStudent(v: StudentFormValues): string | null {
     if (!g.full_name.trim()) return `${tag}: full name is required.`;
     if (!g.relationship) return `${tag}: relationship is required.`;
     if (!phoneRegex.test(g.phone.trim())) return `${tag}: valid mobile is required.`;
-    if (g.email && !emailRegex.test(g.email.trim())) return `${tag}: invalid email.`;
+    if (g.email && !emailRegex.test(g.email.trim())) return `${tag}: please enter a valid email address (e.g., name@example.com).`;
   }
   return null;
 }
