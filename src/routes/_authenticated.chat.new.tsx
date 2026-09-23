@@ -6,8 +6,8 @@ import { ArrowLeft, MessageSquare } from "lucide-react";
 import { listEligibleRecipients, getOrCreateConversation } from "@/lib/chat.functions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getUserErrorMessage } from "@/lib/user-error";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/chat/new")({
   component: NewChat,
 });

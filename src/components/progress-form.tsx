@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getUserErrorMessage } from "@/lib/user-error";
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export function ProgressForm({ type, title, invalidateKey }: { type: ProgressType; title: string; invalidateKey: string }) {
   const fetchScope = useServerFn(getProgressScope);
   const create = useServerFn(createProgress);

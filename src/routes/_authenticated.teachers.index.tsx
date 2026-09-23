@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { titleCase } from "@/lib/utils";
 import {
-import { getUserErrorMessage } from "@/lib/user-error";
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -22,6 +21,7 @@ import {
 } from "@/components/teacher-form";
 import { PageHeader } from "./_authenticated.classes";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/teachers/")({
   head: () => ({ meta: [{ title: "Teachers — Analysis" }] }),
   component: TeachersPage,

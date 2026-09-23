@@ -7,8 +7,8 @@ import { getAttendanceSettings, updateAttendanceSettings } from "@/lib/attendanc
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getUserErrorMessage } from "@/lib/user-error";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/attendance/settings")({
   component: SettingsPage,
 });

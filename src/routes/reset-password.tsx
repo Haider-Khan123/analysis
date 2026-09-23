@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/password-input";
 import { Label } from "@/components/ui/label";
 import { AuthShell } from "./login";
-import { getUserErrorMessage } from "@/lib/user-error";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: "Reset password — Analysis" }] }),
   component: ResetPasswordPage,

@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-import { getUserErrorMessage } from "@/lib/user-error";
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import {
@@ -26,6 +25,7 @@ import {
 } from "@/components/teacher-form";
 import { titleCase } from "@/lib/utils";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/teachers/$teacherId")({
   head: ({ params }) => ({ meta: [{ title: `Teacher · ${params.teacherId.slice(0, 8)}` }] }),
   component: TeacherProfilePage,

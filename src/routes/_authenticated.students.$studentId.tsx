@@ -9,7 +9,6 @@ import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-import { getUserErrorMessage } from "@/lib/user-error";
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { getStudentDetail, updateStudent } from "@/lib/students.functions";
@@ -18,6 +17,7 @@ import {
 } from "@/components/student-form";
 import { titleCase } from "@/lib/utils";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/students/$studentId")({
   head: ({ params }) => ({ meta: [{ title: `Student · ${params.studentId.slice(0, 8)}` }] }),
   component: StudentProfilePage,

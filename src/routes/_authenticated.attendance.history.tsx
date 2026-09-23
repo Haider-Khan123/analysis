@@ -5,7 +5,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
 import {
-import { getUserErrorMessage } from "@/lib/user-error";
   getMarkableScope,
   getAttendanceHistory,
   updateAttendanceRecord,
@@ -28,6 +27,7 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/attendance/history")({
   component: HistoryPage,
 });

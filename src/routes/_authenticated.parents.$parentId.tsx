@@ -9,7 +9,6 @@ import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-import { getUserErrorMessage } from "@/lib/user-error";
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import {
@@ -25,6 +24,7 @@ import {
   RELATIONSHIP_TYPES, type RelationshipType,
 } from "@/lib/parents.functions";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/parents/$parentId")({
   head: ({ params }) => ({ meta: [{ title: `Parent · ${params.parentId.slice(0, 8)}` }] }),
   component: ParentProfilePage,

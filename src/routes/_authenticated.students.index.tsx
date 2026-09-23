@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-import { getUserErrorMessage } from "@/lib/user-error";
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { titleCase } from "@/lib/utils";
@@ -22,6 +21,7 @@ import {
 import { createStudent, deleteStudent } from "@/lib/students.functions";
 import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/students/")({
   head: () => ({ meta: [{ title: "Students — Analysis" }] }),
   component: StudentsListPage,
