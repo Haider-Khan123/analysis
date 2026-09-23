@@ -68,11 +68,25 @@ export const listAllUsers = createServerFn({ method: "GET" })
       let source_label = "Profile";
       let status: string | null = null;
       const sources: AppUserRow["sources"] = [];
-      const labels: string[] = [];
-      if (rs.includes("admin")) { sources.push("admin"); labels.push("School Administrator"); }
-      if (t) { sources.push("teacher"); labels.push(`Teacher${t.designation ? ` · ${t.designation}` : ""}`); status = t.status ?? null; }
-      if (par) { sources.push("parent"); labels.push("Parent / Guardian"); status = status ?? par.status ?? null; }
-      if (sources.length) { source = sources[0]; source_label = labels.join(" + "); } else sources.push("other");
+      // Each person belongs to exactly one counter. Administrative access takes
+      // precedence over linked staff records so an admin is never double-counted.
+      if (rs.includes("admin")) {
+        source = "admin";
+        source_label = "School Administrator";
+        sources.push("admin");
+      } else if (t || rs.includes("teacher")) {
+        source = "teacher";
+        source_label = `Teacher${t?.designation ? ` · ${t.designation}` : ""}`;
+        status = t?.status ?? null;
+        sources.push("teacher");
+      } else if (par || rs.includes("parent")) {
+        source = "parent";
+        source_label = "Parent / Guardian";
+        status = par?.status ?? null;
+        sources.push("parent");
+      } else {
+        sources.push("other");
+      }
       users.push({
         id: p.id,
         full_name: p.full_name ?? null,
