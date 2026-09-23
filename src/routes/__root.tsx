@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../lib/auth-context";
 import { supabase } from "../integrations/supabase/client";
 import { Toaster } from "../components/ui/sonner";
+import { getUserErrorMessage } from "../lib/user-error";
 
 function NotFoundComponent() {
   return (
@@ -46,7 +47,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold text-foreground">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {getUserErrorMessage(error, "We couldn't load this page. Please try again.")}
+        </p>
         <button
           onClick={() => {
             router.invalidate();

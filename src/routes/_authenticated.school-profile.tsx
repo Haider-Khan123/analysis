@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 export const Route = createFileRoute("/_authenticated/school-profile")({
   head: () => ({ meta: [{ title: "School Profile — Analysis" }] }),
@@ -114,7 +115,7 @@ function SchoolProfilePage() {
       await refreshAll();
       setEditMode(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create institute");
+      toast.error(getUserErrorMessage(err, "Unable to create the institute. Please try again."));
     } finally {
       setCreating(false);
     }
@@ -138,7 +139,7 @@ function SchoolProfilePage() {
       await refreshAll();
       setEditMode(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      toast.error(getUserErrorMessage(err, "Unable to save the institute profile. Please try again."));
     } finally {
       setSaving(false);
     }
@@ -154,7 +155,7 @@ function SchoolProfilePage() {
       await refreshAll();
       navigate({ to: "/dashboard", replace: true });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete");
+      toast.error(getUserErrorMessage(err, "Unable to delete the institute. Please try again."));
     } finally {
       setDeleting(false);
     }
@@ -180,11 +181,11 @@ function SchoolProfilePage() {
         >
           <div className="space-y-2">
             <Label htmlFor="name">Institution Name <Req /></Label>
-            <Input id="name" required placeholder="Enter your institution name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input id="name" required maxLength={160} placeholder="Enter your institution name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
-            <Input id="branch" required placeholder="Enter branch name/ code" value={branch} onChange={(e) => setBranch(e.target.value)} />
+            <Input id="branch" required maxLength={120} placeholder="Enter branch name/ code" value={branch} onChange={(e) => setBranch(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">Institution Phone <Req /></Label>
@@ -193,6 +194,7 @@ function SchoolProfilePage() {
               type="tel"
               inputMode="numeric"
               pattern="[0-9]+"
+              maxLength={40}
               required
               placeholder="Enter phone number"
               value={phone}
@@ -317,11 +319,11 @@ function SchoolProfilePage() {
       >
         <div className="space-y-2">
           <Label htmlFor="name">Institution Name <Req /></Label>
-          <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} />
+          <Input id="name" required maxLength={160} value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="branch">Branch Name/ Code <Req /></Label>
-          <Input id="branch" required value={branch} onChange={(e) => setBranch(e.target.value)} />
+          <Input id="branch" required maxLength={120} value={branch} onChange={(e) => setBranch(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="phone">Institution Phone <Req /></Label>
@@ -330,6 +332,7 @@ function SchoolProfilePage() {
             type="tel"
             inputMode="numeric"
             pattern="[0-9]+"
+            maxLength={40}
             required
             value={phone}
             onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
