@@ -10,6 +10,7 @@ export type AppUserRow = {
   roles: string[];
   source: "admin" | "teacher" | "parent" | "student" | "other";
   source_label: string;
+  sources: Array<"admin" | "teacher" | "parent" | "student" | "other">;
   status: string | null;
   created_at: string;
 };
@@ -66,9 +67,12 @@ export const listAllUsers = createServerFn({ method: "GET" })
       let source: AppUserRow["source"] = "other";
       let source_label = "Profile";
       let status: string | null = null;
-      if (rs.includes("admin")) { source = "admin"; source_label = "School Administrator"; }
-      if (t) { source = "teacher"; source_label = `Teacher${t.designation ? ` · ${t.designation}` : ""}`; status = t.status ?? null; }
-      else if (par) { source = "parent"; source_label = "Parent / Guardian"; status = par.status ?? null; }
+      const sources: AppUserRow["sources"] = [];
+      const labels: string[] = [];
+      if (rs.includes("admin")) { sources.push("admin"); labels.push("School Administrator"); }
+      if (t) { sources.push("teacher"); labels.push(`Teacher${t.designation ? ` · ${t.designation}` : ""}`); status = t.status ?? null; }
+      if (par) { sources.push("parent"); labels.push("Parent / Guardian"); status = status ?? par.status ?? null; }
+      if (sources.length) { source = sources[0]; source_label = labels.join(" + "); } else sources.push("other");
       users.push({
         id: p.id,
         full_name: p.full_name ?? null,
@@ -77,6 +81,7 @@ export const listAllUsers = createServerFn({ method: "GET" })
         roles: rs,
         source,
         source_label,
+        sources,
         status,
         created_at: p.created_at as string,
       });
@@ -92,6 +97,7 @@ export const listAllUsers = createServerFn({ method: "GET" })
         phone: t.phone ?? null,
         roles: [],
         source: "teacher",
+        sources: ["teacher"],
         source_label: `Teacher${t.designation ? ` · ${t.designation}` : ""} (no login)`,
         status: t.status ?? null,
         created_at: t.created_at as string,
@@ -106,6 +112,7 @@ export const listAllUsers = createServerFn({ method: "GET" })
         phone: p.phone ?? null,
         roles: [],
         source: "parent",
+        sources: ["parent"],
         source_label: "Parent / Guardian (no login)",
         status: p.status ?? null,
         created_at: p.created_at as string,
@@ -119,6 +126,7 @@ export const listAllUsers = createServerFn({ method: "GET" })
         phone: null,
         roles: [],
         source: "student",
+        sources: ["student"],
         source_label: "Student",
         status: s.status ?? null,
         created_at: s.created_at as string,
