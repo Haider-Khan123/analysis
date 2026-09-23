@@ -29,6 +29,7 @@ function UserManagement() {
   const fetchUsers = useServerFn(listAllUsers);
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["all-users"],
+    staleTime: 0,
     queryFn: () => fetchUsers(),
   });
 
