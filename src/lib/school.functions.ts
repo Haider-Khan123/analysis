@@ -1,3 +1,4 @@
+import { branchError, phoneError } from "./validators";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
@@ -14,8 +15,8 @@ export const createSchoolForAdmin = createServerFn({ method: "POST" })
       .object({
         schoolName: z.string().trim().min(2).max(120),
         address: z.string().trim().max(255).optional().nullable(),
-        phone: z.string().trim().max(40).optional().nullable(),
-        branch: z.string().trim().max(120).optional().nullable(),
+        phone: z.string().trim().max(25).refine((v) => !v || !phoneError(v), { message: "Please enter a valid phone number (max 15 digits)." }).optional().nullable(),
+        branch: z.string().trim().max(20).refine((v) => !v || !branchError(v), { message: "Branch Code can only contain up to 20 letters and numbers." }).optional().nullable(),
         logoDataUrl: z
           .string()
           .max(800_000)
@@ -103,8 +104,8 @@ export const updateMySchool = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z.object({
       name: z.string().trim().min(2).max(120),
-      branch: z.string().trim().max(120).nullable(),
-      phone: z.string().trim().max(40).nullable(),
+      branch: z.string().trim().max(20).refine((v) => !v || !branchError(v), { message: "Branch Code can only contain up to 20 letters and numbers." }).nullable(),
+      phone: z.string().trim().max(25).refine((v) => !v || !phoneError(v), { message: "Please enter a valid phone number (max 15 digits)." }).nullable(),
       logoDataUrl: z.string().max(800_000).nullable(),
     }).parse(input),
   )

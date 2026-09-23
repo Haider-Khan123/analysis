@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from "@/lib/validators";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,7 +47,7 @@ export const emptyStudent: StudentFormValues = {
 };
 
 const phoneRegex = /^[+0-9 \-()]{7,20}$/;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = EMAIL_REGEX;
 
 export function validateStudent(v: StudentFormValues): string | null {
   if (!v.admission_number.trim()) return "Admission number is required.";
@@ -65,7 +66,7 @@ export function validateStudent(v: StudentFormValues): string | null {
     if (!g.full_name.trim()) return `${tag}: full name is required.`;
     if (!g.relationship) return `${tag}: relationship is required.`;
     if (!phoneRegex.test(g.phone.trim())) return `${tag}: valid mobile is required.`;
-    if (g.email && !emailRegex.test(g.email.trim())) return `${tag}: invalid email.`;
+    if (g.email && !emailRegex.test(g.email.trim())) return `${tag}: please enter a valid email address (e.g., name@example.com).`;
   }
   return null;
 }
