@@ -195,12 +195,13 @@ function SchoolProfilePage() {
               id="phone"
               type="tel"
               inputMode="tel"
-                            maxLength={25}
+              maxLength={25}
               required
               placeholder="e.g., +92 300 1234567"
               value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+              onChange={(e) => setPhone(sanitizePhone(e.target.value))}
             />
+            <p className={phoneError(phone) ? "text-xs text-destructive" : "text-xs text-muted-foreground"}>{phoneError(phone) ?? "Include country code. Max 15 digits."}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="logo">Institute Logo <Req /></Label>
