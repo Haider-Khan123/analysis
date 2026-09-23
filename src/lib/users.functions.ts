@@ -30,12 +30,29 @@ export const listAllUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<{ users: AppUserRow[]; error?: string }> => {
     const guard = await assertAdminSchool(context.userId);
-    if ("error" in guard) return { users: [], error: guard.error };
+    if ("error" in guard) {
+      // Admin who hasn't created an institute yet: still show themselves as the Admin.
+      const [{ data: me }, { data: myRoles }] = await Promise.all([
+        supabaseAdmin.from("profiles").select("id, full_name, email, phone, created_at, school_id").eq("id", context.userId).maybeSingle(),
+        supabaseAdmin.from("user_roles").select("role").eq("user_id", context.userId),
+      ]);
+      const rs = (myRoles ?? []).map((r) => r.role as string);
+      if (me && !me.school_id && (rs.length === 0 || rs.includes("admin"))) {
+        return {
+          users: [{
+            id: me.id, full_name: me.full_name ?? null, email: me.email, phone: me.phone ?? null,
+            roles: rs.length ? rs : ["admin"], source: "admin", sources: ["admin"],
+            source_label: "School Administrator", status: null, created_at: me.created_at as string,
+          }],
+        };
+      }
+      return { users: [], error: guard.error };
+    }
     const { schoolId } = guard;
 
     const [{ data: profiles }, { data: roles }, { data: teachers }, { data: parents }, { data: students }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id, full_name, email, phone, created_at").eq("school_id", schoolId),
-      supabaseAdmin.from("user_roles").select("user_id, role, school_id"),
+      supabaseAdmin.from("user_roles").select("user_id, role, school_id").eq("school_id", schoolId),
       supabaseAdmin.from("teachers").select("user_id, full_name, email, phone, status, created_at, designation").eq("school_id", schoolId),
       supabaseAdmin.from("parents").select("user_id, full_name, email, phone, status, created_at").eq("school_id", schoolId),
       supabaseAdmin.from("students").select("id, full_name, status, created_at").eq("school_id", schoolId),
