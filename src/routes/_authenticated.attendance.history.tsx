@@ -27,6 +27,7 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/attendance/history")({
   component: HistoryPage,
 });
@@ -92,12 +93,12 @@ function HistoryPage() {
       },
     }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Attendance updated");
       qc.invalidateQueries({ queryKey: ["att-history"] });
       setEditing(null);
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+    onError: (e: unknown) => toast.error(getUserErrorMessage(e)),
   });
 
   return (

@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export function ProgressForm({ type, title, invalidateKey }: { type: ProgressType; title: string; invalidateKey: string }) {
   const fetchScope = useServerFn(getProgressScope);
   const create = useServerFn(createProgress);
@@ -56,7 +57,7 @@ export function ProgressForm({ type, title, invalidateKey }: { type: ProgressTyp
       },
     }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Saved");
       qc.invalidateQueries({ queryKey: [invalidateKey] });
       setObsTitle(""); setNotes(""); setSubject(""); setBehavior(""); setParticipation(""); setStrengths(""); setImprovements("");

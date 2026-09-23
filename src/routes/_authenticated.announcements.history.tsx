@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/announcements/history")({
   component: HistoryPage,
 });
@@ -67,11 +68,11 @@ function HistoryPage() {
 
   const delM = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
-    onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Deleted"); invalidate(); } },
+    onSuccess: (res) => { if (!res.ok) toast.error(getUserErrorMessage(res.error)); else { toast.success("Deleted"); invalidate(); } },
   });
   const pubM = useMutation({
     mutationFn: (id: string) => publishFn({ data: { id } }),
-    onSuccess: (res) => { if (!res.ok) toast.error(res.error); else { toast.success("Published"); invalidate(); } },
+    onSuccess: (res) => { if (!res.ok) toast.error(getUserErrorMessage(res.error)); else { toast.success("Published"); invalidate(); } },
   });
 
   return (

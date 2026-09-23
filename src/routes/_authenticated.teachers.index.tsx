@@ -21,6 +21,7 @@ import {
 } from "@/components/teacher-form";
 import { PageHeader } from "./_authenticated.classes";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/teachers/")({
   head: () => ({ meta: [{ title: "Teachers — Analysis" }] }),
   component: TeachersPage,
@@ -78,7 +79,7 @@ function TeachersPage() {
       qc.invalidateQueries({ queryKey: ["teachers"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const del = useMutation({
@@ -91,7 +92,7 @@ function TeachersPage() {
       qc.invalidateQueries({ queryKey: ["teachers"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const sendInvite = useMutation({
@@ -103,7 +104,7 @@ function TeachersPage() {
       toast.success("Invite sent");
       qc.invalidateQueries({ queryKey: ["teachers"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const term = search.trim().toLowerCase();

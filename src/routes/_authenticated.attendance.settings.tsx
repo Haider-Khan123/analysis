@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/attendance/settings")({
   component: SettingsPage,
 });
@@ -23,7 +24,7 @@ function SettingsPage() {
   const mutation = useMutation({
     mutationFn: () => update({ data: { threshold } }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Settings updated");
       qc.invalidateQueries({ queryKey: ["att-settings"] });
     },

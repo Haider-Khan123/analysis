@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/super-admin/admin-management")({
   component: AdminManagementPage,
 });
@@ -74,7 +75,7 @@ function AdminManagementPage() {
       toast.success(vars.suspended ? "Admin blocked" : "Admin re-activated");
       qc.invalidateQueries({ queryKey: ["super-admin", "admins"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   if (loading || !isSuperAdmin) return null;

@@ -21,6 +21,7 @@ import {
 import { createStudent, deleteStudent } from "@/lib/students.functions";
 import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/students/")({
   head: () => ({ meta: [{ title: "Students — Analysis" }] }),
   component: StudentsListPage,
@@ -112,7 +113,7 @@ function StudentsListPage() {
       qc.invalidateQueries({ queryKey: ["students"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const del = useMutation({
@@ -125,7 +126,7 @@ function StudentsListPage() {
       qc.invalidateQueries({ queryKey: ["students"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const term = search.trim().toLowerCase();

@@ -24,6 +24,7 @@ import {
   RELATIONSHIP_TYPES, type RelationshipType,
 } from "@/lib/parents.functions";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/parents/$parentId")({
   head: ({ params }) => ({ meta: [{ title: `Parent · ${params.parentId.slice(0, 8)}` }] }),
   component: ParentProfilePage,
@@ -91,7 +92,7 @@ function ParentProfilePage() {
       qc.invalidateQueries({ queryKey: ["parent-detail", parentId] });
       qc.invalidateQueries({ queryKey: ["parents"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const link = useMutation({
@@ -108,7 +109,7 @@ function ParentProfilePage() {
       setLinkOpen(false); setLinkStudentId(""); setLinkRelationship("son"); setLinkPrimary(false);
       qc.invalidateQueries({ queryKey: ["parent-detail", parentId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const unlink = useMutation({
@@ -120,7 +121,7 @@ function ParentProfilePage() {
       toast.success("Link removed");
       qc.invalidateQueries({ queryKey: ["parent-detail", parentId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const updLink = useMutation({
@@ -131,14 +132,14 @@ function ParentProfilePage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["parent-detail", parentId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const classMap = useMemo(() => new Map((classesQ.data ?? []).map((c) => [c.id, c.name])), [classesQ.data]);
   const sectionMap = useMemo(() => new Map((sectionsQ.data ?? []).map((s) => [s.id, s.name])), [sectionsQ.data]);
 
   if (detailQ.isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
-  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ?? "Not found"}</p>;
+  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ? getUserErrorMessage(detailQ.data.error, "Record not found.") : "Record not found."}</p>;
 
   const p = detailQ.data.parent as Record<string, unknown>;
   const links = detailQ.data.links as Array<{ id: string; student_id: string; relationship_type: string; is_primary: boolean }>;

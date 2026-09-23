@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/homework/list")({
   component: HomeworkListPage,
 });
@@ -43,7 +44,7 @@ function HomeworkListPage() {
   const delMutation = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Deleted");
       qc.invalidateQueries({ queryKey: ["hw-list"] });
     },

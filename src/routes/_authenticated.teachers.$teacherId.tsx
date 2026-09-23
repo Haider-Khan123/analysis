@@ -25,6 +25,7 @@ import {
 } from "@/components/teacher-form";
 import { titleCase } from "@/lib/utils";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/teachers/$teacherId")({
   head: ({ params }) => ({ meta: [{ title: `Teacher · ${params.teacherId.slice(0, 8)}` }] }),
   component: TeacherProfilePage,
@@ -91,11 +92,11 @@ function TeacherProfilePage() {
       qc.invalidateQueries({ queryKey: ["teacher-detail", teacherId] });
       qc.invalidateQueries({ queryKey: ["teachers"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   if (detailQ.isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
-  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ?? "Not found"}</p>;
+  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ? getUserErrorMessage(detailQ.data.error, "Record not found.") : "Record not found."}</p>;
 
   const d = detailQ.data;
   const t = d.teacher as Record<string, unknown>;
@@ -260,7 +261,7 @@ function AssignmentsPanel({
         classTeacherOf: isClassTeacher ? [{ classId: ctClass, sectionId: ctSection }] : [],
       });
     } catch (e) {
-      toast.error((e as Error).message);
+      toast.error(getUserErrorMessage(e));
     } finally { setSaving(false); }
   };
 

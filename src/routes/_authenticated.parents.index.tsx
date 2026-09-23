@@ -22,6 +22,7 @@ import { createParent, deleteParent } from "@/lib/parents.functions";
 import { inviteUserForRow } from "@/lib/school.functions";
 import { getTeacherScopedData } from "@/lib/teacher-scope.functions";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/parents/")({
   head: () => ({ meta: [{ title: "Parents — Analysis" }] }),
   component: ParentsListPage,
@@ -110,7 +111,7 @@ function ParentsListPage() {
       qc.invalidateQueries({ queryKey: ["parents"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const del = useMutation({
@@ -123,7 +124,7 @@ function ParentsListPage() {
       qc.invalidateQueries({ queryKey: ["parents"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const sendInvite = useMutation({
@@ -135,7 +136,7 @@ function ParentsListPage() {
       toast.success("Invite sent");
       qc.invalidateQueries({ queryKey: ["parents"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   const term = search.trim().toLowerCase();

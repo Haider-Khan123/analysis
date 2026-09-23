@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/chat/$conversationId")({
   component: ChatThread,
 });
@@ -124,7 +125,7 @@ function ChatThread() {
         contentType: pending.file.type || undefined,
       });
       setFiles((p) => p.map((x) => x.file === pending.file
-        ? { ...x, uploading: false, path: error ? undefined : path, error: error?.message }
+        ? { ...x, uploading: false, path: error ? undefined : path, error: error ? getUserErrorMessage(error, "File upload failed. Please try again.") : undefined }
         : x));
     }
   }
@@ -279,7 +280,7 @@ function ChatThread() {
           </Button>
         </div>
         {sendMut.isError && (
-          <p className="mt-2 text-xs text-destructive">{(sendMut.error as Error).message}</p>
+          <p className="mt-2 text-xs text-destructive">{getUserErrorMessage(sendMut.error)}</p>
         )}
       </div>
     </div>

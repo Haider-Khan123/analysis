@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
@@ -58,7 +59,7 @@ function LoginPage() {
 
     if (error || !data?.user) {
       setBusy(false);
-      toast.error(error?.message ?? "Unable to sign in");
+      toast.error(getUserErrorMessage(error, "Unable to sign in."));
       return;
     }
 

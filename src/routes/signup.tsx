@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthShell } from "./login";
+import { getUserErrorMessage } from "@/lib/user-error";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -64,8 +65,7 @@ function SignupPage() {
       toast.success("Account created. Set up your institute next.");
       navigate({ to: "/school-profile", replace: true });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Signup failed";
-      toast.error(msg);
+      toast.error(getUserErrorMessage(err, "Unable to create your account. Please try again."));
     } finally {
       setBusy(false);
     }

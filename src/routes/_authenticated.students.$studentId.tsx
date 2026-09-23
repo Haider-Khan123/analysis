@@ -17,6 +17,7 @@ import {
 } from "@/components/student-form";
 import { titleCase } from "@/lib/utils";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/students/$studentId")({
   head: ({ params }) => ({ meta: [{ title: `Student · ${params.studentId.slice(0, 8)}` }] }),
   component: StudentProfilePage,
@@ -82,11 +83,11 @@ function StudentProfilePage() {
       qc.invalidateQueries({ queryKey: ["student-detail", studentId] });
       qc.invalidateQueries({ queryKey: ["students"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
   });
 
   if (detailQ.isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
-  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ?? "Not found"}</p>;
+  if (!detailQ.data?.ok) return <p className="text-sm text-destructive">{detailQ.data?.error ? getUserErrorMessage(detailQ.data.error, "Record not found.") : "Record not found."}</p>;
 
   const s = detailQ.data.student as Record<string, unknown>;
   const guardians = detailQ.data.guardians as Record<string, unknown>[];

@@ -7,6 +7,7 @@ import { PasswordInput } from "@/components/password-input";
 import { Label } from "@/components/ui/label";
 import { AuthShell } from "./login";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: "Reset password — Analysis" }] }),
   component: ResetPasswordPage,
@@ -48,7 +49,7 @@ function ResetPasswordPage() {
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(getUserErrorMessage(error));
       return;
     }
     toast.success("Password updated. You're signed in.");

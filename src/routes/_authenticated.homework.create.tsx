@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/homework/create")({
   component: CreateHomeworkPage,
 });
@@ -59,7 +60,7 @@ function CreateHomeworkPage() {
     for (const pending of valid) {
       const path = `${user.id}/${Date.now()}-${pending.file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
       const { error } = await supabase.storage.from("homework-attachments").upload(path, pending.file, { contentType: pending.file.type || undefined });
-      setFiles((p) => p.map((x) => x.file === pending.file ? { ...x, uploading: false, path: error ? undefined : path, error: error?.message } : x));
+      setFiles((p) => p.map((x) => x.file === pending.file ? { ...x, uploading: false, path: error ? undefined : path, error: error ? getUserErrorMessage(error, "File upload failed. Please try again.") : undefined } : x));
     }
   };
 
@@ -81,11 +82,11 @@ function CreateHomeworkPage() {
       },
     }),
     onSuccess: (res) => {
-      if (!res.ok) { toast.error(res.error); return; }
+      if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Homework created");
       navigate({ to: "/homework/list" });
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+    onError: (e: unknown) => toast.error(getUserErrorMessage(e)),
   });
 
   const valid = classId && subject.trim() && title.trim() && dueDate >= assignedDate && (scopeChoice === "class" || sectionId);
