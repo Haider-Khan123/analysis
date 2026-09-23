@@ -70,7 +70,7 @@ function UserManagement() {
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return users.filter((u) => {
-      if (source !== "all" && u.source !== source) return false;
+      if (source !== "all" && !u.sources.includes(source)) return false;
       if (!needle) return true;
       return [u.full_name, u.email, u.phone, u.source_label, ...u.roles]
         .filter(Boolean).join(" ").toLowerCase().includes(needle);
@@ -79,7 +79,7 @@ function UserManagement() {
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: users.length, admin: 0, teacher: 0, parent: 0, student: 0, other: 0 };
-    users.forEach((u) => { c[u.source] = (c[u.source] ?? 0) + 1; });
+    users.forEach((u) => { u.sources.forEach((s) => { c[s] = (c[s] ?? 0) + 1; }); });
     return c;
   }, [users]);
 
