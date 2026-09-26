@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Plus, Search, Trash2, Mail, Check } from "lucide-react";
+import { Plus, Search, Trash2, Mail, Check, Pencil, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useCurrentSchool } from "@/lib/use-current-school";
@@ -15,15 +15,22 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { inviteUserForRow } from "@/lib/school.functions";
-import { createTeacher } from "@/lib/teachers.functions";
+import { createTeacher, getTeacherDetail, updateTeacher } from "@/lib/teachers.functions";
 import {
-  TeacherForm, emptyTeacher, validateTeacher, type TeacherFormValues,
+  TeacherForm, emptyTeacher, teacherFromRow, validateTeacher, type TeacherFormValues,
 } from "@/components/teacher-form";
 import { PageHeader } from "./_authenticated.classes";
 
 import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/teachers/")({
-  head: () => ({ meta: [{ title: "Teachers — Analysis" }] }),
+  head: () => ({ meta: [
+    { title: "Teachers — Analysis" },
+    { name: "description", content: "Manage teaching staff, their profiles, and login access in Analysis." },
+    { property: "og:title", content: "Teachers — Analysis" },
+    { property: "og:description", content: "Manage teaching staff, their profiles, and login access in Analysis." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: TeachersPage,
 });
 
@@ -34,9 +41,56 @@ function TeachersPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<TeacherFormValues>(emptyTeacher);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<TeacherFormValues | null>(null);
+  const [editLoading, setEditLoading] = useState(false);
   const [search, setSearch] = useState("");
   const create = useServerFn(createTeacher);
+  const getDetail = useServerFn(getTeacherDetail);
+  const updateFn = useServerFn(updateTeacher);
   const invite = useServerFn(inviteUserForRow);
+
+  const openEdit = async (id: string) => {
+    setEditId(id);
+    setEditForm(null);
+    setEditLoading(true);
+    try {
+      const res = await getDetail({ data: { id } });
+      if (!res.ok) throw new Error(res.error);
+      setEditForm(teacherFromRow(res.teacher));
+    } catch (error) {
+      toast.error(getUserErrorMessage(error));
+      setEditId(null);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const saveEdit = useMutation({
+    mutationFn: async (v: TeacherFormValues) => {
+      if (!editId) return;
+      const err = validateTeacher(v, { requireLogin: false });
+      if (err) throw new Error(err);
+      const res = await updateFn({ data: {
+        id: editId, employee_id: v.employee_id || null,
+        first_name: v.first_name, last_name: v.last_name,
+        gender: v.gender || null, date_of_birth: v.date_of_birth || null,
+        cnic: v.cnic, photo_data_url: v.photo_data_url,
+        phone: v.phone, email: v.email, address: v.address || null,
+        joining_date: v.joining_date, designation: v.designation,
+        department: v.department, status: v.status, subject: v.subject || null,
+      } });
+      if (!res.ok) throw new Error(res.error);
+    },
+    onSuccess: () => {
+      toast.success("Teacher updated");
+      setEditId(null);
+      setEditForm(null);
+      qc.invalidateQueries({ queryKey: ["teachers"] });
+      qc.invalidateQueries({ queryKey: ["teacher-detail"] });
+    },
+    onError: (e: Error) => toast.error(getUserErrorMessage(e)),
+  });
 
   const q = useQuery({
     queryKey: ["teachers"],
@@ -151,6 +205,7 @@ function TeachersPage() {
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+        <p className="mb-3 text-sm text-muted-foreground">Click on Teacher's Name to edit the Informatoin</p>
         <ScrollArea className="max-h-[60vh] pr-2">
           {q.isLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
@@ -212,8 +267,11 @@ function TeachersPage() {
                       ) : <span className="text-xs text-muted-foreground">No login</span>}
                     </td>
                     {isAdmin && (
-                      <td className="py-3 text-right">
-                        <Button variant="ghost" size="icon" onClick={() => del.mutate(t.id)}>
+                      <td className="py-3 text-right whitespace-nowrap">
+                        <Button variant="ghost" size="icon" aria-label={`Edit ${t.full_name}`} title="Edit teacher" onClick={() => void openEdit(t.id)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" aria-label={`Delete ${t.full_name}`} title="Delete teacher" onClick={() => del.mutate(t.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </td>
@@ -225,6 +283,21 @@ function TeachersPage() {
           )}
         </ScrollArea>
       </div>
+      <Dialog open={editId !== null} onOpenChange={(open) => { if (!open) { setEditId(null); setEditForm(null); } }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Edit Teacher</DialogTitle></DialogHeader>
+          {editLoading ? <p className="py-8 text-center text-sm text-muted-foreground">Loading teacher…</p> : editForm && (
+            <>
+              <TeacherForm value={editForm} onChange={setEditForm} mode="edit" />
+              <DialogFooter>
+                <Button onClick={() => saveEdit.mutate(editForm)} disabled={saveEdit.isPending || validateTeacher(editForm, { requireLogin: false }) !== null}>
+                  <Save className="mr-1 h-4 w-4" />{saveEdit.isPending ? "Saving…" : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
