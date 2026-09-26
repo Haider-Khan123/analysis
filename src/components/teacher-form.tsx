@@ -44,7 +44,9 @@ export const emptyTeacher: TeacherFormValues = {
 export function validateTeacher(v: TeacherFormValues, opts: { requireLogin: boolean }): string | null {
   if (!v.first_name.trim()) return "First name is required.";
   if (!v.last_name.trim()) return "Last name is required.";
-  if (!/^[0-9-]{6,15}$/.test(v.cnic.trim())) return "CNIC is required (digits and dashes).";
+  if (!v.cnic.trim()) return "CNIC / National ID is required.";
+  const cnicMsg = cnicError(v.cnic);
+  if (cnicMsg) return cnicMsg;
   if (!/^[+0-9 \-()]{7,20}$/.test(v.phone.trim())) return "Valid mobile number is required.";
   if (!EMAIL_REGEX.test(v.email.trim())) return "Please enter a valid email address (e.g., name@example.com).";
   if (!v.joining_date) return "Joining date is required.";
@@ -119,7 +121,17 @@ export function TeacherForm({
           </Field>
           <Field label="Date Of Birth"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Field>
         </div>
-        <Field label="CNIC / National ID *"><Input value={value.cnic} maxLength={15} onChange={(e) => set("cnic", e.target.value)} placeholder="*****-*******-*" /></Field>
+        <Field label="CNIC / National ID *" error={cnicMsg}>
+          <Input
+            value={value.cnic}
+            maxLength={15}
+            inputMode="numeric"
+            aria-invalid={!!cnicMsg}
+            className={cnicMsg ? "border-destructive focus-visible:ring-destructive" : undefined}
+            onChange={(e) => set("cnic", e.target.value)}
+            placeholder="*****-*******-*"
+          />
+        </Field>
       </TabsContent>
 
       <TabsContent value="contact" className="space-y-3">
@@ -183,8 +195,14 @@ export function TeacherForm({
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="space-y-1.5"><Label>{label}</Label>{children}</div>;
+function Field({ label, error, children }: { label: string; error?: string | null; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      {children}
+      {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+    </div>
+  );
 }
 
 export function teacherFromRow(row: Record<string, unknown>): TeacherFormValues {
