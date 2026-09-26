@@ -46,7 +46,7 @@ const StudentInput = z.object({
   class_id: z.string().uuid(),
   section_id: z.string().uuid(),
   status: z.enum(["active", "inactive"]).default("active"),
-  guardians: z.array(GuardianInput).min(1, "At least one guardian is required").max(10),
+  guardians: z.array(GuardianInput).max(10).default([]),
 });
 
 export const createStudent = createServerFn({ method: "POST" })
@@ -93,8 +93,10 @@ export const createStudent = createServerFn({ method: "POST" })
       address: g.address ?? null,
       is_primary: i === 0 ? true : g.is_primary,
     }));
-    const { error: gErr } = await supabaseAdmin.from("student_guardians").insert(guardians);
-    if (gErr) return { ok: false as const, error: gErr.message };
+    if (guardians.length > 0) {
+      const { error: gErr } = await supabaseAdmin.from("student_guardians").insert(guardians);
+      if (gErr) return { ok: false as const, error: gErr.message };
+    }
 
     await logAudit(schoolId, context.userId, actorName, "student", row.id, "create", {
       ...insertRow, photo_url: insertRow.photo_url ? "[image]" : null, guardians,
@@ -163,8 +165,10 @@ export const updateStudent = createServerFn({ method: "POST" })
       address: g.address ?? null,
       is_primary: i === 0 ? true : g.is_primary,
     }));
-    const { error: gErr } = await supabaseAdmin.from("student_guardians").insert(guardians);
-    if (gErr) return { ok: false as const, error: gErr.message };
+    if (guardians.length > 0) {
+      const { error: gErr } = await supabaseAdmin.from("student_guardians").insert(guardians);
+      if (gErr) return { ok: false as const, error: gErr.message };
+    }
 
     await logAudit(schoolId, context.userId, actorName, "student", data.id, "update", {
       fields: diff, guardians,
