@@ -50,6 +50,21 @@ export function sanitizeBranch(v: string): string {
   return v.replace(/[^A-Za-z0-9]/g, "").slice(0, BRANCH_MAX);
 }
 
+// Date of birth: must not be in the future (or unreasonably far in the past).
+export const DOB_MIN_YEAR = 1900;
+
+export function todayStr(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function dobError(v: string): string | null {
+  const s = v.trim();
+  if (!s) return null;
+  if (s > todayStr()) return "Date of birth cannot be in the future.";
+  if (s < `${DOB_MIN_YEAR}-01-01`) return `Date of birth cannot be before ${DOB_MIN_YEAR}.`;
+  return null;
+}
+
 // CNIC / National ID: 13 digits shown as *****-*******-* (5-7-1), max 15 characters.
 export const CNIC_MAX = 15;
 export const CNIC_REGEX = /^[0-9]{5}-[0-9]{7}-[0-9]$/;

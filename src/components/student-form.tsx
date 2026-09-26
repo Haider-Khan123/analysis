@@ -1,4 +1,4 @@
-import { EMAIL_REGEX } from "@/lib/validators";
+import { EMAIL_REGEX, dobError, todayStr } from "@/lib/validators";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +55,8 @@ export function validateStudent(v: StudentFormValues): string | null {
   if (!v.last_name.trim()) return "Last name is required.";
   if (!v.gender) return "Gender is required.";
   if (!v.date_of_birth) return "Date of birth is required.";
+  const dobMsg = dobError(v.date_of_birth);
+  if (dobMsg) return dobMsg;
   if (!v.admission_date) return "Admission date is required.";
   if (!v.class_id) return "Class is required.";
   if (!v.section_id) return "Section is required.";
@@ -79,6 +81,7 @@ export function StudentForm({
   classes: { id: string; name: string }[];
   sections: { id: string; name: string; class_id: string }[];
 }) {
+  const dobMsg = value.date_of_birth ? dobError(value.date_of_birth) : null;
   const set = <K extends keyof StudentFormValues>(k: K, val: StudentFormValues[K]) =>
     onChange({ ...value, [k]: val });
   const [tab, setTab] = useState("basic");
@@ -150,7 +153,16 @@ export function StudentForm({
               </SelectContent>
             </Select>
           </Row>
-          <Row label="Date Of Birth *"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Row>
+          <Row label="Date Of Birth *" error={dobMsg}>
+            <Input
+              type="date"
+              value={value.date_of_birth}
+              max={todayStr()}
+              aria-invalid={!!dobMsg}
+              className={dobMsg ? "border-destructive focus-visible:ring-destructive" : undefined}
+              onChange={(e) => set("date_of_birth", e.target.value)}
+            />
+          </Row>
         </div>
       </TabsContent>
 
@@ -227,8 +239,14 @@ export function StudentForm({
   );
 }
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="space-y-1.5"><Label>{label}</Label>{children}</div>;
+function Row({ label, error, children }: { label: string; error?: string | null; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      {children}
+      {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+    </div>
+  );
 }
 
 export function studentFromRow(
