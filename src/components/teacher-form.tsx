@@ -172,7 +172,10 @@ export function TeacherForm({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Designation *"><Input value={value.designation} onChange={(e) => set("designation", e.target.value)} placeholder="e.g. Senior Teacher" /></Field>
-          <Field label="Department *"><Input value={value.department} onChange={(e) => set("department", e.target.value)} placeholder="e.g. Science" /></Field>
+          <Field label="Department *"><Input value={value.department} onChange={(e) => {
+            const department = e.target.value;
+            onChange({ ...value, department, subject: !value.subject.trim() || value.subject.trim().toLowerCase() === value.department.trim().toLowerCase() ? department : value.subject });
+          }} placeholder="e.g. Science" /></Field>
         </div>
         <Field label="Primary subject"><Input value={value.subject} onChange={(e) => set("subject", e.target.value)} placeholder="e.g. Mathematics" /></Field>
       </TabsContent>
