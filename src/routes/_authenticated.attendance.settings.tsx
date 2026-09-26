@@ -18,11 +18,15 @@ function SettingsPage() {
   const update = useServerFn(updateAttendanceSettings);
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["att-settings"], queryFn: () => fetchSettings() });
-  const [threshold, setThreshold] = useState<number>(75);
-  useEffect(() => { if (data?.threshold != null) setThreshold(data.threshold); }, [data?.threshold]);
+  const [threshold, setThreshold] = useState<string>("");
+  useEffect(() => { if (data?.threshold != null) setThreshold(String(data.threshold)); }, [data?.threshold]);
+
+  const thresholdNum = Number(threshold);
+  const isValid = threshold.trim() !== "" && Number.isFinite(thresholdNum) && thresholdNum >= 0 && thresholdNum <= 100;
+  const isDirty = data?.threshold != null && isValid && thresholdNum !== data.threshold;
 
   const mutation = useMutation({
-    mutationFn: () => update({ data: { threshold } }),
+    mutationFn: () => update({ data: { threshold: thresholdNum } }),
     onSuccess: (res) => {
       if (!res.ok) { toast.error(getUserErrorMessage(res.error)); return; }
       toast.success("Settings updated");
@@ -39,14 +43,14 @@ function SettingsPage() {
       <CardContent className="space-y-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Low attendance threshold (%)</label>
-          <Input type="number" min={0} max={100} value={threshold} onChange={(e) => setThreshold(Number(e.target.value))} />
+          <Input type="number" min={0} max={100} value={threshold} onChange={(e) => setThreshold(e.target.value)} />
           <p className="mt-1 text-xs text-muted-foreground">Students below this percentage will appear in the Low Attendance Report.</p>
         </div>
         <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
           <strong className="text-foreground">Edit cutoff:</strong> Teachers can mark and edit attendance only for today.
           After today, only an administrator can edit a record.
         </div>
-        <Button onClick={() => mutation.mutate()} disabled={mutation.isPending}>Save Settings</Button>
+        <Button onClick={() => mutation.mutate()} disabled={mutation.isPending || !isDirty}>Save Settings</Button>
       </CardContent>
     </Card>
   );
