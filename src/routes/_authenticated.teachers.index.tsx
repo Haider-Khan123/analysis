@@ -23,7 +23,14 @@ import { PageHeader } from "./_authenticated.classes";
 
 import { getUserErrorMessage } from "@/lib/user-error";
 export const Route = createFileRoute("/_authenticated/teachers/")({
-  head: () => ({ meta: [{ title: "Teachers — Analysis" }] }),
+  head: () => ({ meta: [
+    { title: "Teachers — Analysis" },
+    { name: "description", content: "Manage teaching staff, their profiles, and login access in Analysis." },
+    { property: "og:title", content: "Teachers — Analysis" },
+    { property: "og:description", content: "Manage teaching staff, their profiles, and login access in Analysis." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: TeachersPage,
 });
 
