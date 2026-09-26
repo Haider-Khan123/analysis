@@ -227,8 +227,14 @@ export function StudentForm({
   );
 }
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="space-y-1.5"><Label>{label}</Label>{children}</div>;
+function Row({ label, error, children }: { label: string; error?: string | null; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      {children}
+      {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+    </div>
+  );
 }
 
 export function studentFromRow(
