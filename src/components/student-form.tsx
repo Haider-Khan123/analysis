@@ -55,6 +55,8 @@ export function validateStudent(v: StudentFormValues): string | null {
   if (!v.last_name.trim()) return "Last name is required.";
   if (!v.gender) return "Gender is required.";
   if (!v.date_of_birth) return "Date of birth is required.";
+  const dobMsg = dobError(v.date_of_birth);
+  if (dobMsg) return dobMsg;
   if (!v.admission_date) return "Admission date is required.";
   if (!v.class_id) return "Class is required.";
   if (!v.section_id) return "Section is required.";
@@ -150,7 +152,16 @@ export function StudentForm({
               </SelectContent>
             </Select>
           </Row>
-          <Row label="Date Of Birth *"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Row>
+          <Row label="Date Of Birth *" error={dobMsg}>
+            <Input
+              type="date"
+              value={value.date_of_birth}
+              max={todayStr()}
+              aria-invalid={!!dobMsg}
+              className={dobMsg ? "border-destructive focus-visible:ring-destructive" : undefined}
+              onChange={(e) => set("date_of_birth", e.target.value)}
+            />
+          </Row>
         </div>
       </TabsContent>
 

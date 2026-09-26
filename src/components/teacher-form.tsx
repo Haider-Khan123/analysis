@@ -47,6 +47,8 @@ export function validateTeacher(v: TeacherFormValues, opts: { requireLogin: bool
   if (!v.cnic.trim()) return "CNIC / National ID is required.";
   const cnicMsg = cnicError(v.cnic);
   if (cnicMsg) return cnicMsg;
+  const dobMsg = dobError(v.date_of_birth);
+  if (dobMsg) return dobMsg;
   if (!/^[+0-9 \-()]{7,20}$/.test(v.phone.trim())) return "Valid mobile number is required.";
   if (!EMAIL_REGEX.test(v.email.trim())) return "Please enter a valid email address (e.g., name@example.com).";
   if (!v.joining_date) return "Joining date is required.";
@@ -73,6 +75,7 @@ export function TeacherForm({
 
   // Live CNIC feedback: shown once the user starts typing an invalid format.
   const cnicMsg = value.cnic.trim() ? cnicError(value.cnic) : null;
+  const dobMsg = value.date_of_birth ? dobError(value.date_of_birth) : null;
 
   const onPhoto = async (file: File) => {
     if (file.size > 900_000) { toast.error("Image too large (max ~900 KB)."); return; }
@@ -122,7 +125,16 @@ export function TeacherForm({
               </SelectContent>
             </Select>
           </Field>
-          <Field label="Date Of Birth"><Input type="date" value={value.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} /></Field>
+          <Field label="Date Of Birth" error={dobMsg}>
+            <Input
+              type="date"
+              value={value.date_of_birth}
+              max={todayStr()}
+              aria-invalid={!!dobMsg}
+              className={dobMsg ? "border-destructive focus-visible:ring-destructive" : undefined}
+              onChange={(e) => set("date_of_birth", e.target.value)}
+            />
+          </Field>
         </div>
         <Field label="CNIC / National ID *" error={cnicMsg}>
           <Input
