@@ -71,6 +71,9 @@ export function TeacherForm({
 
   const [tab, setTab] = useState("basic");
 
+  // Live CNIC feedback: shown once the user starts typing an invalid format.
+  const cnicMsg = value.cnic.trim() ? cnicError(value.cnic) : null;
+
   const onPhoto = async (file: File) => {
     if (file.size > 900_000) { toast.error("Image too large (max ~900 KB)."); return; }
     const reader = new FileReader();
