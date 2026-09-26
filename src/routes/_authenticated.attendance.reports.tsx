@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Download } from "lucide-react";
+import { todayStr } from "@/lib/validators";
 import { getAttendancePercentageReport } from "@/lib/attendance.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,11 +49,11 @@ function ReportsPage() {
         <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">From</label>
-            <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+            <Input type="date" value={from} max={todayStr()} onChange={(e) => setFrom(e.target.value)} />
           </div>
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">To</label>
-            <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+            <Input type="date" value={to} max={todayStr()} onChange={(e) => setTo(e.target.value)} />
           </div>
           <div className="flex items-end">
             <Button variant="outline" className="w-full" onClick={exportCsv} disabled={rows.length === 0}>
