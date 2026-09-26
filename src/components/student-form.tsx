@@ -2,13 +2,12 @@ import { EMAIL_REGEX, dobError, todayStr } from "@/lib/validators";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Upload, Plus, Trash2 } from "lucide-react";
+import { Upload } from "lucide-react";
 import { toast } from "sonner";
 
 export type GuardianValues = {
@@ -58,6 +57,7 @@ export function validateStudent(v: StudentFormValues): string | null {
   const dobMsg = dobError(v.date_of_birth);
   if (dobMsg) return dobMsg;
   if (!v.admission_date) return "Admission date is required.";
+  if (v.admission_date > todayStr()) return "Admission date cannot be in the future.";
   if (!v.class_id) return "Class is required.";
   if (!v.section_id) return "Section is required.";
   // Guardians are optional. If any guardian fields are filled, validate that guardian.
@@ -82,6 +82,7 @@ export function StudentForm({
   sections: { id: string; name: string; class_id: string }[];
 }) {
   const dobMsg = value.date_of_birth ? dobError(value.date_of_birth) : null;
+  const admissionMsg = value.admission_date > todayStr() ? "Admission date cannot be in the future." : null;
   const set = <K extends keyof StudentFormValues>(k: K, val: StudentFormValues[K]) =>
     onChange({ ...value, [k]: val });
   const [tab, setTab] = useState("basic");
@@ -99,23 +100,12 @@ export function StudentForm({
     reader.readAsDataURL(file);
   };
 
-  const updateGuardian = (i: number, patch: Partial<GuardianValues>) => {
-    const next = value.guardians.map((g, idx) => idx === i ? { ...g, ...patch } : g);
-    onChange({ ...value, guardians: next });
-  };
-  const addGuardian = () => onChange({ ...value, guardians: [...value.guardians, { ...emptyGuardian, is_primary: value.guardians.length === 0 }] });
-  const removeGuardian = (i: number) => {
-    const next = value.guardians.filter((_, idx) => idx !== i);
-    if (next.length && !next.some((g) => g.is_primary)) next[0].is_primary = true;
-    onChange({ ...value, guardians: next });
-  };
 
   return (
     <Tabs value={tab} onValueChange={setTab}>
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="basic">Basic</TabsTrigger>
         <TabsTrigger value="admission">Admission</TabsTrigger>
-        <TabsTrigger value="guardians">Guardians</TabsTrigger>
       </TabsList>
 
       <TabsContent value="basic" className="space-y-3">
@@ -168,7 +158,16 @@ export function StudentForm({
 
       <TabsContent value="admission" className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <Row label="Admission Date *"><Input type="date" value={value.admission_date} onChange={(e) => set("admission_date", e.target.value)} /></Row>
+          <Row label="Admission Date *" error={admissionMsg}>
+            <Input
+              type="date"
+              value={value.admission_date}
+              max={todayStr()}
+              aria-invalid={!!admissionMsg}
+              className={admissionMsg ? "border-destructive focus-visible:ring-destructive" : undefined}
+              onChange={(e) => set("admission_date", e.target.value)}
+            />
+          </Row>
           <Row label="Status">
             <Select value={value.status} onValueChange={(v) => set("status", v as "active" | "inactive")}>
               <SelectTrigger><SelectValue /></SelectTrigger>
@@ -199,42 +198,6 @@ export function StudentForm({
         </div>
       </TabsContent>
 
-      <TabsContent value="guardians" className="space-y-4">
-        <p className="text-xs text-muted-foreground">Guardians are optional. If added, the first one is the Primary Guardian.</p>
-        {value.guardians.map((g, i) => (
-          <div key={i} className="space-y-3 rounded-md border border-border p-3">
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium">{i === 0 ? "Primary Guardian" : `Guardian ${i + 1}`}</div>
-              <Button type="button" variant="ghost" size="icon" onClick={() => removeGuardian(i)}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Row label="Full Name *"><Input value={g.full_name} onChange={(e) => updateGuardian(i, { full_name: e.target.value })} /></Row>
-              <Row label="Relationship *">
-                <Select value={g.relationship || undefined} onValueChange={(v) => updateGuardian(i, { relationship: v as GuardianValues["relationship"] })}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="father">Father</SelectItem>
-                    <SelectItem value="mother">Mother</SelectItem>
-                    <SelectItem value="guardian">Guardian</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Row>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Row label="Mobile Number *"><Input value={g.phone} onChange={(e) => updateGuardian(i, { phone: e.target.value })} /></Row>
-              <Row label="Email Address"><Input type="email" value={g.email} onChange={(e) => updateGuardian(i, { email: e.target.value })} /></Row>
-            </div>
-            <Row label="Residential Address">
-              <Textarea rows={2} value={g.address} onChange={(e) => updateGuardian(i, { address: e.target.value })} />
-            </Row>
-          </div>
-        ))}
-        <Button type="button" variant="outline" size="sm" onClick={addGuardian}>
-          <Plus className="mr-1 h-4 w-4" /> Add Another Guardian
-        </Button>
-      </TabsContent>
     </Tabs>
   );
 }
