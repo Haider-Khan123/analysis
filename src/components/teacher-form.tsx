@@ -1,4 +1,4 @@
-import { EMAIL_REGEX } from "@/lib/validators";
+import { EMAIL_REGEX, cnicError } from "@/lib/validators";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

@@ -49,3 +49,17 @@ export function sanitizePhone(v: string): string {
 export function sanitizeBranch(v: string): string {
   return v.replace(/[^A-Za-z0-9]/g, "").slice(0, BRANCH_MAX);
 }
+
+// CNIC / National ID: 13 digits shown as *****-*******-* (5-7-1), max 15 characters.
+export const CNIC_MAX = 15;
+export const CNIC_REGEX = /^[0-9]{5}-[0-9]{7}-[0-9]$/;
+export const CNIC_ALLOWED = /^[0-9-]+$/;
+
+export function cnicError(v: string): string | null {
+  const s = v.trim();
+  if (!s) return null;
+  if (s.length > CNIC_MAX) return `CNIC / National ID must not exceed ${CNIC_MAX} characters.`;
+  if (!CNIC_ALLOWED.test(s)) return "CNIC / National ID can only contain digits and dashes (-).";
+  if (!CNIC_REGEX.test(s)) return "Enter a valid CNIC / National ID in the format *****-*******-* (13 digits).";
+  return null;
+}
