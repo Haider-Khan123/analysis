@@ -205,7 +205,7 @@ function TeachersPage() {
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
-        <p className="mb-3 text-sm text-muted-foreground">Click on Teacher's Name to edit the Informatoin</p>
+        <p className="mb-3 text-sm text-muted-foreground">Click on Teacher's Name to complete the Profile</p>
         <ScrollArea className="max-h-[60vh] pr-2">
           {q.isLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
