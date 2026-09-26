@@ -1,4 +1,4 @@
-import { EMAIL_REGEX } from "@/lib/validators";
+import { EMAIL_REGEX, dobError, todayStr } from "@/lib/validators";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,6 +81,7 @@ export function StudentForm({
   classes: { id: string; name: string }[];
   sections: { id: string; name: string; class_id: string }[];
 }) {
+  const dobMsg = value.date_of_birth ? dobError(value.date_of_birth) : null;
   const set = <K extends keyof StudentFormValues>(k: K, val: StudentFormValues[K]) =>
     onChange({ ...value, [k]: val });
   const [tab, setTab] = useState("basic");
