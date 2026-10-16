@@ -6,7 +6,6 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -37,20 +36,19 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: ErrorComponentProps) {
-  const err = error instanceof Error ? error : new Error(String(error));
-  console.error(err);
+function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(err, { boundary: "tanstack_root_error_component" });
-  }, [err]);
+    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold text-foreground">Something went wrong</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {getUserErrorMessage(err, "We couldn't load this page. Please try again.")}
+          {getUserErrorMessage(error, "We couldn't load this page. Please try again.")}
         </p>
         <button
           onClick={() => {
