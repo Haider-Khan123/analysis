@@ -9,70 +9,69 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated.users'
-import { Route as AuthenticatedTeachersRouteImport } from './routes/_authenticated.teachers'
-import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated.students'
-import { Route as AuthenticatedSchoolProfileRouteImport } from './routes/_authenticated.school-profile'
-import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated.progress'
-import { Route as AuthenticatedParentsRouteImport } from './routes/_authenticated.parents'
-import { Route as AuthenticatedParentProgressRouteImport } from './routes/_authenticated.parent-progress'
-import { Route as AuthenticatedParentHomeworkRouteImport } from './routes/_authenticated.parent-homework'
-import { Route as AuthenticatedParentAnnouncementsRouteImport } from './routes/_authenticated.parent-announcements'
-import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
-import { Route as AuthenticatedHomeworkRouteImport } from './routes/_authenticated.homework'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
-import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated.classes'
-import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated.chat'
-import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated.attendance'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authenticated.announcements'
-import { Route as AuthenticatedTeachersIndexRouteImport } from './routes/_authenticated.teachers.index'
-import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authenticated.students.index'
-import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated.progress.index'
-import { Route as AuthenticatedParentsIndexRouteImport } from './routes/_authenticated.parents.index'
-import { Route as AuthenticatedHomeworkIndexRouteImport } from './routes/_authenticated.homework.index'
-import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated.chat.index'
-import { Route as AuthenticatedAttendanceIndexRouteImport } from './routes/_authenticated.attendance.index'
+import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated.attendance'
+import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated.chat'
+import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated.classes'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedHomeworkRouteImport } from './routes/_authenticated.homework'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
+import { Route as AuthenticatedParentAnnouncementsRouteImport } from './routes/_authenticated.parent-announcements'
+import { Route as AuthenticatedParentHomeworkRouteImport } from './routes/_authenticated.parent-homework'
+import { Route as AuthenticatedParentProgressRouteImport } from './routes/_authenticated.parent-progress'
+import { Route as AuthenticatedParentsRouteImport } from './routes/_authenticated.parents'
+import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated.progress'
+import { Route as AuthenticatedSchoolProfileRouteImport } from './routes/_authenticated.school-profile'
+import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated.students'
+import { Route as AuthenticatedTeachersRouteImport } from './routes/_authenticated.teachers'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated.users'
 import { Route as AuthenticatedAnnouncementsIndexRouteImport } from './routes/_authenticated.announcements.index'
-import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated.teachers.$teacherId'
-import { Route as AuthenticatedSuperAdminAdminManagementRouteImport } from './routes/_authenticated.super-admin.admin-management'
-import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated.students.$studentId'
-import { Route as AuthenticatedProgressReportsRouteImport } from './routes/_authenticated.progress.reports'
-import { Route as AuthenticatedProgressParticipationRouteImport } from './routes/_authenticated.progress.participation'
-import { Route as AuthenticatedProgressObservationsRouteImport } from './routes/_authenticated.progress.observations'
-import { Route as AuthenticatedProgressHistoryRouteImport } from './routes/_authenticated.progress.history'
-import { Route as AuthenticatedProgressBehaviorRouteImport } from './routes/_authenticated.progress.behavior'
-import { Route as AuthenticatedProgressAcademicRouteImport } from './routes/_authenticated.progress.academic'
-import { Route as AuthenticatedParentsParentIdRouteImport } from './routes/_authenticated.parents.$parentId'
-import { Route as AuthenticatedHomeworkReportsRouteImport } from './routes/_authenticated.homework.reports'
-import { Route as AuthenticatedHomeworkListRouteImport } from './routes/_authenticated.homework.list'
-import { Route as AuthenticatedHomeworkHistoryRouteImport } from './routes/_authenticated.homework.history'
-import { Route as AuthenticatedHomeworkCreateRouteImport } from './routes/_authenticated.homework.create'
-import { Route as AuthenticatedChatNewRouteImport } from './routes/_authenticated.chat.new'
-import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated.chat.$conversationId'
-import { Route as AuthenticatedAttendanceSettingsRouteImport } from './routes/_authenticated.attendance.settings'
-import { Route as AuthenticatedAttendanceReportsRouteImport } from './routes/_authenticated.attendance.reports'
-import { Route as AuthenticatedAttendanceMarkRouteImport } from './routes/_authenticated.attendance.mark'
-import { Route as AuthenticatedAttendanceHistoryRouteImport } from './routes/_authenticated.attendance.history'
-import { Route as AuthenticatedAnnouncementsViewRouteImport } from './routes/_authenticated.announcements.view'
-import { Route as AuthenticatedAnnouncementsHistoryRouteImport } from './routes/_authenticated.announcements.history'
-import { Route as AuthenticatedAnnouncementsCreateRouteImport } from './routes/_authenticated.announcements.create'
 import { Route as AuthenticatedAnnouncementsCategoriesRouteImport } from './routes/_authenticated.announcements.categories'
-import { Route as AuthenticatedHomeworkHomeworkIdEditRouteImport } from './routes/_authenticated.homework.$homeworkId.edit'
+import { Route as AuthenticatedAnnouncementsCreateRouteImport } from './routes/_authenticated.announcements.create'
+import { Route as AuthenticatedAnnouncementsHistoryRouteImport } from './routes/_authenticated.announcements.history'
+import { Route as AuthenticatedAnnouncementsViewRouteImport } from './routes/_authenticated.announcements.view'
+import { Route as AuthenticatedAttendanceIndexRouteImport } from './routes/_authenticated.attendance.index'
+import { Route as AuthenticatedAttendanceHistoryRouteImport } from './routes/_authenticated.attendance.history'
+import { Route as AuthenticatedAttendanceMarkRouteImport } from './routes/_authenticated.attendance.mark'
+import { Route as AuthenticatedAttendanceReportsRouteImport } from './routes/_authenticated.attendance.reports'
+import { Route as AuthenticatedAttendanceSettingsRouteImport } from './routes/_authenticated.attendance.settings'
+import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated.chat.index'
+import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated.chat.$conversationId'
+import { Route as AuthenticatedChatNewRouteImport } from './routes/_authenticated.chat.new'
+import { Route as AuthenticatedHomeworkIndexRouteImport } from './routes/_authenticated.homework.index'
+import { Route as AuthenticatedHomeworkCreateRouteImport } from './routes/_authenticated.homework.create'
+import { Route as AuthenticatedHomeworkHistoryRouteImport } from './routes/_authenticated.homework.history'
+import { Route as AuthenticatedHomeworkListRouteImport } from './routes/_authenticated.homework.list'
+import { Route as AuthenticatedHomeworkReportsRouteImport } from './routes/_authenticated.homework.reports'
+import { Route as AuthenticatedParentsIndexRouteImport } from './routes/_authenticated.parents.index'
+import { Route as AuthenticatedParentsParentIdRouteImport } from './routes/_authenticated.parents.$parentId'
+import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated.progress.index'
+import { Route as AuthenticatedProgressAcademicRouteImport } from './routes/_authenticated.progress.academic'
+import { Route as AuthenticatedProgressBehaviorRouteImport } from './routes/_authenticated.progress.behavior'
+import { Route as AuthenticatedProgressHistoryRouteImport } from './routes/_authenticated.progress.history'
+import { Route as AuthenticatedProgressObservationsRouteImport } from './routes/_authenticated.progress.observations'
+import { Route as AuthenticatedProgressParticipationRouteImport } from './routes/_authenticated.progress.participation'
+import { Route as AuthenticatedProgressReportsRouteImport } from './routes/_authenticated.progress.reports'
+import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authenticated.students.index'
+import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated.students.$studentId'
+import { Route as AuthenticatedSuperAdminAdminManagementRouteImport } from './routes/_authenticated.super-admin.admin-management'
+import { Route as AuthenticatedTeachersIndexRouteImport } from './routes/_authenticated.teachers.index'
+import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated.teachers.$teacherId'
 import { Route as AuthenticatedAnnouncementsIdEditRouteImport } from './routes/_authenticated.announcements.$id.edit'
+import { Route as AuthenticatedHomeworkHomeworkIdEditRouteImport } from './routes/_authenticated.homework.$homeworkId.edit'
 
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -80,56 +79,51 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedTeachersRoute = AuthenticatedTeachersRouteImport.update({
-  id: '/teachers',
-  path: '/teachers',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedStudentsRoute = AuthenticatedStudentsRouteImport.update({
-  id: '/students',
-  path: '/students',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedSchoolProfileRoute =
-  AuthenticatedSchoolProfileRouteImport.update({
-    id: '/school-profile',
-    path: '/school-profile',
+const AuthenticatedAnnouncementsRoute =
+  AuthenticatedAnnouncementsRouteImport.update({
+    id: '/announcements',
+    path: '/announcements',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedProgressRoute = AuthenticatedProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
+const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedParentsRoute = AuthenticatedParentsRouteImport.update({
-  id: '/parents',
-  path: '/parents',
+const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedParentProgressRoute =
-  AuthenticatedParentProgressRouteImport.update({
-    id: '/parent-progress',
-    path: '/parent-progress',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedParentHomeworkRoute =
-  AuthenticatedParentHomeworkRouteImport.update({
-    id: '/parent-homework',
-    path: '/parent-homework',
+const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedHomeworkRoute = AuthenticatedHomeworkRouteImport.update({
+  id: '/homework',
+  path: '/homework',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedParentAnnouncementsRoute =
@@ -138,225 +132,53 @@ const AuthenticatedParentAnnouncementsRoute =
     path: '/parent-announcements',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedNotificationsRoute =
-  AuthenticatedNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
+const AuthenticatedParentHomeworkRoute =
+  AuthenticatedParentHomeworkRouteImport.update({
+    id: '/parent-homework',
+    path: '/parent-homework',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedHomeworkRoute = AuthenticatedHomeworkRouteImport.update({
-  id: '/homework',
-  path: '/homework',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
-  id: '/classes',
-  path: '/classes',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedAnnouncementsRoute =
-  AuthenticatedAnnouncementsRouteImport.update({
-    id: '/announcements',
-    path: '/announcements',
+const AuthenticatedParentProgressRoute =
+  AuthenticatedParentProgressRouteImport.update({
+    id: '/parent-progress',
+    path: '/parent-progress',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedTeachersIndexRoute =
-  AuthenticatedTeachersIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedTeachersRoute,
-  } as any)
-const AuthenticatedStudentsIndexRoute =
-  AuthenticatedStudentsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedStudentsRoute,
-  } as any)
-const AuthenticatedProgressIndexRoute =
-  AuthenticatedProgressIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedProgressRoute,
-  } as any)
-const AuthenticatedParentsIndexRoute =
-  AuthenticatedParentsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedParentsRoute,
-  } as any)
-const AuthenticatedHomeworkIndexRoute =
-  AuthenticatedHomeworkIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedHomeworkRoute,
-  } as any)
-const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedChatRoute,
+const AuthenticatedParentsRoute = AuthenticatedParentsRouteImport.update({
+  id: '/parents',
+  path: '/parents',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAttendanceIndexRoute =
-  AuthenticatedAttendanceIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedAttendanceRoute,
+const AuthenticatedProgressRoute = AuthenticatedProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSchoolProfileRoute =
+  AuthenticatedSchoolProfileRouteImport.update({
+    id: '/school-profile',
+    path: '/school-profile',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentsRoute = AuthenticatedStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedTeachersRoute = AuthenticatedTeachersRouteImport.update({
+  id: '/teachers',
+  path: '/teachers',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAnnouncementsIndexRoute =
   AuthenticatedAnnouncementsIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedAnnouncementsRoute,
-  } as any)
-const AuthenticatedTeachersTeacherIdRoute =
-  AuthenticatedTeachersTeacherIdRouteImport.update({
-    id: '/$teacherId',
-    path: '/$teacherId',
-    getParentRoute: () => AuthenticatedTeachersRoute,
-  } as any)
-const AuthenticatedSuperAdminAdminManagementRoute =
-  AuthenticatedSuperAdminAdminManagementRouteImport.update({
-    id: '/super-admin/admin-management',
-    path: '/super-admin/admin-management',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedStudentsStudentIdRoute =
-  AuthenticatedStudentsStudentIdRouteImport.update({
-    id: '/$studentId',
-    path: '/$studentId',
-    getParentRoute: () => AuthenticatedStudentsRoute,
-  } as any)
-const AuthenticatedProgressReportsRoute =
-  AuthenticatedProgressReportsRouteImport.update({
-    id: '/reports',
-    path: '/reports',
-    getParentRoute: () => AuthenticatedProgressRoute,
-  } as any)
-const AuthenticatedProgressParticipationRoute =
-  AuthenticatedProgressParticipationRouteImport.update({
-    id: '/participation',
-    path: '/participation',
-    getParentRoute: () => AuthenticatedProgressRoute,
-  } as any)
-const AuthenticatedProgressObservationsRoute =
-  AuthenticatedProgressObservationsRouteImport.update({
-    id: '/observations',
-    path: '/observations',
-    getParentRoute: () => AuthenticatedProgressRoute,
-  } as any)
-const AuthenticatedProgressHistoryRoute =
-  AuthenticatedProgressHistoryRouteImport.update({
-    id: '/history',
-    path: '/history',
-    getParentRoute: () => AuthenticatedProgressRoute,
-  } as any)
-const AuthenticatedProgressBehaviorRoute =
-  AuthenticatedProgressBehaviorRouteImport.update({
-    id: '/behavior',
-    path: '/behavior',
-    getParentRoute: () => AuthenticatedProgressRoute,
-  } as any)
-const AuthenticatedProgressAcademicRoute =
-  AuthenticatedProgressAcademicRouteImport.update({
-    id: '/academic',
-    path: '/academic',
-    getParentRoute: () => AuthenticatedProgressRoute,
-  } as any)
-const AuthenticatedParentsParentIdRoute =
-  AuthenticatedParentsParentIdRouteImport.update({
-    id: '/$parentId',
-    path: '/$parentId',
-    getParentRoute: () => AuthenticatedParentsRoute,
-  } as any)
-const AuthenticatedHomeworkReportsRoute =
-  AuthenticatedHomeworkReportsRouteImport.update({
-    id: '/reports',
-    path: '/reports',
-    getParentRoute: () => AuthenticatedHomeworkRoute,
-  } as any)
-const AuthenticatedHomeworkListRoute =
-  AuthenticatedHomeworkListRouteImport.update({
-    id: '/list',
-    path: '/list',
-    getParentRoute: () => AuthenticatedHomeworkRoute,
-  } as any)
-const AuthenticatedHomeworkHistoryRoute =
-  AuthenticatedHomeworkHistoryRouteImport.update({
-    id: '/history',
-    path: '/history',
-    getParentRoute: () => AuthenticatedHomeworkRoute,
-  } as any)
-const AuthenticatedHomeworkCreateRoute =
-  AuthenticatedHomeworkCreateRouteImport.update({
-    id: '/create',
-    path: '/create',
-    getParentRoute: () => AuthenticatedHomeworkRoute,
-  } as any)
-const AuthenticatedChatNewRoute = AuthenticatedChatNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => AuthenticatedChatRoute,
-} as any)
-const AuthenticatedChatConversationIdRoute =
-  AuthenticatedChatConversationIdRouteImport.update({
-    id: '/$conversationId',
-    path: '/$conversationId',
-    getParentRoute: () => AuthenticatedChatRoute,
-  } as any)
-const AuthenticatedAttendanceSettingsRoute =
-  AuthenticatedAttendanceSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedAttendanceRoute,
-  } as any)
-const AuthenticatedAttendanceReportsRoute =
-  AuthenticatedAttendanceReportsRouteImport.update({
-    id: '/reports',
-    path: '/reports',
-    getParentRoute: () => AuthenticatedAttendanceRoute,
-  } as any)
-const AuthenticatedAttendanceMarkRoute =
-  AuthenticatedAttendanceMarkRouteImport.update({
-    id: '/mark',
-    path: '/mark',
-    getParentRoute: () => AuthenticatedAttendanceRoute,
-  } as any)
-const AuthenticatedAttendanceHistoryRoute =
-  AuthenticatedAttendanceHistoryRouteImport.update({
-    id: '/history',
-    path: '/history',
-    getParentRoute: () => AuthenticatedAttendanceRoute,
-  } as any)
-const AuthenticatedAnnouncementsViewRoute =
-  AuthenticatedAnnouncementsViewRouteImport.update({
-    id: '/view',
-    path: '/view',
-    getParentRoute: () => AuthenticatedAnnouncementsRoute,
-  } as any)
-const AuthenticatedAnnouncementsHistoryRoute =
-  AuthenticatedAnnouncementsHistoryRouteImport.update({
-    id: '/history',
-    path: '/history',
-    getParentRoute: () => AuthenticatedAnnouncementsRoute,
-  } as any)
-const AuthenticatedAnnouncementsCreateRoute =
-  AuthenticatedAnnouncementsCreateRouteImport.update({
-    id: '/create',
-    path: '/create',
     getParentRoute: () => AuthenticatedAnnouncementsRoute,
   } as any)
 const AuthenticatedAnnouncementsCategoriesRoute =
@@ -365,17 +187,195 @@ const AuthenticatedAnnouncementsCategoriesRoute =
     path: '/categories',
     getParentRoute: () => AuthenticatedAnnouncementsRoute,
   } as any)
-const AuthenticatedHomeworkHomeworkIdEditRoute =
-  AuthenticatedHomeworkHomeworkIdEditRouteImport.update({
-    id: '/$homeworkId/edit',
-    path: '/$homeworkId/edit',
+const AuthenticatedAnnouncementsCreateRoute =
+  AuthenticatedAnnouncementsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedAnnouncementsRoute,
+  } as any)
+const AuthenticatedAnnouncementsHistoryRoute =
+  AuthenticatedAnnouncementsHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedAnnouncementsRoute,
+  } as any)
+const AuthenticatedAnnouncementsViewRoute =
+  AuthenticatedAnnouncementsViewRouteImport.update({
+    id: '/view',
+    path: '/view',
+    getParentRoute: () => AuthenticatedAnnouncementsRoute,
+  } as any)
+const AuthenticatedAttendanceIndexRoute =
+  AuthenticatedAttendanceIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedAttendanceHistoryRoute =
+  AuthenticatedAttendanceHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedAttendanceMarkRoute =
+  AuthenticatedAttendanceMarkRouteImport.update({
+    id: '/mark',
+    path: '/mark',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedAttendanceReportsRoute =
+  AuthenticatedAttendanceReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedAttendanceSettingsRoute =
+  AuthenticatedAttendanceSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAttendanceRoute,
+  } as any)
+const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedChatRoute,
+} as any)
+const AuthenticatedChatConversationIdRoute =
+  AuthenticatedChatConversationIdRouteImport.update({
+    id: '/$conversationId',
+    path: '/$conversationId',
+    getParentRoute: () => AuthenticatedChatRoute,
+  } as any)
+const AuthenticatedChatNewRoute = AuthenticatedChatNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedChatRoute,
+} as any)
+const AuthenticatedHomeworkIndexRoute =
+  AuthenticatedHomeworkIndexRouteImport.update({
+    id: '/',
+    path: '/',
     getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedHomeworkCreateRoute =
+  AuthenticatedHomeworkCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedHomeworkHistoryRoute =
+  AuthenticatedHomeworkHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedHomeworkListRoute =
+  AuthenticatedHomeworkListRouteImport.update({
+    id: '/list',
+    path: '/list',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedHomeworkReportsRoute =
+  AuthenticatedHomeworkReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
+  } as any)
+const AuthenticatedParentsIndexRoute =
+  AuthenticatedParentsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedParentsRoute,
+  } as any)
+const AuthenticatedParentsParentIdRoute =
+  AuthenticatedParentsParentIdRouteImport.update({
+    id: '/$parentId',
+    path: '/$parentId',
+    getParentRoute: () => AuthenticatedParentsRoute,
+  } as any)
+const AuthenticatedProgressIndexRoute =
+  AuthenticatedProgressIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressAcademicRoute =
+  AuthenticatedProgressAcademicRouteImport.update({
+    id: '/academic',
+    path: '/academic',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressBehaviorRoute =
+  AuthenticatedProgressBehaviorRouteImport.update({
+    id: '/behavior',
+    path: '/behavior',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressHistoryRoute =
+  AuthenticatedProgressHistoryRouteImport.update({
+    id: '/history',
+    path: '/history',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressObservationsRoute =
+  AuthenticatedProgressObservationsRouteImport.update({
+    id: '/observations',
+    path: '/observations',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressParticipationRoute =
+  AuthenticatedProgressParticipationRouteImport.update({
+    id: '/participation',
+    path: '/participation',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedProgressReportsRoute =
+  AuthenticatedProgressReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedProgressRoute,
+  } as any)
+const AuthenticatedStudentsIndexRoute =
+  AuthenticatedStudentsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedStudentsRoute,
+  } as any)
+const AuthenticatedStudentsStudentIdRoute =
+  AuthenticatedStudentsStudentIdRouteImport.update({
+    id: '/$studentId',
+    path: '/$studentId',
+    getParentRoute: () => AuthenticatedStudentsRoute,
+  } as any)
+const AuthenticatedSuperAdminAdminManagementRoute =
+  AuthenticatedSuperAdminAdminManagementRouteImport.update({
+    id: '/super-admin/admin-management',
+    path: '/super-admin/admin-management',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedTeachersIndexRoute =
+  AuthenticatedTeachersIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedTeachersRoute,
+  } as any)
+const AuthenticatedTeachersTeacherIdRoute =
+  AuthenticatedTeachersTeacherIdRouteImport.update({
+    id: '/$teacherId',
+    path: '/$teacherId',
+    getParentRoute: () => AuthenticatedTeachersRoute,
   } as any)
 const AuthenticatedAnnouncementsIdEditRoute =
   AuthenticatedAnnouncementsIdEditRouteImport.update({
     id: '/$id/edit',
     path: '/$id/edit',
     getParentRoute: () => AuthenticatedAnnouncementsRoute,
+  } as any)
+const AuthenticatedHomeworkHomeworkIdEditRoute =
+  AuthenticatedHomeworkHomeworkIdEditRouteImport.update({
+    id: '/$homeworkId/edit',
+    path: '/$homeworkId/edit',
+    getParentRoute: () => AuthenticatedHomeworkRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -714,25 +714,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -742,109 +728,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/users': {
-      id: '/_authenticated/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof AuthenticatedUsersRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/teachers': {
-      id: '/_authenticated/teachers'
-      path: '/teachers'
-      fullPath: '/teachers'
-      preLoaderRoute: typeof AuthenticatedTeachersRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/students': {
-      id: '/_authenticated/students'
-      path: '/students'
-      fullPath: '/students'
-      preLoaderRoute: typeof AuthenticatedStudentsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/school-profile': {
-      id: '/_authenticated/school-profile'
-      path: '/school-profile'
-      fullPath: '/school-profile'
-      preLoaderRoute: typeof AuthenticatedSchoolProfileRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/progress': {
-      id: '/_authenticated/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof AuthenticatedProgressRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/parents': {
-      id: '/_authenticated/parents'
-      path: '/parents'
-      fullPath: '/parents'
-      preLoaderRoute: typeof AuthenticatedParentsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/parent-progress': {
-      id: '/_authenticated/parent-progress'
-      path: '/parent-progress'
-      fullPath: '/parent-progress'
-      preLoaderRoute: typeof AuthenticatedParentProgressRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/parent-homework': {
-      id: '/_authenticated/parent-homework'
-      path: '/parent-homework'
-      fullPath: '/parent-homework'
-      preLoaderRoute: typeof AuthenticatedParentHomeworkRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/parent-announcements': {
-      id: '/_authenticated/parent-announcements'
-      path: '/parent-announcements'
-      fullPath: '/parent-announcements'
-      preLoaderRoute: typeof AuthenticatedParentAnnouncementsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/notifications': {
-      id: '/_authenticated/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/homework': {
-      id: '/_authenticated/homework'
-      path: '/homework'
-      fullPath: '/homework'
-      preLoaderRoute: typeof AuthenticatedHomeworkRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/classes': {
-      id: '/_authenticated/classes'
-      path: '/classes'
-      fullPath: '/classes'
-      preLoaderRoute: typeof AuthenticatedClassesRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/chat': {
-      id: '/_authenticated/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof AuthenticatedChatRouteImport
+    '/_authenticated/announcements': {
+      id: '/_authenticated/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/attendance': {
@@ -854,228 +763,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAttendanceRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/announcements': {
-      id: '/_authenticated/announcements'
-      path: '/announcements'
-      fullPath: '/announcements'
-      preLoaderRoute: typeof AuthenticatedAnnouncementsRouteImport
+    '/_authenticated/chat': {
+      id: '/_authenticated/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof AuthenticatedChatRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/teachers/': {
-      id: '/_authenticated/teachers/'
-      path: '/'
-      fullPath: '/teachers/'
-      preLoaderRoute: typeof AuthenticatedTeachersIndexRouteImport
-      parentRoute: typeof AuthenticatedTeachersRoute
+    '/_authenticated/classes': {
+      id: '/_authenticated/classes'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof AuthenticatedClassesRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/students/': {
-      id: '/_authenticated/students/'
-      path: '/'
-      fullPath: '/students/'
-      preLoaderRoute: typeof AuthenticatedStudentsIndexRouteImport
-      parentRoute: typeof AuthenticatedStudentsRoute
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/progress/': {
-      id: '/_authenticated/progress/'
-      path: '/'
-      fullPath: '/progress/'
-      preLoaderRoute: typeof AuthenticatedProgressIndexRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
+    '/_authenticated/homework': {
+      id: '/_authenticated/homework'
+      path: '/homework'
+      fullPath: '/homework'
+      preLoaderRoute: typeof AuthenticatedHomeworkRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/parents/': {
-      id: '/_authenticated/parents/'
-      path: '/'
-      fullPath: '/parents/'
-      preLoaderRoute: typeof AuthenticatedParentsIndexRouteImport
-      parentRoute: typeof AuthenticatedParentsRoute
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/homework/': {
-      id: '/_authenticated/homework/'
-      path: '/'
-      fullPath: '/homework/'
-      preLoaderRoute: typeof AuthenticatedHomeworkIndexRouteImport
-      parentRoute: typeof AuthenticatedHomeworkRoute
+    '/_authenticated/parent-announcements': {
+      id: '/_authenticated/parent-announcements'
+      path: '/parent-announcements'
+      fullPath: '/parent-announcements'
+      preLoaderRoute: typeof AuthenticatedParentAnnouncementsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/chat/': {
-      id: '/_authenticated/chat/'
-      path: '/'
-      fullPath: '/chat/'
-      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
-      parentRoute: typeof AuthenticatedChatRoute
+    '/_authenticated/parent-homework': {
+      id: '/_authenticated/parent-homework'
+      path: '/parent-homework'
+      fullPath: '/parent-homework'
+      preLoaderRoute: typeof AuthenticatedParentHomeworkRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/attendance/': {
-      id: '/_authenticated/attendance/'
-      path: '/'
-      fullPath: '/attendance/'
-      preLoaderRoute: typeof AuthenticatedAttendanceIndexRouteImport
-      parentRoute: typeof AuthenticatedAttendanceRoute
+    '/_authenticated/parent-progress': {
+      id: '/_authenticated/parent-progress'
+      path: '/parent-progress'
+      fullPath: '/parent-progress'
+      preLoaderRoute: typeof AuthenticatedParentProgressRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/parents': {
+      id: '/_authenticated/parents'
+      path: '/parents'
+      fullPath: '/parents'
+      preLoaderRoute: typeof AuthenticatedParentsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/progress': {
+      id: '/_authenticated/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof AuthenticatedProgressRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/school-profile': {
+      id: '/_authenticated/school-profile'
+      path: '/school-profile'
+      fullPath: '/school-profile'
+      preLoaderRoute: typeof AuthenticatedSchoolProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/students': {
+      id: '/_authenticated/students'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof AuthenticatedStudentsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/teachers': {
+      id: '/_authenticated/teachers'
+      path: '/teachers'
+      fullPath: '/teachers'
+      preLoaderRoute: typeof AuthenticatedTeachersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/announcements/': {
       id: '/_authenticated/announcements/'
       path: '/'
       fullPath: '/announcements/'
       preLoaderRoute: typeof AuthenticatedAnnouncementsIndexRouteImport
-      parentRoute: typeof AuthenticatedAnnouncementsRoute
-    }
-    '/_authenticated/teachers/$teacherId': {
-      id: '/_authenticated/teachers/$teacherId'
-      path: '/$teacherId'
-      fullPath: '/teachers/$teacherId'
-      preLoaderRoute: typeof AuthenticatedTeachersTeacherIdRouteImport
-      parentRoute: typeof AuthenticatedTeachersRoute
-    }
-    '/_authenticated/super-admin/admin-management': {
-      id: '/_authenticated/super-admin/admin-management'
-      path: '/super-admin/admin-management'
-      fullPath: '/super-admin/admin-management'
-      preLoaderRoute: typeof AuthenticatedSuperAdminAdminManagementRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/students/$studentId': {
-      id: '/_authenticated/students/$studentId'
-      path: '/$studentId'
-      fullPath: '/students/$studentId'
-      preLoaderRoute: typeof AuthenticatedStudentsStudentIdRouteImport
-      parentRoute: typeof AuthenticatedStudentsRoute
-    }
-    '/_authenticated/progress/reports': {
-      id: '/_authenticated/progress/reports'
-      path: '/reports'
-      fullPath: '/progress/reports'
-      preLoaderRoute: typeof AuthenticatedProgressReportsRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
-    }
-    '/_authenticated/progress/participation': {
-      id: '/_authenticated/progress/participation'
-      path: '/participation'
-      fullPath: '/progress/participation'
-      preLoaderRoute: typeof AuthenticatedProgressParticipationRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
-    }
-    '/_authenticated/progress/observations': {
-      id: '/_authenticated/progress/observations'
-      path: '/observations'
-      fullPath: '/progress/observations'
-      preLoaderRoute: typeof AuthenticatedProgressObservationsRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
-    }
-    '/_authenticated/progress/history': {
-      id: '/_authenticated/progress/history'
-      path: '/history'
-      fullPath: '/progress/history'
-      preLoaderRoute: typeof AuthenticatedProgressHistoryRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
-    }
-    '/_authenticated/progress/behavior': {
-      id: '/_authenticated/progress/behavior'
-      path: '/behavior'
-      fullPath: '/progress/behavior'
-      preLoaderRoute: typeof AuthenticatedProgressBehaviorRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
-    }
-    '/_authenticated/progress/academic': {
-      id: '/_authenticated/progress/academic'
-      path: '/academic'
-      fullPath: '/progress/academic'
-      preLoaderRoute: typeof AuthenticatedProgressAcademicRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
-    }
-    '/_authenticated/parents/$parentId': {
-      id: '/_authenticated/parents/$parentId'
-      path: '/$parentId'
-      fullPath: '/parents/$parentId'
-      preLoaderRoute: typeof AuthenticatedParentsParentIdRouteImport
-      parentRoute: typeof AuthenticatedParentsRoute
-    }
-    '/_authenticated/homework/reports': {
-      id: '/_authenticated/homework/reports'
-      path: '/reports'
-      fullPath: '/homework/reports'
-      preLoaderRoute: typeof AuthenticatedHomeworkReportsRouteImport
-      parentRoute: typeof AuthenticatedHomeworkRoute
-    }
-    '/_authenticated/homework/list': {
-      id: '/_authenticated/homework/list'
-      path: '/list'
-      fullPath: '/homework/list'
-      preLoaderRoute: typeof AuthenticatedHomeworkListRouteImport
-      parentRoute: typeof AuthenticatedHomeworkRoute
-    }
-    '/_authenticated/homework/history': {
-      id: '/_authenticated/homework/history'
-      path: '/history'
-      fullPath: '/homework/history'
-      preLoaderRoute: typeof AuthenticatedHomeworkHistoryRouteImport
-      parentRoute: typeof AuthenticatedHomeworkRoute
-    }
-    '/_authenticated/homework/create': {
-      id: '/_authenticated/homework/create'
-      path: '/create'
-      fullPath: '/homework/create'
-      preLoaderRoute: typeof AuthenticatedHomeworkCreateRouteImport
-      parentRoute: typeof AuthenticatedHomeworkRoute
-    }
-    '/_authenticated/chat/new': {
-      id: '/_authenticated/chat/new'
-      path: '/new'
-      fullPath: '/chat/new'
-      preLoaderRoute: typeof AuthenticatedChatNewRouteImport
-      parentRoute: typeof AuthenticatedChatRoute
-    }
-    '/_authenticated/chat/$conversationId': {
-      id: '/_authenticated/chat/$conversationId'
-      path: '/$conversationId'
-      fullPath: '/chat/$conversationId'
-      preLoaderRoute: typeof AuthenticatedChatConversationIdRouteImport
-      parentRoute: typeof AuthenticatedChatRoute
-    }
-    '/_authenticated/attendance/settings': {
-      id: '/_authenticated/attendance/settings'
-      path: '/settings'
-      fullPath: '/attendance/settings'
-      preLoaderRoute: typeof AuthenticatedAttendanceSettingsRouteImport
-      parentRoute: typeof AuthenticatedAttendanceRoute
-    }
-    '/_authenticated/attendance/reports': {
-      id: '/_authenticated/attendance/reports'
-      path: '/reports'
-      fullPath: '/attendance/reports'
-      preLoaderRoute: typeof AuthenticatedAttendanceReportsRouteImport
-      parentRoute: typeof AuthenticatedAttendanceRoute
-    }
-    '/_authenticated/attendance/mark': {
-      id: '/_authenticated/attendance/mark'
-      path: '/mark'
-      fullPath: '/attendance/mark'
-      preLoaderRoute: typeof AuthenticatedAttendanceMarkRouteImport
-      parentRoute: typeof AuthenticatedAttendanceRoute
-    }
-    '/_authenticated/attendance/history': {
-      id: '/_authenticated/attendance/history'
-      path: '/history'
-      fullPath: '/attendance/history'
-      preLoaderRoute: typeof AuthenticatedAttendanceHistoryRouteImport
-      parentRoute: typeof AuthenticatedAttendanceRoute
-    }
-    '/_authenticated/announcements/view': {
-      id: '/_authenticated/announcements/view'
-      path: '/view'
-      fullPath: '/announcements/view'
-      preLoaderRoute: typeof AuthenticatedAnnouncementsViewRouteImport
-      parentRoute: typeof AuthenticatedAnnouncementsRoute
-    }
-    '/_authenticated/announcements/history': {
-      id: '/_authenticated/announcements/history'
-      path: '/history'
-      fullPath: '/announcements/history'
-      preLoaderRoute: typeof AuthenticatedAnnouncementsHistoryRouteImport
-      parentRoute: typeof AuthenticatedAnnouncementsRoute
-    }
-    '/_authenticated/announcements/create': {
-      id: '/_authenticated/announcements/create'
-      path: '/create'
-      fullPath: '/announcements/create'
-      preLoaderRoute: typeof AuthenticatedAnnouncementsCreateRouteImport
       parentRoute: typeof AuthenticatedAnnouncementsRoute
     }
     '/_authenticated/announcements/categories': {
@@ -1085,12 +875,215 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnnouncementsCategoriesRouteImport
       parentRoute: typeof AuthenticatedAnnouncementsRoute
     }
-    '/_authenticated/homework/$homeworkId/edit': {
-      id: '/_authenticated/homework/$homeworkId/edit'
-      path: '/$homeworkId/edit'
-      fullPath: '/homework/$homeworkId/edit'
-      preLoaderRoute: typeof AuthenticatedHomeworkHomeworkIdEditRouteImport
+    '/_authenticated/announcements/create': {
+      id: '/_authenticated/announcements/create'
+      path: '/create'
+      fullPath: '/announcements/create'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsCreateRouteImport
+      parentRoute: typeof AuthenticatedAnnouncementsRoute
+    }
+    '/_authenticated/announcements/history': {
+      id: '/_authenticated/announcements/history'
+      path: '/history'
+      fullPath: '/announcements/history'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsHistoryRouteImport
+      parentRoute: typeof AuthenticatedAnnouncementsRoute
+    }
+    '/_authenticated/announcements/view': {
+      id: '/_authenticated/announcements/view'
+      path: '/view'
+      fullPath: '/announcements/view'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsViewRouteImport
+      parentRoute: typeof AuthenticatedAnnouncementsRoute
+    }
+    '/_authenticated/attendance/': {
+      id: '/_authenticated/attendance/'
+      path: '/'
+      fullPath: '/attendance/'
+      preLoaderRoute: typeof AuthenticatedAttendanceIndexRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/attendance/history': {
+      id: '/_authenticated/attendance/history'
+      path: '/history'
+      fullPath: '/attendance/history'
+      preLoaderRoute: typeof AuthenticatedAttendanceHistoryRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/attendance/mark': {
+      id: '/_authenticated/attendance/mark'
+      path: '/mark'
+      fullPath: '/attendance/mark'
+      preLoaderRoute: typeof AuthenticatedAttendanceMarkRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/attendance/reports': {
+      id: '/_authenticated/attendance/reports'
+      path: '/reports'
+      fullPath: '/attendance/reports'
+      preLoaderRoute: typeof AuthenticatedAttendanceReportsRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/attendance/settings': {
+      id: '/_authenticated/attendance/settings'
+      path: '/settings'
+      fullPath: '/attendance/settings'
+      preLoaderRoute: typeof AuthenticatedAttendanceSettingsRouteImport
+      parentRoute: typeof AuthenticatedAttendanceRoute
+    }
+    '/_authenticated/chat/': {
+      id: '/_authenticated/chat/'
+      path: '/'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
+    }
+    '/_authenticated/chat/$conversationId': {
+      id: '/_authenticated/chat/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/chat/$conversationId'
+      preLoaderRoute: typeof AuthenticatedChatConversationIdRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
+    }
+    '/_authenticated/chat/new': {
+      id: '/_authenticated/chat/new'
+      path: '/new'
+      fullPath: '/chat/new'
+      preLoaderRoute: typeof AuthenticatedChatNewRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
+    }
+    '/_authenticated/homework/': {
+      id: '/_authenticated/homework/'
+      path: '/'
+      fullPath: '/homework/'
+      preLoaderRoute: typeof AuthenticatedHomeworkIndexRouteImport
       parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/homework/create': {
+      id: '/_authenticated/homework/create'
+      path: '/create'
+      fullPath: '/homework/create'
+      preLoaderRoute: typeof AuthenticatedHomeworkCreateRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/homework/history': {
+      id: '/_authenticated/homework/history'
+      path: '/history'
+      fullPath: '/homework/history'
+      preLoaderRoute: typeof AuthenticatedHomeworkHistoryRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/homework/list': {
+      id: '/_authenticated/homework/list'
+      path: '/list'
+      fullPath: '/homework/list'
+      preLoaderRoute: typeof AuthenticatedHomeworkListRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/homework/reports': {
+      id: '/_authenticated/homework/reports'
+      path: '/reports'
+      fullPath: '/homework/reports'
+      preLoaderRoute: typeof AuthenticatedHomeworkReportsRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
+    }
+    '/_authenticated/parents/': {
+      id: '/_authenticated/parents/'
+      path: '/'
+      fullPath: '/parents/'
+      preLoaderRoute: typeof AuthenticatedParentsIndexRouteImport
+      parentRoute: typeof AuthenticatedParentsRoute
+    }
+    '/_authenticated/parents/$parentId': {
+      id: '/_authenticated/parents/$parentId'
+      path: '/$parentId'
+      fullPath: '/parents/$parentId'
+      preLoaderRoute: typeof AuthenticatedParentsParentIdRouteImport
+      parentRoute: typeof AuthenticatedParentsRoute
+    }
+    '/_authenticated/progress/': {
+      id: '/_authenticated/progress/'
+      path: '/'
+      fullPath: '/progress/'
+      preLoaderRoute: typeof AuthenticatedProgressIndexRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/academic': {
+      id: '/_authenticated/progress/academic'
+      path: '/academic'
+      fullPath: '/progress/academic'
+      preLoaderRoute: typeof AuthenticatedProgressAcademicRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/behavior': {
+      id: '/_authenticated/progress/behavior'
+      path: '/behavior'
+      fullPath: '/progress/behavior'
+      preLoaderRoute: typeof AuthenticatedProgressBehaviorRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/history': {
+      id: '/_authenticated/progress/history'
+      path: '/history'
+      fullPath: '/progress/history'
+      preLoaderRoute: typeof AuthenticatedProgressHistoryRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/observations': {
+      id: '/_authenticated/progress/observations'
+      path: '/observations'
+      fullPath: '/progress/observations'
+      preLoaderRoute: typeof AuthenticatedProgressObservationsRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/participation': {
+      id: '/_authenticated/progress/participation'
+      path: '/participation'
+      fullPath: '/progress/participation'
+      preLoaderRoute: typeof AuthenticatedProgressParticipationRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/progress/reports': {
+      id: '/_authenticated/progress/reports'
+      path: '/reports'
+      fullPath: '/progress/reports'
+      preLoaderRoute: typeof AuthenticatedProgressReportsRouteImport
+      parentRoute: typeof AuthenticatedProgressRoute
+    }
+    '/_authenticated/students/': {
+      id: '/_authenticated/students/'
+      path: '/'
+      fullPath: '/students/'
+      preLoaderRoute: typeof AuthenticatedStudentsIndexRouteImport
+      parentRoute: typeof AuthenticatedStudentsRoute
+    }
+    '/_authenticated/students/$studentId': {
+      id: '/_authenticated/students/$studentId'
+      path: '/$studentId'
+      fullPath: '/students/$studentId'
+      preLoaderRoute: typeof AuthenticatedStudentsStudentIdRouteImport
+      parentRoute: typeof AuthenticatedStudentsRoute
+    }
+    '/_authenticated/super-admin/admin-management': {
+      id: '/_authenticated/super-admin/admin-management'
+      path: '/super-admin/admin-management'
+      fullPath: '/super-admin/admin-management'
+      preLoaderRoute: typeof AuthenticatedSuperAdminAdminManagementRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/teachers/': {
+      id: '/_authenticated/teachers/'
+      path: '/'
+      fullPath: '/teachers/'
+      preLoaderRoute: typeof AuthenticatedTeachersIndexRouteImport
+      parentRoute: typeof AuthenticatedTeachersRoute
+    }
+    '/_authenticated/teachers/$teacherId': {
+      id: '/_authenticated/teachers/$teacherId'
+      path: '/$teacherId'
+      fullPath: '/teachers/$teacherId'
+      preLoaderRoute: typeof AuthenticatedTeachersTeacherIdRouteImport
+      parentRoute: typeof AuthenticatedTeachersRoute
     }
     '/_authenticated/announcements/$id/edit': {
       id: '/_authenticated/announcements/$id/edit'
@@ -1098,6 +1091,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/announcements/$id/edit'
       preLoaderRoute: typeof AuthenticatedAnnouncementsIdEditRouteImport
       parentRoute: typeof AuthenticatedAnnouncementsRoute
+    }
+    '/_authenticated/homework/$homeworkId/edit': {
+      id: '/_authenticated/homework/$homeworkId/edit'
+      path: '/$homeworkId/edit'
+      fullPath: '/homework/$homeworkId/edit'
+      preLoaderRoute: typeof AuthenticatedHomeworkHomeworkIdEditRouteImport
+      parentRoute: typeof AuthenticatedHomeworkRoute
     }
   }
 }
