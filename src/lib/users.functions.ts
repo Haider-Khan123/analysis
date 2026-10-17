@@ -1,0 +1,169 @@
+import { createServerFn } from "@tanstack/react-start";
+import { requireAuth } from "@/integrations/postgres/auth-middleware";
+import { db } from "@/integrations/postgres/client.server";
+
+export type AppUserRow = {
+  id: string;
+  full_name: string | null;
+  email: string;
+  phone: string | null;
+  roles: string[];
+  source: "admin" | "teacher" | "parent" | "student" | "other";
+  source_label: string;
+  sources: Array<"admin" | "teacher" | "parent" | "student" | "other">;
+  status: string | null;
+  created_at: string;
+};
+
+async function assertAdminSchool(userId: string) {
+  const { data: profile } = await db
+    .from("profiles").select("school_id").eq("id", userId).maybeSingle();
+  const schoolId = profile?.school_id;
+  if (!schoolId) return { error: "No institute on your profile." as const };
+  const { data: adminRole } = await db
+    .from("user_roles").select("id").eq("user_id", userId).eq("role", "admin").maybeSingle();
+  if (!adminRole) return { error: "Only admins can perform this action." as const };
+  return { schoolId };
+}
+
+export const listAllUsers = createServerFn({ method: "GET" })
+  .middleware([requireAuth])
+  .handler(async ({ context }): Promise<{ users: AppUserRow[]; error?: string }> => {
+    const guard = await assertAdminSchool(context.userId);
+    if ("error" in guard) {
+      // Admin who hasn't created an institute yet: still show themselves as the Admin.
+      const [{ data: me }, { data: myRoles }] = await Promise.all([
+        db.from("profiles").select("id, full_name, email, phone, created_at, school_id").eq("id", context.userId).maybeSingle(),
+        db.from("user_roles").select("role").eq("user_id", context.userId),
+      ]);
+      const rs = (myRoles ?? []).map((r) => r.role as string);
+      if (me && !me.school_id && (rs.length === 0 || rs.includes("admin"))) {
+        return {
+          users: [{
+            id: me.id, full_name: me.full_name ?? null, email: me.email, phone: me.phone ?? null,
+            roles: rs.length ? rs : ["admin"], source: "admin", sources: ["admin"],
+            source_label: "School Administrator", status: null, created_at: me.created_at as string,
+          }],
+        };
+      }
+      return { users: [], error: guard.error };
+    }
+    const { schoolId } = guard;
+
+    const [{ data: profiles }, { data: roles }, { data: teachers }, { data: parents }, { data: students }] = await Promise.all([
+      db.from("profiles").select("id, full_name, email, phone, created_at").eq("school_id", schoolId),
+      db.from("user_roles").select("user_id, role, school_id").eq("school_id", schoolId),
+      db.from("teachers").select("user_id, full_name, email, phone, status, created_at, designation").eq("school_id", schoolId),
+      db.from("parents").select("user_id, full_name, email, phone, status, created_at").eq("school_id", schoolId),
+      db.from("students").select("id, full_name, status, created_at").eq("school_id", schoolId),
+    ]);
+
+    const roleByUser = new Map<string, string[]>();
+    (roles ?? []).forEach((r) => {
+      if (!r.user_id) return;
+      const arr = roleByUser.get(r.user_id) ?? [];
+      arr.push(r.role as string);
+      roleByUser.set(r.user_id, arr);
+    });
+
+    type TeacherRow = NonNullable<typeof teachers>[number];
+    type ParentRow = NonNullable<typeof parents>[number];
+    const teacherByUser = new Map<string, TeacherRow>();
+    (teachers ?? []).forEach((t) => { if (t.user_id) teacherByUser.set(t.user_id, t); });
+    const parentByUser = new Map<string, ParentRow>();
+    (parents ?? []).forEach((p) => { if (p.user_id) parentByUser.set(p.user_id, p); });
+
+    const users: AppUserRow[] = [];
+    const seen = new Set<string>();
+
+    (profiles ?? []).forEach((p) => {
+      seen.add(p.id);
+      const rs = roleByUser.get(p.id) ?? [];
+      const t = teacherByUser.get(p.id);
+      const par = parentByUser.get(p.id);
+      let source: AppUserRow["source"] = "other";
+      let source_label = "Profile";
+      let status: string | null = null;
+      const sources: AppUserRow["sources"] = [];
+      // Each person belongs to exactly one counter. Administrative access takes
+      // precedence over linked staff records so an admin is never double-counted.
+      if (rs.includes("admin")) {
+        source = "admin";
+        source_label = "School Administrator";
+        sources.push("admin");
+      } else if (t || rs.includes("teacher")) {
+        source = "teacher";
+        source_label = `Teacher${t?.designation ? ` · ${t.designation}` : ""}`;
+        status = t?.status ?? null;
+        sources.push("teacher");
+      } else if (par || rs.includes("parent")) {
+        source = "parent";
+        source_label = "Parent / Guardian";
+        status = par?.status ?? null;
+        sources.push("parent");
+      } else {
+        sources.push("other");
+      }
+      users.push({
+        id: p.id,
+        full_name: p.full_name ?? null,
+        email: p.email,
+        phone: (p as { phone?: string | null }).phone ?? t?.phone ?? par?.phone ?? null,
+        roles: rs,
+        source,
+        source_label,
+        sources,
+        status,
+        created_at: p.created_at as string,
+      });
+    });
+
+    // Teachers / parents without auth user (no login yet) — still surface them
+    (teachers ?? []).forEach((t) => {
+      if (t.user_id && seen.has(t.user_id)) return;
+      users.push({
+        id: `teacher:${t.user_id ?? t.email ?? Math.random()}`,
+        full_name: t.full_name,
+        email: t.email ?? "—",
+        phone: t.phone ?? null,
+        roles: [],
+        source: "teacher",
+        sources: ["teacher"],
+        source_label: `Teacher${t.designation ? ` · ${t.designation}` : ""} (no login)`,
+        status: t.status ?? null,
+        created_at: t.created_at as string,
+      });
+    });
+    (parents ?? []).forEach((p) => {
+      if (p.user_id && seen.has(p.user_id)) return;
+      users.push({
+        id: `parent:${p.user_id ?? p.email ?? Math.random()}`,
+        full_name: p.full_name,
+        email: p.email ?? "—",
+        phone: p.phone ?? null,
+        roles: [],
+        source: "parent",
+        sources: ["parent"],
+        source_label: "Parent / Guardian (no login)",
+        status: p.status ?? null,
+        created_at: p.created_at as string,
+      });
+    });
+    (students ?? []).forEach((s) => {
+      users.push({
+        id: `student:${s.id}`,
+        full_name: s.full_name,
+        email: "—",
+        phone: null,
+        roles: [],
+        source: "student",
+        sources: ["student"],
+        source_label: "Student",
+        status: s.status ?? null,
+        created_at: s.created_at as string,
+      });
+    });
+
+    users.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+    return { users };
+  });
